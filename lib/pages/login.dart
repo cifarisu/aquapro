@@ -1,3 +1,4 @@
+import 'package:aquapro/pages/signup.dart';
 import 'package:aquapro/widget/widget_support.dart';
 import 'package:flutter/material.dart';
 
@@ -74,11 +75,15 @@ Container(
                           padding: EdgeInsets.symmetric(vertical: 8),
                           width: 200,
                           decoration: BoxDecoration(color: Color(0Xffff5722), borderRadius: BorderRadius.circular(20)),
-                          child: Center(child: Text("Log In", style: TextStyle(color: Colors.white, fontSize: 18.0, fontFamily: 'Poppins', fontWeight: FontWeight.bold))),
+                          child: Center(child: Text("LOG IN", style: TextStyle(color: Colors.white, fontSize: 18.0, fontFamily: 'Poppins', fontWeight: FontWeight.bold))),
                         ),
                       ),
                     SizedBox(height: 50,),
-                      Text("Don't have an account? Sign Up", style: TextStyle(fontSize: 15)),
+                      GestureDetector(
+                        onTap: (){
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=> SignUp()));
+                        },
+                        child: Text("Don't have an account? Sign Up", style: TextStyle(fontSize: 15))),
                   ]),
                 ),
               ),
