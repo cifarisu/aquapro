@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "110747729838",
+    "project_id": "aquapro-b890e",
+    "storage_bucket": "aquapro-b890e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:110747729838:android:f3a6ef05fa904cf6d8923f",
+        "android_client_info": {
+          "package_name": "com.example.aquapro"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDBtKk8ApUZ3KjBStM4tWPZxLBlaLOGy8E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
