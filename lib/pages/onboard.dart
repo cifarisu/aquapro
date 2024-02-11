@@ -35,30 +35,30 @@ class _OnboardState extends State<Onboard> {
       body:  Column(children: [
         Expanded(
           child: PageView.builder(
-            controller: _controller,
-            itemCount: contents.length,
-            onPageChanged: (int index){
-              setState(() {
-                currentIndex=index;
-              });
-            },
-            itemBuilder: (_, i){
-            return Padding(padding: EdgeInsets.all(20),
-            child: Column(children: [
-            Image.asset(contents[i].image, height: 450,width: MediaQuery.of(context).size.width/1.5, fit: BoxFit.fill,),
-            SizedBox(height: 40),
-            Text(contents[i].title, style: AppWidget.boldTextFieldStyle(),),
-            SizedBox(height: 20),
-            Text(contents[i].description,style: AppWidget.boldTextFieldStyle(),),
-            ],),
-            );
-          }),
+              controller: _controller,
+              itemCount: contents.length,
+              onPageChanged: (int index){
+                setState(() {
+                  currentIndex=index;
+                });
+              },
+              itemBuilder: (_, i){
+                return Padding(padding: EdgeInsets.all(20),
+                  child: Column(children: [
+                    Image.asset(contents[i].image, height: 450,width: MediaQuery.of(context).size.width/1.5, fit: BoxFit.fill,),
+                    SizedBox(height: 40),
+                    Text(contents[i].title, style: AppWidget.boldTextFieldStyle(),),
+                    SizedBox(height: 20),
+                    Text(contents[i].description,style: AppWidget.boldTextFieldStyle(),),
+                  ],),
+                );
+              }),
         ),
         Container(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: List.generate(contents.length, (index) =>
-              buildDot(index, context),
+                buildDot(index, context),
             ),
           ),
         ),
@@ -70,11 +70,11 @@ class _OnboardState extends State<Onboard> {
             _controller.nextPage(duration: Duration(milliseconds: 100), curve: Curves.bounceIn);
           },
           child: Container(
-            decoration: BoxDecoration(color: Colors.red),
-            height: 60,
-            margin: EdgeInsets.all(40),
-            width: double.infinity,
-            child: Text("Next", style: TextStyle(color: Colors.white),)
+              decoration: BoxDecoration(color: Colors.red),
+              height: 60,
+              margin: EdgeInsets.all(40),
+              width: double.infinity,
+              child: Text("Next", style: TextStyle(color: Colors.white),)
           ),
         ),
       ],),
@@ -88,4 +88,4 @@ class _OnboardState extends State<Onboard> {
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(6), color: Colors.black38),
     );
   }
-} 
+}

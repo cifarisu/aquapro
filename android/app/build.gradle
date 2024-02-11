@@ -25,7 +25,7 @@ if (flutterVersionName == null) {
 
 android {
     namespace "com.example.aquapro"
-    compileSdkVersion flutter.compileSdkVersion
+    compileSdkVersion 33
     ndkVersion flutter.ndkVersion
 
     compileOptions {
@@ -50,6 +50,7 @@ android {
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        multiDexEnabled true
     }
 
     buildTypes {
@@ -68,4 +69,5 @@ flutter {
 dependencies {
     implementation(platform("com.google.firebase:firebase-bom:32.7.2"))
     implementation(platform("com.google.firebase:firebase-bom:32.7.2"))
+    implementation 'com.android.support:multidex:2.0.1'
 }
