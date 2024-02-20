@@ -9,37 +9,50 @@ app = Flask(__name__)
 
 class Ant:
     def __init__(self, num_cities):
-        self.tour = np.concatenate(([0], np.random.permutation(num_cities - 1) + 1, [0]))  # Add 0 at the end
+        self.tour = np.concatenate(([0], np.random.permutation(np.delete(np.arange(num_cities), 0))))
         self.distance = np.inf
 
 def calculate_total_distance(tour, distances):
-    total_distance = np.sum(distances[tour[:-1], tour[1:]])
-    return total_distance  # No need to add distance back to starting city, it's already in the tour
+    total_distance = np.sum(distances[tour[:-1], tour[1:]]) + distances[tour[-1], 0]
+    return total_distance
 
-def ant_colony_optimization(distances, num_iterations=10, num_ants=10, decay=0.1, alpha=1, beta=1):
+def two_opt(tour, distances):
+    num_cities = len(tour)
+    for i in range(num_cities - 1):
+        for j in range(i + 2, num_cities + int(i == 0)):
+            if j - i == 1: continue
+            new_tour = tour.copy()
+            new_tour[i+1:j] = tour[j-1:i:-1]
+            if calculate_total_distance(new_tour, distances) < calculate_total_distance(tour, distances):
+                tour = new_tour
+    return tour
+
+def ant_colony_optimization(distances, num_iterations=100, num_ants=100, decay=1, alpha=1, beta=1):
     num_cities = len(distances)
     pheromones = np.ones((num_cities, num_cities))
     best_tour = None
     best_distance = np.inf
+    best_iteration = None
 
     for iteration in range(num_iterations):
+        decay = 1 - 1/(iteration + 1)
         ants = [Ant(num_cities) for _ in range(num_ants)]
         for ant in ants:
-            for i in range(1, num_cities):  # Start from 1 because the first city is fixed
+            for i in range(1, num_cities):
                 p = pheromones[ant.tour[i], :] ** alpha * ((1.0 / distances[ant.tour[i], :]) ** beta)
                 p[ant.tour[:i+1]] = 0
-                if i < num_cities - 1:  # Avoid the last city in ant.tour
+                if i < num_cities - 1:
                     ant.tour[i+1] = np.random.choice(range(num_cities), 1, p=p/np.sum(p))
+            ant.tour = two_opt(ant.tour, distances)
             ant.distance = calculate_total_distance(ant.tour, distances)
             if ant.distance < best_distance:
                 best_distance = ant.distance
                 best_tour = ant.tour.copy()
-            pheromones[ant.tour[:-2], ant.tour[1:-1]] += 1.0 / ant.distance  # Exclude the last city
+                best_iteration = iteration
+            pheromones[ant.tour[:-1], ant.tour[1:]] += 1.0 / ant.distance
         pheromones *= (1.0 - decay)
 
-        print(f"Iteration {iteration + 1}/{num_iterations} - Best Distance: {best_distance}")
-
-    return best_tour
+    return np.concatenate((best_tour, [0])), best_distance, best_iteration, num_iterations, num_ants
 
 @app.route("/")
 def index():
@@ -102,14 +115,52 @@ def index():
     distances = np.array(distance)
     distances = distances.copy()
 
-    start_time = time.time()
-    best_route = ant_colony_optimization(distances, num_iterations=100, num_ants=10)
-    end_time = time.time()
+    # Run ACO a large number of times to estimate the best known result
+    best_known_result = np.inf
+    for _ in range(10):
+        best_route, total_distance, _, _, _ = ant_colony_optimization(distances, num_iterations=100, num_ants=10)
+        if total_distance < best_known_result:
+            best_known_result = total_distance
+
+    # Initialize lists to store results
+    best_routes = []
+    total_distances = []
+    running_times = []
+    best_iterations = []
+
+    # Run ACO 15 times
+    for trial in range(15):
+        start_time = time.time()
+        best_route, total_distance, best_iteration, num_iterations, num_ants = ant_colony_optimization(distances, num_iterations=100, num_ants=10)
+        end_time = time.time()
+
+        # Store results
+        best_routes.append(best_route)
+        total_distances.append(total_distance)
+        running_times.append(end_time - start_time)
+        best_iterations.append(best_iteration)
+
+    # Calculate statistics
+    average_distance = np.mean(total_distances)
+    std_dev_distance = np.std(total_distances)
+
+    # Calculate percent error using the best result from all trials
+    best_result = min(total_distances)
+    percent_error = (best_result - best_known_result) / best_known_result * 100
+
+    
 
     result = {
-        "Best Route": best_route.tolist(),
-        "Total Distance": calculate_total_distance(best_route, distances),
-        "Running Time": end_time - start_time
+        "Best Routes": [route.tolist() for route in best_routes],
+        "Total Distances": total_distances,
+        "Running Times": running_times,
+        "Best Iterations": best_iterations,
+        "Average Total Distance": average_distance,
+        "Standard Deviation of Total Distance": std_dev_distance,
+        "Best Known Result": best_known_result,
+        "Best Result": best_result,
+        "Number of Evaluations": num_iterations * num_ants,
+        "% Error": percent_error
     }
 
     return jsonify(result)
