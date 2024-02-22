@@ -70,7 +70,7 @@ registration() async {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                Color(0xFFff5c30), Color(0xFFe74b1a)
+                Color.fromARGB(255, 33, 214, 250), Color.fromARGB(255, 184, 247, 251)
               ]),),
         ),
         Container(
@@ -160,7 +160,7 @@ registration() async {
                             child: Container(
                               padding: EdgeInsets.symmetric(vertical: 8),
                               width: 200,
-                              decoration: BoxDecoration(color: Color(0Xffff5722), borderRadius: BorderRadius.circular(20)),
+                              decoration: BoxDecoration(color: Color.fromARGB(255, 33, 214, 250), borderRadius: BorderRadius.circular(20)),
                               child: Center(child: Text("SIGN UP", style: TextStyle(color: Colors.white, fontSize: 18.0, fontFamily: 'Poppins', fontWeight: FontWeight.bold))),
                             ),
                           ),
