@@ -1,6 +1,7 @@
 import 'package:aquapro/pages/home.dart';
 import 'package:aquapro/pages/login.dart';
 import 'package:aquapro/pages/onboard.dart';
+import 'package:aquapro/pages/order_traking_page.dart';
 import 'package:aquapro/pages/signup.dart';
 import 'package:flutter/material.dart';
 
@@ -37,7 +38,7 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
-        home: SignUp()
+        home: OrderTrackingPage()
     );
   }
 }
