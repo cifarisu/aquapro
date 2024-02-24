@@ -14,12 +14,13 @@ class SignUp extends StatefulWidget {
 
 class _SignUpState extends State<SignUp> {
 
-  String email="", password="", name="";
+  String email="", password="", name="", type="df";
 
 
   TextEditingController namecontroller = new TextEditingController();
   TextEditingController passwordcontroller = new TextEditingController();
   TextEditingController mailcontroller = new TextEditingController();
+  TextEditingController typecontroller = new TextEditingController();
 
   final _formkey=GlobalKey<FormState>();
 
@@ -70,7 +71,7 @@ registration() async {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                Color(0xFFff5c30), Color(0xFFe74b1a)
+                Color.fromARGB(255, 2, 206, 247), Color.fromARGB(255, 255, 255, 255)
               ]),),
         ),
         Container(
@@ -131,6 +132,19 @@ registration() async {
                           height:30,
                         ),
                         TextFormField(
+                           controller: typecontroller,
+                          validator: (value){
+                            if(value==null || value.isEmpty){
+                              return 'Please choose user type';
+                            }
+                            return null;
+                          },
+                          decoration: InputDecoration(hintText: 'Type', hintStyle: AppWidget.boldTextFieldStyle(), prefixIcon: Icon(Icons.email_outlined)),
+                        ),
+                        SizedBox(
+                          height:30,
+                        ),
+                        TextFormField(
                            controller: passwordcontroller,
                             validator: (value){
                             if(value==null || value.isEmpty){
@@ -147,6 +161,7 @@ registration() async {
                             if(_formkey.currentState!.validate()){
                               setState(() {
                                 email=mailcontroller.text;
+                                type=typecontroller.text;
                                 name=namecontroller.text;
                                 password=passwordcontroller.text;
 
@@ -160,7 +175,7 @@ registration() async {
                             child: Container(
                               padding: EdgeInsets.symmetric(vertical: 8),
                               width: 200,
-                              decoration: BoxDecoration(color: Color(0Xffff5722), borderRadius: BorderRadius.circular(20)),
+                              decoration: BoxDecoration(color: Color.fromARGB(255, 33, 214, 250), borderRadius: BorderRadius.circular(20)),
                               child: Center(child: Text("SIGN UP", style: TextStyle(color: Colors.white, fontSize: 18.0, fontFamily: 'Poppins', fontWeight: FontWeight.bold))),
                             ),
                           ),
