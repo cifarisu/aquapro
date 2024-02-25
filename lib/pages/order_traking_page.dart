@@ -4,6 +4,7 @@ import 'package:aquapro/widget/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart';
 
 class OrderTrackingPage extends StatefulWidget {
   const OrderTrackingPage({Key? key}) : super(key: key);
@@ -19,6 +20,39 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
   static const LatLng destination = LatLng(13.137190709035641, 123.73700332397237);
 
   List<LatLng> polylineCoordinates = [];
+  LocationData? currentLocation;
+
+
+
+
+  void getCurrentLocation() async {
+    Location location = Location();
+
+
+
+    location.getLocation().then((location){
+      currentLocation = location;
+    },);
+
+    GoogleMapController googleMapController = await _controller.future;
+
+
+    location.onLocationChanged.listen((newLoc){
+      currentLocation = newLoc;
+
+      googleMapController.animateCamera(CameraUpdate.newCameraPosition(
+        CameraPosition(
+          zoom: 13.5,
+          target: LatLng(newLoc.latitude!, newLoc.longitude!,))));
+
+      setState(() {
+        
+      });
+
+
+    },);
+
+  }
 
   void getPolyPoints() async {
     PolylinePoints polylinePoints = PolylinePoints();
@@ -39,8 +73,8 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
 
   @override
   void initState() {
+    getCurrentLocation();
     getPolyPoints();
-
     super.initState();
   }
 
@@ -53,23 +87,38 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
           style: TextStyle(color: Colors.black, fontSize: 16),
         ),
       ),
-      body: GoogleMap(mapType: MapType.normal, initialCameraPosition: CameraPosition(target: sourceLocation, zoom: 14.5),
+      body: currentLocation == null ? 
+      const Center(child: Text("Loading")) : 
+      GoogleMap(mapType: MapType.normal, initialCameraPosition: CameraPosition(
+        target: LatLng(currentLocation!.latitude!, currentLocation!.longitude!), zoom: 15.5),
       polylines: {
         Polyline(
           polylineId: PolylineId("route"),
           points: polylineCoordinates,
+          color: primaryColor,
+          width:6,
         ),
       },
       markers: {
-        const Marker(
+        if (currentLocation != null) 
+          Marker(
+            markerId: MarkerId("currentLocation"),
+            position: LatLng(
+              currentLocation!.latitude!, currentLocation!.longitude!),
+          ),
+        Marker(
           markerId: MarkerId("source"),
           position: sourceLocation,
-          ),
-        const Marker(
+        ),
+        Marker(
           markerId: MarkerId("destination"),
           position: destination,
         )
-      },),
+      },
+      onMapCreated: (mapController){
+        _controller.complete(mapController);
+      },
+      ),
     );
   }
 }
