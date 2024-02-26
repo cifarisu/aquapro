@@ -16,14 +16,15 @@ class OrderTrackingPage extends StatefulWidget {
 class OrderTrackingPageState extends State<OrderTrackingPage> {
   final Completer<GoogleMapController> _controller = Completer();
 
-  static const LatLng sourceLocation = LatLng(13.138486263526069, 123.73427819974167);
-  static const LatLng destination = LatLng(13.137190709035641, 123.73700332397237);
+  static const LatLng sourceLocation = LatLng(13.1389, 123.7335);
+  static const LatLng destination = LatLng(13.1438, 123.7438);
 
   List<LatLng> polylineCoordinates = [];
   LocationData? currentLocation;
 
-
-
+  BitmapDescriptor sourceIcon = BitmapDescriptor.defaultMarker;
+  BitmapDescriptor destinationIcon = BitmapDescriptor.defaultMarker;
+  BitmapDescriptor currentLocationIcon = BitmapDescriptor.defaultMarker; 
 
   void getCurrentLocation() async {
     Location location = Location();
@@ -42,7 +43,7 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
 
       googleMapController.animateCamera(CameraUpdate.newCameraPosition(
         CameraPosition(
-          zoom: 13.5,
+          zoom: 18,
           target: LatLng(newLoc.latitude!, newLoc.longitude!,))));
 
       setState(() {
@@ -70,10 +71,29 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
     }
   }
 
+  void setCustomMarker(){
+    BitmapDescriptor.fromAssetImage(ImageConfiguration.empty, "images/Pin_source.png").then((icon){
+      sourceIcon = icon;
+
+    },
+    );
+    BitmapDescriptor.fromAssetImage(ImageConfiguration.empty, "images/Pin_destination.png").then((icon){
+      destinationIcon = icon;
+
+    },
+    );
+    BitmapDescriptor.fromAssetImage(ImageConfiguration.empty, "images/Badge.png").then((icon){
+      currentLocationIcon = icon;
+
+    },
+    );
+  }
+
 
   @override
   void initState() {
     getCurrentLocation();
+    setCustomMarker();
     getPolyPoints();
     super.initState();
   }
@@ -90,7 +110,7 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
       body: currentLocation == null ? 
       const Center(child: Text("Loading")) : 
       GoogleMap(mapType: MapType.normal, initialCameraPosition: CameraPosition(
-        target: LatLng(currentLocation!.latitude!, currentLocation!.longitude!), zoom: 15.5),
+        target: LatLng(currentLocation!.latitude!, currentLocation!.longitude!), zoom: 18),
       polylines: {
         Polyline(
           polylineId: PolylineId("route"),
@@ -103,15 +123,18 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
         if (currentLocation != null) 
           Marker(
             markerId: MarkerId("currentLocation"),
+            icon: currentLocationIcon,
             position: LatLng(
               currentLocation!.latitude!, currentLocation!.longitude!),
           ),
         Marker(
           markerId: MarkerId("source"),
+          icon: sourceIcon,
           position: sourceLocation,
         ),
         Marker(
           markerId: MarkerId("destination"),
+          icon: destinationIcon,
           position: destination,
         )
       },
