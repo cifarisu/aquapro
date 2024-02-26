@@ -17,7 +17,7 @@ class _LogInState extends State<LogIn> {
         Container(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height/2.5,
-          decoration: BoxDecoration(gradient: LinearGradient(
+          decoration: const BoxDecoration(gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
@@ -28,62 +28,62 @@ class _LogInState extends State<LogIn> {
           margin: EdgeInsets.only(top: MediaQuery.of(context).size.height/3),
           height: MediaQuery.of(context).size.height/2,
           width: MediaQuery.of(context).size.width,
-          decoration: BoxDecoration(color: Colors.white,borderRadius: BorderRadius.only(topLeft: Radius.circular(40),topRight: Radius.circular(40),),),
-          child: Text(""),
+          decoration: const BoxDecoration(color: Colors.white,borderRadius: BorderRadius.only(topLeft: Radius.circular(40),topRight: Radius.circular(40),),),
+          child: const Text(""),
         ),
         Container(
-          margin: EdgeInsets.only(top:55, left: 20, right: 20),
+          margin: const EdgeInsets.only(top:55, left: 20, right: 20),
           child: SingleChildScrollView(
             child: Column(children: [
               Center(child: Image.asset("images/logo.png", width: MediaQuery.of(context).size.width/2,fit: BoxFit.cover,)),
-              SizedBox(height: 50.0,),
+              const SizedBox(height: 50.0,),
               Material(
                 elevation: 5.0,
                 borderRadius: BorderRadius.circular(20),
                 child: Container(
-                  padding: EdgeInsets.only(left: 20, right: 20),
+                  padding: const EdgeInsets.only(left: 20, right: 20),
                   width: MediaQuery.of(context).size.width,
                   height: MediaQuery.of(context).size.height/2,
                   decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
                   child: SingleChildScrollView(
                     child: Column(children: [
-                      SizedBox(height: 30,),
+                      const SizedBox(height: 30,),
                       Text("Login", style: AppWidget.boldTextFieldStyle(),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height:30,
                       ),
                       TextField(
-                        decoration: InputDecoration(hintText: 'Email', hintStyle: AppWidget.boldTextFieldStyle(), prefixIcon: Icon(Icons.email_outlined)),
+                        decoration: InputDecoration(hintText: 'Email', hintStyle: AppWidget.boldTextFieldStyle(), prefixIcon: const Icon(Icons.email_outlined)),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height:30,
                       ),
                       TextField(
                         obscureText: true,
-                        decoration: InputDecoration(hintText: 'Password', hintStyle: AppWidget.boldTextFieldStyle(), prefixIcon: Icon(Icons.password_outlined)),
+                        decoration: InputDecoration(hintText: 'Password', hintStyle: AppWidget.boldTextFieldStyle(), prefixIcon: const Icon(Icons.password_outlined)),
                       ),
-                      SizedBox(height: 20,),
+                      const SizedBox(height: 20,),
                       Container(
                         alignment: Alignment.topRight,
                         child: Text("Forgot Password?", style: AppWidget.boldTextFieldStyle(),),),
-                      SizedBox(height: 20,),
+                      const SizedBox(height: 20,),
                       Material(
                         elevation: 5,
                         borderRadius: BorderRadius.circular(20),
                         child: Container(
-                          padding: EdgeInsets.symmetric(vertical: 8),
+                          padding: const EdgeInsets.symmetric(vertical: 8),
                           width: 200,
-                          decoration: BoxDecoration(color:Color.fromARGB(255, 33, 214, 250), borderRadius: BorderRadius.circular(20)),
-                          child: Center(child: Text("LOG IN", style: TextStyle(color: Colors.white, fontSize: 18.0, fontFamily: 'Poppins', fontWeight: FontWeight.bold))),
+                          decoration: BoxDecoration(color:const Color.fromARGB(255, 33, 214, 250), borderRadius: BorderRadius.circular(20)),
+                          child: const Center(child: Text("LOG IN", style: TextStyle(color: Colors.white, fontSize: 18.0, fontFamily: 'Poppins', fontWeight: FontWeight.bold))),
                         ),
                       ),
-                      SizedBox(height: 50,),
+                      const SizedBox(height: 50,),
                       GestureDetector(
                           onTap: (){
-                            Navigator.push(context, MaterialPageRoute(builder: (context)=> SignUp()));
+                            Navigator.push(context, MaterialPageRoute(builder: (context)=> const SignUp()));
                           },
-                          child: Text("Don't have an account? Sign Up", style: TextStyle(fontSize: 15))),
+                          child: const Text("Don't have an account? Sign Up", style: TextStyle(fontSize: 15))),
                     ]),
                   ),
                 ),

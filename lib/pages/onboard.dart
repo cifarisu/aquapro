@@ -43,12 +43,12 @@ class _OnboardState extends State<Onboard> {
                 });
               },
               itemBuilder: (_, i){
-                return Padding(padding: EdgeInsets.all(20),
+                return Padding(padding: const EdgeInsets.all(20),
                   child: Column(children: [
                     Image.asset(contents[i].image, height: 450,width: MediaQuery.of(context).size.width/1.5, fit: BoxFit.fill,),
-                    SizedBox(height: 40),
+                    const SizedBox(height: 40),
                     Text(contents[i].title, style: AppWidget.boldTextFieldStyle(),),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     Text(contents[i].description,style: AppWidget.boldTextFieldStyle(),),
                   ],),
                 );
@@ -65,16 +65,16 @@ class _OnboardState extends State<Onboard> {
         GestureDetector(
           onTap: (){
             if(currentIndex==contents.length-1){
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> SignUp()));
+              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> const SignUp()));
             }
-            _controller.nextPage(duration: Duration(milliseconds: 100), curve: Curves.bounceIn);
+            _controller.nextPage(duration: const Duration(milliseconds: 100), curve: Curves.bounceIn);
           },
           child: Container(
-              decoration: BoxDecoration(color: Colors.red),
+              decoration: const BoxDecoration(color: Colors.red),
               height: 60,
-              margin: EdgeInsets.all(40),
+              margin: const EdgeInsets.all(40),
               width: double.infinity,
-              child: Text("Next", style: TextStyle(color: Colors.white),)
+              child: const Text("Next", style: TextStyle(color: Colors.white),)
           ),
         ),
       ],),
@@ -84,7 +84,7 @@ class _OnboardState extends State<Onboard> {
     return Container(
       height: 10.0,
       width: currentIndex==index?18:7,
-      margin: EdgeInsets.only(right:5),
+      margin: const EdgeInsets.only(right:5),
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(6), color: Colors.black38),
     );
   }
