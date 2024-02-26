@@ -16,10 +16,9 @@ class OrderTrackingPage extends StatefulWidget {
 class OrderTrackingPageState extends State<OrderTrackingPage> {
   final Completer<GoogleMapController> _controller = Completer();
 
-  static const LatLng sourceLocation = LatLng(13.1389, 123.7335);
-  static const LatLng destination = LatLng(13.1438, 123.7438);
+  static const List<LatLng> locations = [LatLng(13.1389, 123.7335), LatLng(13.1438, 123.7438), LatLng(13.1458, 123.7458)]; // Add more destinations here
 
-  List<LatLng> polylineCoordinates = [];
+  List<List<LatLng>> polylineCoordinates = [];
   LocationData? currentLocation;
 
   BitmapDescriptor sourceIcon = BitmapDescriptor.defaultMarker;
@@ -29,14 +28,11 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
   void getCurrentLocation() async {
     Location location = Location();
 
-
-
     location.getLocation().then((location){
       currentLocation = location;
     },);
 
     GoogleMapController googleMapController = await _controller.future;
-
 
     location.onLocationChanged.listen((newLoc){
       currentLocation = newLoc;
@@ -50,7 +46,6 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
         
       });
 
-
     },);
 
   }
@@ -58,16 +53,23 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
   void getPolyPoints() async {
     PolylinePoints polylinePoints = PolylinePoints();
 
-    PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(google_api_key, PointLatLng(sourceLocation.latitude, sourceLocation.longitude),
-    PointLatLng(destination.latitude, destination.longitude),
-    );
+    for (int i = 0; i < locations.length - 1; i++) {
+      LatLng source = locations[i];
+      LatLng destination = locations[i + 1];
 
-    if (result.points.isNotEmpty){
-      result.points.forEach((PointLatLng point) => polylineCoordinates.add(LatLng(point.latitude, point.longitude)),);
-      setState(() {
-        
-      });
+      PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(google_api_key, PointLatLng(source.latitude, source.longitude),
+      PointLatLng(destination.latitude, destination.longitude),
+      );
 
+      if (result.points.isNotEmpty){
+        List<LatLng> route = [];
+        result.points.forEach((PointLatLng point) => route.add(LatLng(point.latitude, point.longitude)),);
+        polylineCoordinates.add(route);
+        setState(() {
+          
+        });
+
+      }
     }
   }
 
@@ -88,7 +90,6 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
     },
     );
   }
-
 
   @override
   void initState() {
@@ -112,12 +113,13 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
       GoogleMap(mapType: MapType.normal, initialCameraPosition: CameraPosition(
         target: LatLng(currentLocation!.latitude!, currentLocation!.longitude!), zoom: 18),
       polylines: {
-        Polyline(
-          polylineId: PolylineId("route"),
-          points: polylineCoordinates,
-          color: primaryColor,
-          width:6,
-        ),
+        for (List<LatLng> route in polylineCoordinates)
+          Polyline(
+            polylineId: PolylineId("route"),
+            points: route,
+            color: primaryColor,
+            width:6,
+          ),
       },
       markers: {
         if (currentLocation != null) 
@@ -127,16 +129,12 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
             position: LatLng(
               currentLocation!.latitude!, currentLocation!.longitude!),
           ),
-        Marker(
-          markerId: MarkerId("source"),
-          icon: sourceIcon,
-          position: sourceLocation,
-        ),
-        Marker(
-          markerId: MarkerId("destination"),
-          icon: destinationIcon,
-          position: destination,
-        )
+        for (LatLng location in locations)
+          Marker(
+            markerId: MarkerId("destination"),
+            icon: destinationIcon,
+            position: location,
+          )
       },
       onMapCreated: (mapController){
         _controller.complete(mapController);
