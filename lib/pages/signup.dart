@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_null_comparison, unused_local_variable, prefer_const_constructors
+
 import 'package:aquapro/pages/login.dart';
 import 'package:aquapro/widget/widget_support.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -25,32 +27,34 @@ class _SignUpState extends State<SignUp> {
   final _formkey=GlobalKey<FormState>();
 
 registration() async {
-  try {
+  if (password != null) {
+    try {
     UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        backgroundColor: Colors.orangeAccent,
-        content: Text("Registered Successfully", style: TextStyle(fontSize: 20)),
-      ),
+    ScaffoldMessenger.of(context).showSnackBar((SnackBar(
+        backgroundColor: Colors.redAccent,
+        content: Text(
+          "Registered Successfully", 
+          style: TextStyle(fontSize: 20)
+        ),
+      )),
     );
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> const LogIn()));
   } on FirebaseException catch (e) {
     if (e.code == 'weak-password') {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           backgroundColor: Colors.orangeAccent,
           content: Text("Password is too weak", style: TextStyle(fontSize: 18)),
         ),
       );
     } else if (e.code == 'email-already-in-use') {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           backgroundColor: Colors.orangeAccent,
           content: Text("Account already exists", style: TextStyle(fontSize: 18)),
         ),
       );
     }
+  }
   }
 }
 
@@ -107,7 +111,7 @@ registration() async {
                           controller: namecontroller,
                           validator: (value){
                             if(value==null || value.isEmpty){
-                              return 'Please Enter E-Email';
+                              return 'Please Enter Name';
                             }
                             return null;
                           },
@@ -178,17 +182,18 @@ registration() async {
                             ),
                           ),
                         ),
-                        const SizedBox(height: 50,),
-                        GestureDetector(
-                            onTap: (){
-                              Navigator.push(context, MaterialPageRoute(builder: (context)=> const LogIn()));
-                            },
-                            child: const Text("Already have an account? Log In", style: TextStyle(fontSize: 15))),
+                        
                       ]),
                     ),
                   ),
                 ),
-              )
+              ),
+              SizedBox(height: 50,),
+              GestureDetector(
+                onTap: (){
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=> const LogIn()));
+                },
+              child: const Text("Already have an account? Log In", style: TextStyle(fontSize: 15))),
             ],),
           ),
         )
