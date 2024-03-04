@@ -74,8 +74,7 @@ class _InputCoordinatesPageState extends State<InputCoordinatesPage> {
       print('An error occurred: $e');
     }
   }
-
-  @override
+@override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(

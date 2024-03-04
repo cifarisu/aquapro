@@ -2,8 +2,10 @@ import 'package:aquapro/pages/home.dart';
 import 'package:aquapro/pages/login.dart';
 import 'package:aquapro/pages/onboard.dart';
 import 'package:aquapro/pages/order_traking_page.dart';
+import 'package:aquapro/pages/rider_info.dart';
 import 'package:aquapro/pages/signup.dart';
 import 'package:aquapro/trialapi/newhome.dart';
+import 'package:aquapro/trialapi/tryingCRUD.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'firebase_options.dart';
@@ -45,7 +47,7 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
-        home: InputCoordinatesPage()
+        home: OrderTrackingPage()
     );
   }
 }
