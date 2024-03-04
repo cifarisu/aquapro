@@ -1,5 +1,6 @@
 // ignore_for_file: unnecessary_null_comparison, unused_local_variable, prefer_const_constructors
 
+import 'package:aquapro/pages/home.dart';
 import 'package:aquapro/pages/login.dart';
 import 'package:aquapro/widget/widget_support.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -39,7 +40,7 @@ registration() async {
         ),
       )),
     );
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> const LogIn()));
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> const Home()));
   } on FirebaseException catch (e) {
     if (e.code == 'weak-password') {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
