@@ -18,6 +18,15 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold (
       body: Container(
+        width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          decoration: const BoxDecoration(gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Color(0xff81e6eb), Color(0xfffffff)
+              ]),),
+        child: Container(
          
          
         margin: const EdgeInsets.only(top: 60.0, left: 10.0, right: 10.0),
@@ -27,12 +36,16 @@ class _HomeState extends State<Home> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text("Browse", style: AppWidget.boldTextFieldStyle()),
-                Container(
+                Text("Browse", style: AppWidget.HeadlineTextFeildStyle()),
+                Column(children: [
+                  Container(
                   padding: const EdgeInsets.all(3),
                   decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(10)),
-                  child: const Icon(Icons.map_outlined, color: Colors.white, size: 40,),
-                )
+                  child: Icon(Icons.map_rounded, color: Colors.white, size: 40,),
+                  ),
+                  Text("Open Maps", style: AppWidget.SmallTextFeildStyle(),)
+                ],),
+                
               ],
             ),
             SizedBox(height: 40,),
@@ -487,6 +500,11 @@ class _HomeState extends State<Home> {
         ],
         ),
         ),
+      
+      
+      ),
+      
+      
 
     );
   }
