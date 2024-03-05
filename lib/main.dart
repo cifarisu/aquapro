@@ -1,3 +1,4 @@
+import 'package:aquapro/pages/front_page.dart';
 import 'package:aquapro/pages/home.dart';
 import 'package:aquapro/pages/login.dart';
 import 'package:aquapro/pages/onboard.dart';
@@ -47,7 +48,7 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
-        home: Home()
+        home: frontPage()
     );
   }
 }
