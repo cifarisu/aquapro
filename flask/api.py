@@ -54,6 +54,8 @@ def ant_colony_optimization(distances, num_iterations=100, num_ants=100, decay=1
 
 app = Flask(__name__)
 
+results = {}  # Store the results here
+
 @app.route("/", methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
@@ -142,22 +144,18 @@ def index():
         percent_error = (best_result - best_known_result) / best_known_result * 100
 
         result = {
-            "Best Routes": [route.tolist() for route in best_routes],
-            "Total Distances": total_distances,
-            "Running Times": running_times,
-            "Best Iterations": best_iterations,
-            "Average Total Distance": average_distance,
-            "Standard Deviation of Total Distance": std_dev_distance,
-            "Best Known Result": best_known_result,
-            "Best Result": best_result,
-            "Number of Evaluations": num_iterations * num_ants,
-            "% Error": percent_error
+            "Best Route": best_route.tolist(),
+            "Total Distance": calculate_total_distance(best_route, distances),
+            "Running Time": end_time - start_time,
         }
-        print("yipii")
         return jsonify(result)
         
     else:
         return "Send a POST request with your coordinates."
+
+@app.route("/results", methods=['GET'])
+def get_results():
+    return jsonify(results)
 
 if __name__ == '__main__':
     app.run(debug=True)

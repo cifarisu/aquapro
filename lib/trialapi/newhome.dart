@@ -11,6 +11,8 @@ class _InputCoordinatesPageState extends State<InputCoordinatesPage> {
   final _formKey = GlobalKey<FormState>();
   List<TextEditingController> _nameControllers = [TextEditingController(text: 'waterstation')];
   List<TextEditingController> _coordinatesControllers = [TextEditingController()];
+  Map<String, dynamic> result = {};
+  String resultText = '';
 
   @override
   void dispose() {
@@ -41,53 +43,85 @@ class _InputCoordinatesPageState extends State<InputCoordinatesPage> {
       print('Sending data: ${json.encode(nodes)}');
       print('Coordinates sent successfully.');
       print('Response body: ${response.body}');
+      result = json.decode(response.body);
+      setState(() {
+        resultText = result.toString();
+      });
     } else {
       print('Failed to send coordinates.');
     }
+
   }
 
+  Future<void> _getResults() async {
+    try {
+      final response = await http.get(
+        Uri.parse('http://10.0.2.2:5000/results'),  // replace with your Flask app's URL
+      );
 
-  @override
+      if (response.statusCode == 200) {
+        result = json.decode(response.body);
+        print('Received results: $result');  // Print the results
+        setState(() {
+          resultText = result.toString();
+        });
+        print('Received results successfully.');
+        print('Response body: $result');
+      } else {
+        print('Failed to get results. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('An error occurred: $e');
+    }
+  }
+@override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Input Coordinates'),
       ),
-      body: Form(
-        key: _formKey,
-        child: ListView.builder(
-          itemCount: _nameControllers.length,
-          itemBuilder: (context, index) {
-            return Column(
-              children: <Widget>[
-                TextFormField(
-                  controller: _nameControllers[index],
-                  decoration: InputDecoration(
-                    labelText: 'Enter name ${index + 1}',
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a name.';
-                    }
-                    return null;
-                  },
-                ),
-                TextFormField(
-                  controller: _coordinatesControllers[index],
-                  decoration: InputDecoration(
-                    labelText: 'Enter coordinates ${index + 1}',
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter coordinates.';
-                    }
-                    return null;
-                  },
-                ),
-              ],
-            );
-          },
-        ),
+      body: Column(
+        children: [
+          Expanded(
+            child: Form(
+              key: _formKey,
+              child: ListView.builder(
+                itemCount: _nameControllers.length,
+                itemBuilder: (context, index) {
+                  return Column(
+                    children: <Widget>[
+                      TextFormField(
+                        controller: _nameControllers[index],
+                        decoration: InputDecoration(
+                          labelText: 'Enter name ${index + 1}',
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter a name.';
+                          }
+                          return null;
+                        },
+                      ),
+                      TextFormField(
+                        controller: _coordinatesControllers[index],
+                        decoration: InputDecoration(
+                          labelText: 'Enter coordinates ${index + 1}',
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter coordinates.';
+                          }
+                          return null;
+                        },
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ),
+          ),
+          Text(resultText),  // Move this line here
+        ],
       ),
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,

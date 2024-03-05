@@ -99,47 +99,54 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
     super.initState();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Track order",
-          style: TextStyle(color: Colors.black, fontSize: 16),
-        ),
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(
+      title: const Text(
+        "Track order",
+        style: TextStyle(color: Colors.black, fontSize: 16),
       ),
-      body: currentLocation == null ? 
-      const Center(child: Text("Loading")) : 
-      GoogleMap(mapType: MapType.normal, initialCameraPosition: CameraPosition(
-        target: LatLng(currentLocation!.latitude!, currentLocation!.longitude!), zoom: 18),
-      polylines: {
-        for (List<LatLng> route in polylineCoordinates)
-          Polyline(
-            polylineId: PolylineId("route"),
-            points: route,
-            color: primaryColor,
-            width:6,
-          ),
-      },
-      markers: {
-        if (currentLocation != null) 
-          Marker(
-            markerId: MarkerId("currentLocation"),
-            icon: currentLocationIcon,
-            position: LatLng(
-              currentLocation!.latitude!, currentLocation!.longitude!),
-          ),
-        for (LatLng location in locations)
-          Marker(
-            markerId: MarkerId("destination"),
-            icon: destinationIcon,
-            position: location,
-          )
-      },
-      onMapCreated: (mapController){
-        _controller.complete(mapController);
-      },
+    ),
+    body: currentLocation == null ? 
+    const Center(child: Text("Loading")) : 
+    Container(
+      height: 500, // Set the height to your desired value
+      width: 500, // Set the width to your desired value
+      child: GoogleMap(
+        mapType: MapType.normal, 
+        initialCameraPosition: CameraPosition(
+          target: LatLng(currentLocation!.latitude!, currentLocation!.longitude!), zoom: 18),
+        polylines: {
+          for (List<LatLng> route in polylineCoordinates)
+            Polyline(
+              polylineId: PolylineId("route"),
+              points: route,
+              color: primaryColor,
+              width:6,
+            ),
+        },
+        markers: {
+          if (currentLocation != null) 
+            Marker(
+              markerId: MarkerId("currentLocation"),
+              icon: currentLocationIcon,
+              position: LatLng(
+                currentLocation!.latitude!, currentLocation!.longitude!),
+            ),
+          for (LatLng location in locations)
+            Marker(
+              markerId: MarkerId("destination"),
+              icon: destinationIcon,
+              position: location,
+            )
+        },
+        onMapCreated: (mapController){
+          _controller.complete(mapController);
+        },
       ),
-    );
-  }
+    ),
+  );
+}
+
 }
