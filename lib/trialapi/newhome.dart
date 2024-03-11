@@ -71,44 +71,44 @@ class _InputCoordinatesPageState extends State<InputCoordinatesPage> {
     return coordinatesList;
   }
 
-Future<void> _sendCoordinates() async {
-  Map<String, List<double>> nodes = {};
-  Map<String, GeoPoint> indexedNodes = {};
-  for (int i = 0; i < _nameControllers.length; i++) {
-    List<String> coordinatesList = _coordinatesControllers[i].text.split(', ');
-    List<double> coordinates = coordinatesList.map((coordinate) => double.parse(coordinate)).toList();
-    nodes[_nameControllers[i].text] = coordinates;
-    indexedNodes['$i'] = GeoPoint(coordinates[0], coordinates[1]);
+  Future<void> _sendCoordinates() async {
+    Map<String, List<double>> nodes = {};
+    Map<String, GeoPoint> indexedNodes = {};
+    for (int i = 0; i < _nameControllers.length; i++) {
+      List<String> coordinatesList = _coordinatesControllers[i].text.split(', ');
+      List<double> coordinates = coordinatesList.map((coordinate) => double.parse(coordinate)).toList();
+      nodes[_nameControllers[i].text] = coordinates;
+      indexedNodes['$i'] = GeoPoint(coordinates[0], coordinates[1]);
+    }
+    final response = await http.post(
+      Uri.parse('http://10.0.2.2:5000/'),  // replace with your Flask app's URL
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: json.encode(nodes),
+    );
+
+    if (response.statusCode == 200) {
+      print('Sending data: ${json.encode(nodes)}');
+      print('Coordinates sent successfully.');
+      print('Response body: ${response.body}');
+      result = json.decode(response.body);
+      setState(() {
+        resultText = result.toString();
+      });
+
+      // Save the results and indexedNodes to Firestore
+      String docId = 'Shop-1,Group2';  // replace with your actual ID
+      final docResult = FirebaseFirestore.instance.collection('results').doc(docId);
+      await docResult.set({
+        'result': result,
+        'indexedNodes': indexedNodes,
+      });
+
+    } else {
+      print('Failed to send coordinates.');
+    }
   }
-  final response = await http.post(
-    Uri.parse('http://10.0.2.2:5000/'),  // replace with your Flask app's URL
-    headers: <String, String>{
-      'Content-Type': 'application/json; charset=UTF-8',
-    },
-    body: json.encode(nodes),
-  );
-
-  if (response.statusCode == 200) {
-    print('Sending data: ${json.encode(nodes)}');
-    print('Coordinates sent successfully.');
-    print('Response body: ${response.body}');
-    result = json.decode(response.body);
-    setState(() {
-      resultText = result.toString();
-    });
-
-    // Save the results and indexedNodes to Firestore
-    String docId = 'Shop-1,Group2';  // replace with your actual ID
-    final docResult = FirebaseFirestore.instance.collection('results').doc(docId);
-    await docResult.set({
-      'result': result,
-      'indexedNodes': indexedNodes,
-    });
-
-  } else {
-    print('Failed to send coordinates.');
-  }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -124,33 +124,52 @@ Future<void> _sendCoordinates() async {
               child: ListView.builder(
                 itemCount: _nameControllers.length,
                 itemBuilder: (context, index) {
-                  return Column(
-                    children: <Widget>[
-                      TextFormField(
-                        controller: _nameControllers[index],
-                        decoration: InputDecoration(
-                          labelText: 'Enter name ${index + 1}',
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter a name.';
-                          }
-                          return null;
-                        },
+                  return Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: TextFormField(
+                              controller: _nameControllers[index],
+                              decoration: InputDecoration(
+                                labelText: 'Name ${index + 1}',
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter a name.';
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                          SizedBox(width: 10),
+                          Expanded(
+                            child: TextFormField(
+                              controller: _coordinatesControllers[index],
+                              decoration: InputDecoration(
+                                labelText: 'Coordinates ${index + 1}',
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter coordinates.';
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                        ],
                       ),
-                      TextFormField(
-                        controller: _coordinatesControllers[index],
-                        decoration: InputDecoration(
-                          labelText: 'Enter coordinates ${index + 1}',
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter coordinates.';
-                          }
-                          return null;
-                        },
-                      ),
-                    ],
+                    ),
                   );
                 },
               ),
