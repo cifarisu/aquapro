@@ -25,13 +25,12 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
   BitmapDescriptor destinationIcon = BitmapDescriptor.defaultMarker;
   BitmapDescriptor currentLocationIcon = BitmapDescriptor.defaultMarker; 
 
-  late Future<void> locationsFuture;
+  bool showMap = false; // Add this line
 
   @override
   void initState() {
     getCurrentLocation();
     setCustomMarker();
-    locationsFuture = getLocationsFromFirebase(); // Fetch locations from Firebase
     super.initState();
   }
 
@@ -155,56 +154,69 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
           style: TextStyle(color: Colors.black, fontSize: 16),
         ),
       ),
-      body: FutureBuilder(
-        future: locationsFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else {
-            return currentLocation == null ? 
-            const Center(child: Text("Loading")) : 
-            Container(
-              height: 500, // Set the height to your desired value
-              width: 500, // Set the width to your desired value
-              child: GoogleMap(
-                mapType: MapType.normal, 
-                initialCameraPosition: CameraPosition(
-                  target: LatLng(currentLocation!.latitude!, currentLocation!.longitude!), zoom: 18),
-                polylines: {
-                  for (List<LatLng> route in polylineCoordinates)
-                    Polyline(
-                      polylineId: PolylineId("route"),
-                      points: route,
-                      color: primaryColor,
-                      width:6,
-                    ),
-                },
-                markers: {
-                  if (currentLocation != null) 
-                    Marker(
-                      markerId: MarkerId("currentLocation"),
-                      icon: currentLocationIcon,
-                      position: LatLng(
-                        currentLocation!.latitude!, currentLocation!.longitude!),
-                    ),
-                  for (LatLng location in locations)
-                    Marker(
-                      markerId: MarkerId(location.toString()),
-                      icon: destinationIcon,
-                      position: location,
-                    )
-                },
-                onMapCreated: (mapController){
-                  if (!_controller.isCompleted) {
-                    _controller.complete(mapController);
-                  }
-                },
-              ),
-            );
-          }
-        },
+      body: showMap ? Stack(
+        children: <Widget>[
+          Container(
+            height: 500, // Set the height to your desired value
+            width: 500, // Set the width to your desired value
+            child: GoogleMap(
+              mapType: MapType.normal, 
+              initialCameraPosition: CameraPosition(
+                target: LatLng(currentLocation!.latitude!, currentLocation!.longitude!), zoom: 18),
+              polylines: {
+                for (List<LatLng> route in polylineCoordinates)
+                  Polyline(
+                    polylineId: PolylineId("route"),
+                    points: route,
+                    color: primaryColor,
+                    width:6,
+                  ),
+              },
+              markers: {
+                if (currentLocation != null) 
+                  Marker(
+                    markerId: MarkerId("currentLocation"),
+                    icon: currentLocationIcon,
+                    position: LatLng(
+                      currentLocation!.latitude!, currentLocation!.longitude!),
+                  ),
+                for (LatLng location in locations)
+                  Marker(
+                    markerId: MarkerId(location.toString()),
+                    icon: destinationIcon,
+                    position: location,
+                  )
+              },
+              onMapCreated: (mapController){
+                if (!_controller.isCompleted) {
+                  _controller.complete(mapController);
+                }
+              },
+            ),
+          ),
+          Positioned(
+            bottom: 50,
+            right: 10,
+            child: FloatingActionButton(
+              onPressed: () async {
+                await getLocationsFromFirebase();
+                getPolyPoints(); // Update the polyline points
+              },
+              child: Icon(Icons.refresh),
+            ),
+          ),
+        ],
+      ) : Center(
+        child: ElevatedButton(
+          onPressed: () async {
+            await getLocationsFromFirebase();
+            getPolyPoints(); // Update the polyline points
+            setState(() {
+              showMap = true; // Show the map after the button is clicked
+            });
+          },
+          child: Text('View Results'),
+        ),
       ),
     );
   }

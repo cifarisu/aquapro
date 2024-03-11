@@ -1,7 +1,10 @@
+import 'package:aquapro/pages/order_traking_page.dart';
+import 'package:aquapro/trialapi/tryingCRUD.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
 
 class InputCoordinatesPage extends StatefulWidget {
   @override
@@ -14,6 +17,8 @@ class _InputCoordinatesPageState extends State<InputCoordinatesPage> {
   List<TextEditingController> _coordinatesControllers = [];
   Map<String, dynamic> result = {};
   String resultText = '';
+  bool showSecondButton = false;
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -72,6 +77,10 @@ class _InputCoordinatesPageState extends State<InputCoordinatesPage> {
   }
 
   Future<void> _sendCoordinates() async {
+    setState(() {
+      isLoading = true;
+    });
+
     Map<String, List<double>> nodes = {};
     Map<String, GeoPoint> indexedNodes = {};
     for (int i = 0; i < _nameControllers.length; i++) {
@@ -95,6 +104,7 @@ class _InputCoordinatesPageState extends State<InputCoordinatesPage> {
       result = json.decode(response.body);
       setState(() {
         resultText = result.toString();
+        showSecondButton = true;
       });
 
       // Save the results and indexedNodes to Firestore
@@ -108,6 +118,10 @@ class _InputCoordinatesPageState extends State<InputCoordinatesPage> {
     } else {
       print('Failed to send coordinates.');
     }
+
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
@@ -116,7 +130,7 @@ class _InputCoordinatesPageState extends State<InputCoordinatesPage> {
       appBar: AppBar(
         title: Text('Input Coordinates'),
       ),
-      body: Column(
+      body: isLoading ? Center(child: CircularProgressIndicator()) : Column(
         children: [
           Expanded(
             child: Form(
@@ -175,6 +189,31 @@ class _InputCoordinatesPageState extends State<InputCoordinatesPage> {
               ),
             ),
           ),
+          if (!isLoading) ...[
+            ElevatedButton(
+              onPressed: () async {
+                // Clear the previous data
+                _nameControllers.clear();
+                _coordinatesControllers.clear();
+
+                // Fetch the new data
+                await fetchGroup('Group1').then((List<User> users) {
+                  for (User user in users) {
+                    _nameControllers.add(TextEditingController(text: user.name));
+                    _coordinatesControllers.add(TextEditingController(text: user.coordinates.join(', ')));
+                  }
+                });
+                await fetchShopCoordinates('Shop-1').then((List<double> coordinates) {
+                  _nameControllers.add(TextEditingController(text: 'Shop-1'));
+                  _coordinatesControllers.add(TextEditingController(text: coordinates.join(', ')));
+                });
+
+                // Update the UI
+                setState(() {});
+              },
+              child: Text('Get Order Details'),
+            ),
+          ],
           Text(resultText),  // Move this line here
         ],
       ),
@@ -182,9 +221,9 @@ class _InputCoordinatesPageState extends State<InputCoordinatesPage> {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           FloatingActionButton(
-            onPressed: () {
+            onPressed: () async {
               if (_formKey.currentState!.validate()) {
-                _sendCoordinates();
+                await _sendCoordinates();
               }
             },
             child: Icon(Icons.send),
@@ -199,6 +238,18 @@ class _InputCoordinatesPageState extends State<InputCoordinatesPage> {
             },
             child: Icon(Icons.add),
           ),
+          if (showSecondButton) ...[
+            SizedBox(height: 10),
+            FloatingActionButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => tryCRUD()),
+                );
+              },
+              child: Icon(Icons.navigate_next),
+            ),
+          ],
         ],
       ),
     );
