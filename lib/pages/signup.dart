@@ -5,8 +5,7 @@ import 'package:aquapro/pages/login.dart';
 import 'package:aquapro/widget/widget_support.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({super.key});
@@ -17,50 +16,57 @@ class SignUp extends StatefulWidget {
 
 class _SignUpState extends State<SignUp> {
 
-  String email="", password="", name="", type="df";
-
+  String email="", password="", name="";
+  String? selectedType;
+  List<String> userTypes = ['Owner', 'Rider', 'Customer'];
 
   TextEditingController namecontroller = TextEditingController();
   TextEditingController passwordcontroller = TextEditingController();
   TextEditingController mailcontroller = TextEditingController();
-  TextEditingController typecontroller = TextEditingController();
 
   final _formkey=GlobalKey<FormState>();
 
-registration() async {
-  if (password != null) {
-    try {
-    UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
+  registration() async {
+    if (password != null) {
+      try {
+        UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
 
-    ScaffoldMessenger.of(context).showSnackBar((SnackBar(
-        backgroundColor: Colors.redAccent,
-        content: Text(
-          "Registered Successfully", 
-          style: TextStyle(fontSize: 20)
-        ),
-      )),
-    );
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> const Home()));
-  } on FirebaseException catch (e) {
-    if (e.code == 'weak-password') {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          backgroundColor: Colors.orangeAccent,
-          content: Text("Password is too weak", style: TextStyle(fontSize: 18)),
-        ),
-      );
-    } else if (e.code == 'email-already-in-use') {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          backgroundColor: Colors.orangeAccent,
-          content: Text("Account already exists", style: TextStyle(fontSize: 18)),
-        ),
-      );
+        // After successful registration, update the user profile with the name
+        await FirebaseAuth.instance.currentUser!.updateDisplayName(name);
+
+        // Then, you can store the user's name in your Firestore database
+        // Use the selectedType as the collection name
+        await FirebaseFirestore.instance.collection(selectedType!).doc(userCredential.user!.uid).set({
+          'name': name,
+          // add any more user info you need
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar((SnackBar(
+            backgroundColor: Colors.redAccent,
+            content: Text(
+              "Registered Successfully", 
+              style: TextStyle(fontSize: 20)
+            ),
+          )),
+        );
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> const Home()));
+      } on FirebaseException catch (e) {
+        if (e.code == 'weak-password') {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              backgroundColor: Colors.orangeAccent,
+              content: Text("Password is too weak", style: TextStyle(fontSize: 18)),
+            ),
+          );
+        } else if (e.code == 'email-already-in-use') {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              backgroundColor: Colors.orangeAccent,
+              content: Text("Account already exists", style: TextStyle(fontSize: 18)),
+            ),
+          );
+        }
+      }
     }
   }
-  }
-}
-
-
-
 
 
   @override
@@ -134,15 +140,30 @@ registration() async {
                         const SizedBox(
                           height:30,
                         ),
-                        TextFormField(
-                           controller: typecontroller,
-                          validator: (value){
-                            if(value==null || value.isEmpty){
+                        DropdownButtonFormField(
+                          value: selectedType,
+                          items: userTypes.map((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              selectedType = newValue;
+                            });
+                          },
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
                               return 'Please choose user type';
                             }
                             return null;
                           },
-                          decoration: InputDecoration(hintText: 'Type', hintStyle: AppWidget.boldTextFieldStyle(), prefixIcon: const Icon(Icons.email_outlined)),
+                          decoration: InputDecoration(
+                            hintText: 'Type',
+                            hintStyle: AppWidget.boldTextFieldStyle(),
+                            prefixIcon: const Icon(Icons.person_outline),
+                          ),
                         ),
                         const SizedBox(
                           height:30,
@@ -164,7 +185,6 @@ registration() async {
                             if(_formkey.currentState!.validate()){
                               setState(() {
                                 email=mailcontroller.text;
-                                type=typecontroller.text;
                                 name=namecontroller.text;
                                 password=passwordcontroller.text;
 
