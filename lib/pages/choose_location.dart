@@ -73,7 +73,7 @@ class _chooseLocationState extends State<chooseLocation> {
                 width: 370,
                 height: 70,
                 decoration: BoxDecoration(
-                    color: Color.fromARGB(0, 0, 0, 0),
+                   color: Color.fromARGB(0, 0, 0, 0),
                     border: Border.all(
                       width: 5,
                       color: Color(0xff0EB4F3),

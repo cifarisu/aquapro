@@ -1,3 +1,4 @@
+import 'package:aquapro/customer/cus_navbar.dart';
 import 'package:aquapro/pages/choose_location.dart';
 import 'package:aquapro/pages/front_page.dart';
 import 'package:aquapro/pages/home.dart';
@@ -50,7 +51,7 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
-        home: chooseLocation()
+        home: cusNavbar()
     );
   }
 }
