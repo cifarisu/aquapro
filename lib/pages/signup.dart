@@ -18,7 +18,7 @@ class _SignUpState extends State<SignUp> {
 
   String email="", password="", name="";
   String? selectedType;
-  List<String> userTypes = ['Owner', 'Rider', 'Customer'];
+  List<String> userTypes = ['Customer', 'Store', 'Rider'];
 
   TextEditingController namecontroller = TextEditingController();
   TextEditingController passwordcontroller = TextEditingController();
@@ -26,47 +26,50 @@ class _SignUpState extends State<SignUp> {
 
   final _formkey=GlobalKey<FormState>();
 
-  registration() async {
-    if (password != null) {
-      try {
-        UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
+registration() async {
+  if (password != null) {
+    try {
+      UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
 
-        // After successful registration, update the user profile with the name
-        await FirebaseAuth.instance.currentUser!.updateDisplayName(name);
+      // After successful registration, update the user profile with the name
+      await FirebaseAuth.instance.currentUser!.updateDisplayName(name);
 
-        // Then, you can store the user's name in your Firestore database
-        // Use the selectedType as the collection name
-        await FirebaseFirestore.instance.collection(selectedType!).doc(userCredential.user!.uid).set({
-          'name': name,
-          // add any more user info you need
-        });
+      // Then, you can store the user's name and ID in your Firestore database
+      // Use the selectedType as the collection name
+      await FirebaseFirestore.instance.collection(selectedType!).doc(userCredential.user!.uid).set({
+        'name': name,
+        'id': userCredential.user!.uid, 
+        'email': email, // Add this line
+        // add any more user info you need
+      });
 
-        ScaffoldMessenger.of(context).showSnackBar((SnackBar(
-            backgroundColor: Colors.redAccent,
-            content: Text(
-              "Registered Successfully", 
-              style: TextStyle(fontSize: 20)
-            ),
-          )),
+      ScaffoldMessenger.of(context).showSnackBar((SnackBar(
+          backgroundColor: Colors.redAccent,
+          content: Text(
+            "Registered Successfully", 
+            style: TextStyle(fontSize: 20)
+          ),
+        )),
+      );
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> const LogIn()));
+    } on FirebaseException catch (e) {
+      if (e.code == 'weak-password') {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Colors.orangeAccent,
+            content: Text("Password is too weak", style: TextStyle(fontSize: 18)),
+          ),
         );
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> const Home()));
-      } on FirebaseException catch (e) {
-        if (e.code == 'weak-password') {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              backgroundColor: Colors.orangeAccent,
-              content: Text("Password is too weak", style: TextStyle(fontSize: 18)),
-            ),
-          );
-        } else if (e.code == 'email-already-in-use') {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              backgroundColor: Colors.orangeAccent,
-              content: Text("Account already exists", style: TextStyle(fontSize: 18)),
-            ),
-          );
-        }
+      } else if (e.code == 'email-already-in-use') {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Colors.orangeAccent,
+            content: Text("Account already exists", style: TextStyle(fontSize: 18)),
+          ),
+        );
       }
     }
   }
+}
+
 
 
   @override
