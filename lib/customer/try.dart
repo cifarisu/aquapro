@@ -38,10 +38,6 @@ class _letsgoState extends State<letsgo> {
   File? _image;
   final picker = ImagePicker();
   String? _imageUrl;
-  String? _name;
-  String? _address;
-  String? _contact;
-  String? _time;
 
   Future getImage() async {
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
@@ -72,73 +68,70 @@ class _letsgoState extends State<letsgo> {
     );
   }
 
-  Future fetchDetailsFromFirebase() async {
-    final userId = FirebaseAuth.instance.currentUser!.uid;
-    final docSnapshot = await FirebaseFirestore.instance.collection('Store').doc(userId).get();
-    
-    final name = docSnapshot.get('name');
-    final address = docSnapshot.get('address');
-    final contact = docSnapshot.get('contact');
-    final time = docSnapshot.get('time');
-    final imageUrl = docSnapshot.get('url');
-    
-    setState(() {
-      _name = name;
-      _address = address;
-      _contact = contact;
-      _time = time;
-      _imageUrl = imageUrl;
-    });
+  Future<List<DocumentSnapshot>> fetchAllStores() async {
+    final querySnapshot = await FirebaseFirestore.instance.collection('Store').get();
+    return querySnapshot.docs;
   }
 
-@override
-Widget build(BuildContext context) {
-  return Scaffold(
-    appBar: AppBar(
-      title: Text('Firebase Storage Demo'),
-    ),
-    body: Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          _imageUrl == null
-              ? Text('No image fetched.')
-              : Image.network(_imageUrl!),
-          SizedBox(height: 20),
-          Text('Name: ${_name ?? 'No name fetched.'}'),
-          Text('Address: ${_address ?? 'No address fetched.'}'),
-          Text('Contact: ${_contact ?? 'No contact fetched.'}'),
-          Text('Time: ${_time ?? 'No time fetched.'}'),
-        ],
-      ),
-    ),
-    floatingActionButton: Column(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: <Widget>[
-        FloatingActionButton(
-          onPressed: getImage,
-          tooltip: 'Pick Image',
-          child: Icon(Icons.add_a_photo),
-        ),
-        SizedBox(
-          height: 10,
-        ),
-        FloatingActionButton(
-          onPressed: () => uploadImageToFirebase(context),
-          tooltip: 'Upload Image',
-          child: Icon(Icons.upload_file),
-        ),
-        SizedBox(
-          height: 10,
-        ),
-        FloatingActionButton(
-          onPressed: fetchDetailsFromFirebase,
-          tooltip: 'Fetch Details',
-          child: Icon(Icons.download),
-        ),
-      ],
-    ),
-  );
-}
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: fetchAllStores(),
+      builder: (context, AsyncSnapshot<List<DocumentSnapshot>> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator();
+        } else if (snapshot.error != null) {
+          return Text('An error occurred!');
+        } else {
+          return Scaffold(
+            appBar: AppBar(
+              title: Text('Firebase Storage Demo'),
+            ),
+            body: ListView.builder(
+              itemCount: snapshot.data!.length,
+              itemBuilder: (context, index) {
+                final store = snapshot.data![index];
+                final name = store.get('name');
+                final address = store.get('address');
+                final contact = store.get('contact');
+                final time = store.get('time');
+                final imageUrl = store.get('url');
 
+                return ListTile(
+                  leading: imageUrl == null ? null : Image.network(imageUrl),
+                  title: Text('Name: $name'),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Address: $address'),
+                      Text('Contact: $contact'),
+                      Text('Time: $time'),
+                    ],
+                  ),
+                );
+              },
+            ),
+            floatingActionButton: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                FloatingActionButton(
+                  onPressed: getImage,
+                  tooltip: 'Pick Image',
+                  child: Icon(Icons.add_a_photo),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                FloatingActionButton(
+                  onPressed: () => uploadImageToFirebase(context),
+                  tooltip: 'Upload Image',
+                  child: Icon(Icons.upload_file),
+                ),
+              ],
+            ),
+          );
+        }
+      },
+    );
+  }
 }

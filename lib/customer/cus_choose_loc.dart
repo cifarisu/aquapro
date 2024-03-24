@@ -1,5 +1,6 @@
 import 'package:aquapro/customer/cus_manualLocation.dart';
 import 'package:aquapro/customer/cus_navbar.dart';
+import 'package:aquapro/customer/try.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -178,7 +179,7 @@ class _CusChooseLocationState extends State<CusChooseLocation> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => CusNavbar()),
+              MaterialPageRoute(builder: (context) => letsgo()),
             );
           },
           child: Text(

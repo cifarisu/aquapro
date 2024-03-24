@@ -1,9 +1,37 @@
-// ignore_for_file: prefer_const_constructors
-
+import 'dart:io';
 import 'package:aquapro/pages/details.dart';
 import 'package:aquapro/widget/widget_support.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  final Future<FirebaseApp> _initialization = Firebase.initializeApp();
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: FutureBuilder(
+        future: _initialization,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return CusHome();
+          }
+          return CircularProgressIndicator();
+        },
+      ),
+    );
+  }
+}
+
 
 
 class CusHome extends StatefulWidget {
@@ -15,6 +43,38 @@ class CusHome extends StatefulWidget {
 
 
 class _CusHomeState extends State<CusHome> {
+  File? _image;
+  final picker = ImagePicker();
+  String? _imageUrl;
+  String? _name;
+  String? _address;
+  String? _contact;
+  String? _time;
+
+    @override
+  void initState() {
+    super.initState();
+    fetchDetailsFromFirebase();
+  }
+
+  Future fetchDetailsFromFirebase() async {
+    final userId = FirebaseAuth.instance.currentUser!.uid;
+    final docSnapshot = await FirebaseFirestore.instance.collection('Store').doc(userId).get();
+    
+    final name = docSnapshot.get('name');
+    final address = docSnapshot.get('address');
+    final contact = docSnapshot.get('contact');
+    final time = docSnapshot.get('time');
+    final imageUrl = docSnapshot.get('url');
+    
+    setState(() {
+      _name = name;
+      _address = address;
+      _contact = contact;
+      _time = time;
+      _imageUrl = imageUrl;
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold (
@@ -95,10 +155,10 @@ class _CusHomeState extends State<CusHome> {
                                   Container(
                                     alignment: Alignment.topCenter,
                                     width: MediaQuery.of(context).size.height,
-                                    child: Image.asset("images/Joylan.png", fit: BoxFit.fill),
+                                    child: Image.network(_imageUrl ?? "Loading...", fit: BoxFit.fill),
                                   ),
                                   SizedBox(height: 5.0,),
-                                  Text("Joylan Water Refilling Station",
+                                  Text(_name ?? "Loading...",
                                     textAlign: TextAlign.center, 
                                     style:AppWidget.boldTextFieldStyle()
                                       
