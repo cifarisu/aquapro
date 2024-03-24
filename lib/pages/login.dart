@@ -1,8 +1,11 @@
 import 'package:aquapro/customer/cus_choose_loc.dart';
 import 'package:aquapro/customer/cus_navbar.dart';
+import 'package:aquapro/customer/try.dart';
 import 'package:aquapro/pages/home.dart';
 import 'package:aquapro/pages/signup.dart';
+import 'package:aquapro/rider/rider_choose_loc.dart';
 import 'package:aquapro/rider/rider_navbar.dart';
+import 'package:aquapro/store/store_choose_loc.dart';
 import 'package:aquapro/store/store_navbar.dart';
 import 'package:aquapro/widget/widget_support.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -32,11 +35,11 @@ class _LogInState extends State<LogIn> {
 
       // Check each collection to see if the user's ID exists in it
       if (await FirebaseFirestore.instance.collection('Customer').doc(uid).get().then((doc) => doc.exists)) {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => CusNavbar()));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => CusChooseLocation()));
       } else if (await FirebaseFirestore.instance.collection('Rider').doc(uid).get().then((doc) => doc.exists)) {
         Navigator.push(context, MaterialPageRoute(builder: (context) => RiderNavbar()));
       } else if (await FirebaseFirestore.instance.collection('Store').doc(uid).get().then((doc) => doc.exists)) {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => StoreNavbar()));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => letsgo()));
       } else {
         // Handle unexpected situation
       }

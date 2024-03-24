@@ -9,14 +9,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 // Import the file where CusNavbar and CusManualLocation are defined
 // import 'path_to_your_file.dart';
 
-class ChooseLocation extends StatefulWidget {
-  const ChooseLocation({Key? key}) : super(key: key);
+class CusChooseLocation extends StatefulWidget {
+  const CusChooseLocation({Key? key}) : super(key: key);
 
   @override
-  _ChooseLocationState createState() => _ChooseLocationState();
+  _CusChooseLocationState createState() => _CusChooseLocationState();
 }
 
-class _ChooseLocationState extends State<ChooseLocation> {
+class _CusChooseLocationState extends State<CusChooseLocation> {
   String locationMessage = "No location selected";
 
   void _getCurrentLocation() async {
@@ -171,6 +171,25 @@ class _ChooseLocationState extends State<ChooseLocation> {
                 ),
               ),
             ),
+                    SizedBox(
+          height: 30,
+        ),
+        TextButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => CusNavbar()),
+            );
+          },
+          child: Text(
+            'Proceed without updating location',
+            style: TextStyle(
+              fontSize: 15.0,
+              color: Colors.blue,
+            ),
+          ),
+        ),
+
           ],
         ),
       ),

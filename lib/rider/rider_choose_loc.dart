@@ -6,14 +6,14 @@ import "package:aquapro/pages/signup.dart";
 import "package:aquapro/widget/widget_support.dart";
 import "package:flutter/material.dart";
 
-class riderChooseLocation extends StatefulWidget {
-  const riderChooseLocation({super.key});
+class RiderChooseLocation extends StatefulWidget {
+  const RiderChooseLocation({super.key});
 
   @override
-  State<riderChooseLocation> createState() => _riderChooseLocationState();
+  State<RiderChooseLocation> createState() => _RiderChooseLocationState();
 }
 
-class _riderChooseLocationState extends State<riderChooseLocation> {
+class _RiderChooseLocationState extends State<RiderChooseLocation> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
