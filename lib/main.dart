@@ -1,5 +1,5 @@
 import 'package:aquapro/customer/cus_navbar.dart';
-import 'package:aquapro/pages/choose_location.dart';
+import 'package:aquapro/customer/cus_choose_loc.dart';
 import 'package:aquapro/pages/front_page.dart';
 import 'package:aquapro/pages/home.dart';
 import 'package:aquapro/pages/login.dart';
@@ -7,6 +7,9 @@ import 'package:aquapro/pages/onboard.dart';
 import 'package:aquapro/pages/order_traking_page.dart';
 import 'package:aquapro/pages/rider_info.dart';
 import 'package:aquapro/pages/signup.dart';
+import 'package:aquapro/rider/rider_choose_loc.dart';
+import 'package:aquapro/rider/rider_navbar.dart';
+import 'package:aquapro/store/store_navbar.dart';
 import 'package:aquapro/trialapi/newhome.dart';
 import 'package:aquapro/trialapi/tryingCRUD.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -51,7 +54,7 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
-        home: cusNavbar()
+        home: RiderNavbar()
     );
   }
 }

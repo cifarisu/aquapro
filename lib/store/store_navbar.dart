@@ -1,31 +1,37 @@
 import "package:aquapro/customer/cus_orders.dart";
 import "package:aquapro/customer/cus_profile.dart";
 import "package:aquapro/pages/home.dart";
+import "package:aquapro/rider/rider_home.dart";
+import "package:aquapro/rider/rider_profile.dart";
+import "package:aquapro/rider/deliveries.dart";
+import "package:aquapro/store/store_home.dart";
+import "package:aquapro/store/store_profile.dart";
+import "package:aquapro/store/store_track_orders.dart";
 import "package:flutter/material.dart";
 
-class CusNavbar extends StatefulWidget {
-  const CusNavbar({super.key});
+class StoreNavbar extends StatefulWidget {
+  const StoreNavbar({super.key});
 
   @override
-  State<CusNavbar> createState() => _CusNavbarState();
+  State<StoreNavbar> createState() => _StoreNavbarState();
 }
 
-class _CusNavbarState extends State<CusNavbar> {
+class _StoreNavbarState extends State<StoreNavbar> {
 
   int _selectedIndex = 0;
 
   late List<Widget> pages;
   late Widget currentPage;
-  late Home homepage;
-  late cusOrders cusorders;
-  late cusProfile cusprofile;
+  late StoreHome homepage;
+  late TrackOrders trackorders;
+  late StoreProfile storeprofile;
   
   @override
   void initState() {
-    homepage=Home();
-    cusorders=cusOrders();
-    cusprofile=cusProfile();
-     pages = [homepage, cusorders, cusprofile];
+    homepage=StoreHome();
+    trackorders=TrackOrders();
+    storeprofile=StoreProfile();
+     pages = [homepage, trackorders,  storeprofile];
     super.initState();
   }
 
@@ -47,8 +53,8 @@ class _CusNavbarState extends State<CusNavbar> {
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart_rounded),
-            label: 'Orders',
+            icon: Icon(Icons.local_shipping_rounded),
+            label: 'Track Orders',
             
           ),
           BottomNavigationBarItem(
