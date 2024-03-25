@@ -1,5 +1,7 @@
 import 'package:aquapro/customer/cus_navbar.dart';
 import 'package:aquapro/customer/cus_choose_loc.dart';
+import 'package:aquapro/customer/cus_stores.dart';
+import 'package:aquapro/customer/stores_near_you.dart';
 import 'package:aquapro/pages/front_page.dart';
 import 'package:aquapro/pages/home.dart';
 import 'package:aquapro/pages/login.dart';
@@ -54,7 +56,7 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
-        home: cusNavbar()
+        home: Stores()
     );
   }
 }

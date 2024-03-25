@@ -1,9 +1,13 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:aquapro/customer/cus_maps.dart';
+import 'package:aquapro/customer/stores_near_you.dart';
 import 'package:aquapro/pages/details.dart';
 import 'package:aquapro/widget/widget_support.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
 
 
 class Home extends StatefulWidget {
@@ -37,14 +41,19 @@ class _HomeState extends State<Home> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text("Browse", style: AppWidget.HeadlineTextFeildStyle()),
-                Column(children: [
-                  Container(
-                  padding: const EdgeInsets.all(3),
-                  decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(10)),
-                  child: Icon(Icons.map_rounded, color: Colors.white, size: 40,),
-                  ),
-                  Text("Open Maps", style: AppWidget.SmallTextFeildStyle(),)
-                ],),
+                GestureDetector(
+                  onTap: (){
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>CusMaps()));
+                      },
+                  child: Column(children: [
+                    Container(
+                    padding: const EdgeInsets.all(3),
+                    decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(10)),
+                    child: Icon(Icons.map_rounded, color: Colors.white, size: 40,),
+                    ),
+                    Text("Open Maps", style: AppWidget.SmallTextFeildStyle(),)
+                  ],),
+                ),
                 
               ],
             ),
@@ -56,9 +65,14 @@ class _HomeState extends State<Home> {
                   "Nearest Water Refilling Stations", 
                   style: AppWidget.BlackTextFeildStyle(),
                 ),
-                Text(
-                  "View all>", 
-                  style: AppWidget.BlueTextFeildStyle(),
+                GestureDetector(
+                   onTap: (){
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>StoresNearYou()));
+                      },
+                  child: Text(
+                    "View all>", 
+                    style: AppWidget.BlueTextFeildStyle(),
+                  ),
                 ),
              ]
             ),
