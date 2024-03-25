@@ -109,9 +109,24 @@ class _CusHomeState extends State<CusHome> {
                           final time = store['time'];
                           final imageUrl = store['url'];
                           return GestureDetector(
-                            onTap: () {
-                               Navigator.push(context, MaterialPageRoute(builder: (context)=>Stores()));
+                            onTap: () async {
+                              final productsSnapshot = await FirebaseFirestore.instance.collection('Store').doc(store.id).collection('Products').get();
+                              final List<DocumentSnapshot> products = productsSnapshot.docs;
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => Stores(
+                                    name: name,
+                                    address: address,
+                                    contact: contact,
+                                    time: time,
+                                    imageUrl: imageUrl,
+                                    products: products,
+                                  ),
+                                ),
+                              );
                             },
+
                             child: SizedBox(
                               width: 330, // Set a fixed width for the container
                               child: Container(
@@ -325,3 +340,5 @@ class _CusHomeState extends State<CusHome> {
     );
   }
 }
+
+                       
