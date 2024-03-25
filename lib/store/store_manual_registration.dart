@@ -54,14 +54,46 @@ class _StoreRegState extends State<StoreReg> {
   void initState() {
     super.initState();
     // Add your products here
-    products.add(Product(name: 'New Gallon (Round)'));
-    products.add(Product(name: 'New Gallon (Slim)'));
-    products.add(Product(name: 'Refill (Round)(Pick-up)'));
-    products.add(Product(name: 'Refill (Slim)(Pick-up)'));
-    products.add(Product(name: 'Refill (Round)(Deliver)'));
-    products.add(Product(name: 'Refill (Slim)(Deliver)'));
-    products.add(Product(name: 'Refill 15-10 Liter'));
-    products.add(Product(name: 'Refill 8-5 Liters'));
+    products.add(Product(
+        name: 'New Gallon (Round)',
+        type: 'deliver&pickup',
+        url:
+            'https://firebasestorage.googleapis.com/v0/b/aquapro-b890e.appspot.com/o/round.png?alt=media&token=1cf52ada-6380-4511-b112-c02927ec1d0c'));
+    products.add(Product(
+        name: 'New Gallon (Slim)',
+        type: 'deliver&pickup',
+        url:
+            'https://firebasestorage.googleapis.com/v0/b/aquapro-b890e.appspot.com/o/flat.png?alt=media&token=5be47884-2fbf-49b0-9e81-21910fb03b6f'));
+    products.add(Product(
+        name: 'Refill (Round)(Pick-up)',
+        type: 'pickup',
+        url:
+            'https://firebasestorage.googleapis.com/v0/b/aquapro-b890e.appspot.com/o/round.png?alt=media&token=1cf52ada-6380-4511-b112-c02927ec1d0c'));
+    products.add(Product(
+        name: 'Refill (Slim)(Pick-up)',
+        type: 'pickup',
+        url:
+            'https://firebasestorage.googleapis.com/v0/b/aquapro-b890e.appspot.com/o/flat.png?alt=media&token=5be47884-2fbf-49b0-9e81-21910fb03b6f'));
+    products.add(Product(
+        name: 'Refill (Round)(Deliver)',
+        type: 'deliver',
+        url:
+            'https://firebasestorage.googleapis.com/v0/b/aquapro-b890e.appspot.com/o/round.png?alt=media&token=1cf52ada-6380-4511-b112-c02927ec1d0c'));
+    products.add(Product(
+        name: 'Refill (Slim)(Deliver)',
+        type: 'deliver',
+        url:
+            'https://firebasestorage.googleapis.com/v0/b/aquapro-b890e.appspot.com/o/flat.png?alt=media&token=5be47884-2fbf-49b0-9e81-21910fb03b6f'));
+    products.add(Product(
+        name: 'Refill 15-10 Liter',
+        type: 'deliver&pickup',
+        url:
+            'https://firebasestorage.googleapis.com/v0/b/aquapro-b890e.appspot.com/o/small.png?alt=media&token=d21b8e32-eee0-4c47-9bbf-26139a2e7dfc'));
+    products.add(Product(
+        name: 'Refill 8-5 Liters',
+        type: 'deliver&pickup',
+        url:
+            'https://firebasestorage.googleapis.com/v0/b/aquapro-b890e.appspot.com/o/small.png?alt=media&token=d21b8e32-eee0-4c47-9bbf-26139a2e7dfc'));
   }
 
   Future getImage() async {
@@ -112,7 +144,12 @@ class _StoreRegState extends State<StoreReg> {
     // Add documents to the 'Products' subcollection
     products.forEach((product) async {
       // Here we set the product name as the document ID and store the price as a field
-      await productsRef.doc(product.name).set({'price': product.price});
+      await productsRef.doc(product.name).set({
+        'price': product.price,
+        'type': product.type,
+        'name': product.name,
+        'url': product.url,
+      });
     });
   }
 
@@ -180,13 +217,26 @@ class _StoreRegState extends State<StoreReg> {
           for (var product in products) ...[
             ListTile(
               title: Text(product.name),
-              subtitle: TextField(
-                decoration: InputDecoration(
-                  labelText: 'Price',
-                ),
-                onChanged: (value) {
-                  product.price = double.tryParse(value) ?? 0.0;
-                },
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextField(
+                    decoration: InputDecoration(
+                      labelText: 'Price',
+                    ),
+                    onChanged: (value) {
+                      product.price = double.tryParse(value) ?? 0.0;
+                    },
+                  ),
+                  Text(
+                    'Type: ${product.type}',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    'URL: ${product.url}',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ],
               ),
             ),
           ],
@@ -210,6 +260,9 @@ class _StoreRegState extends State<StoreReg> {
 class Product {
   final String name;
   double price;
+  final String type; // New field for product type
+  final String url; // New field for product URL
 
-  Product({required this.name, this.price = 0.0}); // Default price to 0.0
+  Product({required this.name, this.price = 0.0, required this.type, required this.url});
 }
+
