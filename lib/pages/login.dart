@@ -35,11 +35,11 @@ class _LogInState extends State<LogIn> {
 
       // Check each collection to see if the user's ID exists in it
       if (await FirebaseFirestore.instance.collection('Customer').doc(uid).get().then((doc) => doc.exists)) {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => letsgo()));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => CusNavbar()));
       } else if (await FirebaseFirestore.instance.collection('Rider').doc(uid).get().then((doc) => doc.exists)) {
         Navigator.push(context, MaterialPageRoute(builder: (context) => RiderNavbar()));
       } else if (await FirebaseFirestore.instance.collection('Store').doc(uid).get().then((doc) => doc.exists)) {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => letsgo()));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => StoreNavbar()));
       } else {
         // Handle unexpected situation
       }
