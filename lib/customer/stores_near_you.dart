@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import "package:aquapro/customer/cus_stores.dart";
 import "package:aquapro/pages/details.dart";
 import "package:aquapro/widget/widget_support.dart";
 import "package:flutter/cupertino.dart";
@@ -69,7 +70,7 @@ class _StoresNearYouState extends State<StoresNearYou> {
                 padding: EdgeInsets.only(top: 15),
                 children: [
                   GestureDetector(onTap: (){
-                        Navigator.push(context, MaterialPageRoute(builder: (context)=>Details()));
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>Stores()));
                       },
                       child: Container(
                         margin: EdgeInsets.all(5),
@@ -170,7 +171,7 @@ class _StoresNearYouState extends State<StoresNearYou> {
                   ),
                   SizedBox(height: 20,),
                   GestureDetector(onTap: (){
-                        Navigator.push(context, MaterialPageRoute(builder: (context)=>Details()));
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>Stores()));
                       },
                       child: Container(
                         margin: EdgeInsets.all(5),

@@ -1,4 +1,8 @@
+import 'package:aquapro/customer/cus_maps.dart';
+import 'package:aquapro/customer/cus_stores.dart';
+import 'package:aquapro/customer/stores_near_you.dart';
 import 'package:aquapro/pages/details.dart';
+import 'package:aquapro/widget/widget_support.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -51,16 +55,19 @@ class _CusHomeState extends State<CusHome> {
                     "Browse",
                     style:TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
-                  Column(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(3),
-                        decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(10)),
-                        child: Icon(Icons.map_rounded, color: Colors.white, size: 40),
-                      ),
-                      Text("Open Maps"),
-                    ],
-                  ),
+                 GestureDetector(
+                  onTap: (){
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>CusMaps()));
+                      },
+                  child: Column(children: [
+                    Container(
+                    padding: const EdgeInsets.all(3),
+                    decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(10)),
+                    child: Icon(Icons.map_rounded, color: Colors.white, size: 40,),
+                    ),
+                    Text("Open Maps", style: AppWidget.SmallTextFeildStyle(),)
+                  ],),
+                ),
                 ],
               ),
               SizedBox(height: 40),
@@ -71,10 +78,15 @@ class _CusHomeState extends State<CusHome> {
                     "Nearest Water Refilling Stations",
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
-                  Text(
-                    "View all>",
-                    style: TextStyle(fontSize: 16, color: Colors.blue),
+                  GestureDetector(
+                   onTap: (){
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>StoresNearYou()));
+                      },
+                  child: Text(
+                    "View all>", 
+                    style: AppWidget.BlueTextFeildStyle(),
                   ),
+                ),
                 ],
               ),
               SizedBox(height: 20),
@@ -98,8 +110,7 @@ class _CusHomeState extends State<CusHome> {
                           final imageUrl = store['url'];
                           return GestureDetector(
                             onTap: () {
-                              // Navigate to store details page
-                              // Navigator.push(context, MaterialPageRoute(builder: (context) => Details()));
+                               Navigator.push(context, MaterialPageRoute(builder: (context)=>Stores()));
                             },
                             child: SizedBox(
                               width: 330, // Set a fixed width for the container
@@ -113,7 +124,7 @@ class _CusHomeState extends State<CusHome> {
                                   elevation: 5.0,
                                   borderRadius: BorderRadius.circular(20),
                                   child: ConstrainedBox(
-                                    constraints: BoxConstraints(minHeight: 300), // Set a fixed height for the container
+                                    constraints: BoxConstraints(minHeight: 500, ), // Set a fixed height for the container
                                     child: Container(
                                       padding: EdgeInsets.all(20),
                                       child: Column(
