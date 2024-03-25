@@ -1,19 +1,63 @@
-// ignore_for_file: prefer_const_constructors
+import 'package:aquapro/customer/cus_manualLocation.dart';
+import 'package:aquapro/customer/cus_navbar.dart';
+import 'package:aquapro/customer/try.dart';
+import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-import "package:aquapro/pages/home.dart";
-import "package:aquapro/pages/login.dart";
-import "package:aquapro/pages/signup.dart";
-import "package:aquapro/widget/widget_support.dart";
-import "package:flutter/material.dart";
+// Import the file where CusNavbar and CusManualLocation are defined
+// import 'path_to_your_file.dart';
 
-class chooseLocation extends StatefulWidget {
-  const chooseLocation({super.key});
+class CusChooseLocation extends StatefulWidget {
+  const CusChooseLocation({Key? key}) : super(key: key);
 
   @override
-  State<chooseLocation> createState() => _chooseLocationState();
+  _CusChooseLocationState createState() => _CusChooseLocationState();
 }
 
-class _chooseLocationState extends State<chooseLocation> {
+class _CusChooseLocationState extends State<CusChooseLocation> {
+  String locationMessage = "No location selected";
+
+  void _getCurrentLocation() async {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled){
+      return Future.error('Location services are disabled');
+    }
+
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied){
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied){
+        return Future.error('Location permissions are denied');
+      }
+    }
+    if (permission == LocationPermission.deniedForever){
+      return Future.error(
+        'Location permissions are permanently denied, we cannot request permission for the device.'
+      );
+    }
+
+    final position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    setState(() {
+      locationMessage = "Latitude: ${position.latitude}, Longitude: ${position.longitude}";
+    });
+
+    // Update the coordinates in Firebase
+    CollectionReference customers = FirebaseFirestore.instance.collection('Customer');
+    String uid = FirebaseAuth.instance.currentUser!.uid;
+    customers.doc(uid).update({
+      'coordinates': GeoPoint(position.latitude, position.longitude),
+    });
+
+    // Navigate to CusNavbar after getting the location
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => CusNavbar()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,9 +66,10 @@ class _chooseLocationState extends State<chooseLocation> {
         height: MediaQuery.of(context).size.height,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Color(0xff81e6eb), Color(0xffffffff)]),
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xff81e6eb), Color(0xffffffff)],
+          ),
         ),
         child: Column(
           children: [
@@ -32,20 +77,24 @@ class _chooseLocationState extends State<chooseLocation> {
               height: 110,
             ),
             Center(
-                child: Image.asset(
-              "images/maps_icon.png",
-              width: MediaQuery.of(context).size.width / 1.4,
-              fit: BoxFit.cover,
-            )),
+              child: Image.asset(
+                "images/maps_icon.png",
+                width: MediaQuery.of(context).size.width / 1.4,
+                fit: BoxFit.cover,
+              ),
+            ),
             SizedBox(
               height: 30,
             ),
-            Text("Hi, nice to meet you!",
-                style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 25.0,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Poppins')),
+            Text(
+              "Hi, nice to meet you!",
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 25.0,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Poppins',
+              ),
+            ),
             SizedBox(
               height: 30,
             ),
@@ -64,20 +113,18 @@ class _chooseLocationState extends State<chooseLocation> {
               height: 40,
             ),
             GestureDetector(
-              onTap: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => const Home()));
-              },
+              onTap: _getCurrentLocation,
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 width: 370,
                 height: 70,
                 decoration: BoxDecoration(
-                   color: Color.fromARGB(0, 0, 0, 0),
-                    border: Border.all(
-                      width: 5,
-                      color: Color(0xff0EB4F3),
-                    )),
+                  color: Color.fromARGB(0, 0, 0, 0),
+                  border: Border.all(
+                    width: 5,
+                    color: Color(0xff0EB4F3),
+                  ),
+                ),
                 child: Center(
                   child: Row(
                     children: [
@@ -85,19 +132,23 @@ class _chooseLocationState extends State<chooseLocation> {
                         width: 15,
                       ),
                       Container(
-                          child: Image.asset(
-                        "images/location_icon.png",
-                        fit: BoxFit.fitHeight,
-                      )),
+                        child: Image.asset(
+                          "images/location_icon.png",
+                          fit: BoxFit.fitHeight,
+                        ),
+                      ),
                       SizedBox(
                         width: 15,
                       ),
-                      Text("Use current location",
-                          style: TextStyle(
-                              color: Color(0xff0EB4F3),
-                              fontSize: 20.0,
-                              fontFamily: 'Poppins',
-                              fontWeight: FontWeight.bold)),
+                      Text(
+                        'Get Current Location',
+                        style: TextStyle(
+                          color: Color(0xff0EB4F3),
+                          fontSize: 20.0,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -106,17 +157,40 @@ class _chooseLocationState extends State<chooseLocation> {
             SizedBox(
               height: 30,
             ),
-            GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                      context, MaterialPageRoute(builder: (context) => Home()));
-                },
-                child: Text("Select Manually",
-                    style: TextStyle(
-                        fontSize: 18,
-                        decoration: TextDecoration.underline,
-                        fontWeight: FontWeight.w800,
-                        fontFamily: "Times New Roman"))),
+            TextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => CusManualLocation()),
+                );
+              },
+              child: Text(
+                'Select Manually',
+                style: TextStyle(
+                  fontSize: 15.0,
+                  color: Colors.blue,
+                ),
+              ),
+            ),
+                    SizedBox(
+          height: 30,
+        ),
+        TextButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => letsgo()),
+            );
+          },
+          child: Text(
+            'Proceed without updating location',
+            style: TextStyle(
+              fontSize: 15.0,
+              color: Colors.blue,
+            ),
+          ),
+        ),
+
           ],
         ),
       ),

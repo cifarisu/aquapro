@@ -1,7 +1,8 @@
+import 'package:aquapro/customer/cus_home.dart';
+import 'package:aquapro/customer/cus_manualLocation.dart';
 import 'package:aquapro/customer/cus_navbar.dart';
 import 'package:aquapro/customer/cus_choose_loc.dart';
-import 'package:aquapro/customer/cus_stores.dart';
-import 'package:aquapro/customer/stores_near_you.dart';
+import 'package:aquapro/customer/try.dart';
 import 'package:aquapro/pages/front_page.dart';
 import 'package:aquapro/pages/home.dart';
 import 'package:aquapro/pages/login.dart';
@@ -11,6 +12,7 @@ import 'package:aquapro/pages/rider_info.dart';
 import 'package:aquapro/pages/signup.dart';
 import 'package:aquapro/rider/rider_choose_loc.dart';
 import 'package:aquapro/rider/rider_navbar.dart';
+import 'package:aquapro/store/store_manual_registration.dart';
 import 'package:aquapro/store/store_navbar.dart';
 import 'package:aquapro/trialapi/newhome.dart';
 import 'package:aquapro/trialapi/tryingCRUD.dart';
@@ -53,10 +55,10 @@ class MyApp extends StatelessWidget {
           //
           // This works for code too, not just values: Most code changes can be
           // tested with just a hot reload.
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent),
           useMaterial3: true,
         ),
-        home: Stores()
+        home: CusNavbar()
     );
   }
 }

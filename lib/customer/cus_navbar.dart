@@ -1,6 +1,6 @@
+import "package:aquapro/customer/cus_home.dart";
 import "package:aquapro/customer/cus_orders.dart";
 import "package:aquapro/customer/cus_profile.dart";
-import "package:aquapro/pages/home.dart";
 import "package:flutter/material.dart";
 
 class CusNavbar extends StatefulWidget {
@@ -16,13 +16,13 @@ class _CusNavbarState extends State<CusNavbar> {
 
   late List<Widget> pages;
   late Widget currentPage;
-  late Home homepage;
+  late CusHome homepage;
   late cusOrders cusorders;
   late cusProfile cusprofile;
   
   @override
   void initState() {
-    homepage=Home();
+    homepage=CusHome();
     cusorders=cusOrders();
     cusprofile=cusProfile();
      pages = [homepage, cusorders, cusprofile];
