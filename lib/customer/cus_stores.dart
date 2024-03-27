@@ -1,5 +1,8 @@
+import 'package:aquapro/customer/cus_maps.dart';
+import 'package:aquapro/widget/widget_support.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class Stores extends StatefulWidget {
   final String name;
@@ -32,8 +35,11 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
     _tabController = TabController(length: 2, vsync: this);
   }
 
+  int quantity = 1;
+
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -81,8 +87,10 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Container(
+                padding: EdgeInsets.only(left: 10),
+                
                 height: 100,
-                width: MediaQuery.of(context).size.width / 1.15,
+                width: MediaQuery.of(context).size.width ,
                 child: Row(
                   children: [
                     Container(
@@ -99,12 +107,16 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          widget.name,
-                          style: TextStyle(
-                            fontFamily: 'Times New Roman',
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15,
+                        Container(
+                          
+                          width: 365,
+                          child: Text(
+                            widget.name,
+                            style: TextStyle(
+                              fontFamily: 'Times New Roman',
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                            ),
                           ),
                         ),
                         Text(
@@ -235,595 +247,485 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                   ],
                 ),
               ),
-              Container(
-                width: double.maxFinite,
-                height: 300,
-                child: TabBarView(
-                  controller: _tabController,
-                  children: [
-                    // Placeholder for "Deliver" tab
-                    ListView(
-                      padding: EdgeInsets.all(8),
-                      children: _filterProductsByType('deliver').map<Widget>((product) {
-                        String productName = product['name'];
-                        double productPrice = product['price'];
-                        String productImageUrl = product['url'];
-                        return Container(
-                          padding: EdgeInsets.all(10),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              SizedBox(
-                                width: 14.0,
-                              ),
-                              Container(
-                                height: 120,
-                                padding: EdgeInsets.all(5),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
-                                  color: Color.fromARGB(0, 0, 0, 0),
-                                  border: Border.all(
-                                    width: 3,
-                                    color: Color(0xff0EB4F3),
-                                  ),
+              
+              Expanded(
+                child: Container(
+                  width: double.maxFinite,
+                  height: 300,
+                  child: TabBarView(
+                    controller: _tabController,
+                    children: [
+                      // Placeholder for "Deliver" tab
+                      ListView(
+                        padding: EdgeInsets.all(8),
+                        children: _filterProductsByType('deliver')
+                            .map<Widget>((product) {
+                          String productName = product['name'];
+                          double productPrice = product['price'];
+                          String productImageUrl = product['url'];
+                          return Container(
+                            padding: EdgeInsets.all(10),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(
+                                  width: 14.0,
                                 ),
-                                child: ClipRRect(
-                                  child: Image.network(
-                                    productImageUrl,// Changed image path
-                                    fit: BoxFit.fitHeight,
-                                  ),
-                                ),
-                              ),
-                              SizedBox(
-                                width: 15.0,
-                              ),
-                              Expanded(
-                                child: Container(
+                                Container(
                                   height: 120,
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        child: Text(
-                                          productName,
-                                          style: TextStyle(
-                                            fontFamily: "Times New Roman",
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w800,
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(height: 3.0),
-                                      Container(
-                                        child: Text(
-                                          "Php $productPrice",
-                                          style: TextStyle(
-                                            fontFamily: "Calibri",
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w400,
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(height: 10.0),
-                                      Row(
-                                        children: [
-                                          GestureDetector(
-                                            onTap: () => showDialog<String>(
-                                              context: context,
-                                              builder: (BuildContext context) =>
-                                                  AlertDialog(
-                                                actionsPadding:
-                                                    EdgeInsets.only(
-                                                        bottom: 10),
-                                                contentPadding:
-                                                    EdgeInsets.only(top: 30),
-                                                backgroundColor: Colors.white,
-                                                content: SingleChildScrollView(
-                                                  child: ListBody(
-                                                    children: <Widget>[
-                                                      Text(
-                                                        'Are you sure you want to buy the',
-                                                        style: TextStyle(
-                                                            fontSize: 17),
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                      ),
-                                                      Text(
-                                                        '1 New Slim Container w/ water',
-                                                        style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 17),
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                      ),
-                                                      SizedBox(
-                                                        height: 10,
-                                                      ),
-                                                      Container(
-                                                        width:
-                                                            MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width,
-                                                        height: 2,
-                                                        color:
-                                                            Color(0xffbfbdbc),
-                                                      )
-                                                    ],
-                                                  ),
-                                                ),
-                                                actions: <Widget>[
-                                                  TextButton(
-                                                    onPressed: () =>
-                                                        Navigator.pop(context,
-                                                            'Continue'),
-                                                    child: Text(
-                                                      'Continue',
-                                                      style: TextStyle(
-                                                        color:
-                                                            Color(0xff0eb4f3),
-                                                        fontSize: 20,
-                                                      ),
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                    ),
-                                                  ),
-                                                  TextButton(
-                                                    onPressed: () =>
-                                                        Navigator.pop(
-                                                            context, 'Cancel'),
-                                                    child: Text(
-                                                      'Cancel',
-                                                      style: TextStyle(
-                                                        color: Colors.red,
-                                                        fontSize: 20,
-                                                      ),
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            child: Container(
-                                              width: 70,
-                                              height: 20,
-                                              alignment: Alignment.center,
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                                border: Border.all(
-                                                  color: Color(0xff0eb4f3),
-                                                  width: 2,
-                                                ),
-                                              ),
-                                              child: Text(
-                                                "Buy Now",
-                                                style: TextStyle(
-                                                  fontSize: 10,
-                                                  color: Color(0xff0eb4f3),
-                                                ),
-                                              ),
+                                  padding: EdgeInsets.all(5),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20),
+                                    color: Color.fromARGB(0, 0, 0, 0),
+                                    border: Border.all(
+                                      width: 3,
+                                      color: Color(0xff0EB4F3),
+                                    ),
+                                  ),
+                                  child: ClipRRect(
+                                    child: Image.network(
+                                      productImageUrl, // Changed image path
+                                      fit: BoxFit.fitHeight,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 15.0,
+                                ),
+                                Expanded(
+                                  child: Container(
+                                    height: 120,
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          child: Text(
+                                            productName,
+                                            style: TextStyle(
+                                              fontFamily: "Times New Roman",
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.w800,
                                             ),
                                           ),
-                                          SizedBox(
-                                            width: 10,
+                                        ),
+                                        SizedBox(height: 3.0),
+                                        Container(
+                                          child: Text(
+                                            "Php $productPrice",
+                                            style: TextStyle(
+                                              fontFamily: "Calibri",
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w400,
+                                            ),
                                           ),
-                                          GestureDetector(
-                                            onTap: () => showDialog<String>(
-                                              context: context,
-                                              builder: (BuildContext context) =>
-                                                  AlertDialog(
-                                                actionsPadding:
-                                                    EdgeInsets.only(
-                                                        bottom: 10),
-                                                contentPadding:
-                                                    EdgeInsets.only(top: 30),
-                                                backgroundColor: Colors.white,
-                                                content: SingleChildScrollView(
-                                                  child: ListBody(
-                                                    children: <Widget>[
-                                                      Text(
-                                                        'Are you sure you want to',
+                                        ),
+                                        SizedBox(height: 10.0),
+                                        Row(
+                                          children: [
+                                            GestureDetector(
+                                              onTap: () => showDialog<String>(
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) =>
+                                                        AlertDialog(
+                                                  actionsPadding:
+                                                      EdgeInsets.only(
+                                                          bottom: 10),
+                                                  contentPadding:
+                                                      EdgeInsets.only(top: 30),
+                                                  backgroundColor: Colors.white,
+                                                  content:
+                                                      SingleChildScrollView(
+                                                    child: ListBody(
+                                                      children: <Widget>[
+                                                        Text(
+                                                          'Are you sure you want to buy the',
+                                                          style: TextStyle(
+                                                              fontSize: 17),
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                        ),
+                                                        Text(
+                                                          '1 New Slim Container w/ water',
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: 17),
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                        ),
+                                                        SizedBox(
+                                                          height: 10,
+                                                        ),
+                                                        Container(
+                                                          width: MediaQuery.of(
+                                                                  context)
+                                                              .size
+                                                              .width,
+                                                          height: 2,
+                                                          color:
+                                                              Color(0xffbfbdbc),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  actions: <Widget>[
+                                                    TextButton(
+                                                      onPressed: () =>
+                                                          Navigator.pop(context,
+                                                              'Continue'),
+                                                      child: Text(
+                                                        'Continue',
                                                         style: TextStyle(
-                                                          fontSize: 17,
+                                                          color:
+                                                              Color(0xff0eb4f3),
+                                                          fontSize: 20,
                                                         ),
                                                         textAlign:
                                                             TextAlign.center,
                                                       ),
-                                                      Text(
-                                                        'Remove 1 New Slim Container w/ water',
+                                                    ),
+                                                    TextButton(
+                                                      onPressed: () =>
+                                                          Navigator.pop(context,
+                                                              'Cancel'),
+                                                      child: Text(
+                                                        'Cancel',
                                                         style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 17,
+                                                          color: Colors.red,
+                                                          fontSize: 20,
                                                         ),
                                                         textAlign:
                                                             TextAlign.center,
                                                       ),
-                                                      SizedBox(
-                                                        height: 10,
-                                                      ),
-                                                      Container(
-                                                        width:
-                                                            MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width,
-                                                        height: 2,
-                                                        color:
-                                                            Color(0xffbfbdbc),
-                                                      )
-                                                    ],
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              child: Container(
+                                                width: 100,
+                                                height: 28,
+                                                alignment: Alignment.center,
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(15),
+                                                  border: Border.all(
+                                                    color: Color(0xff0eb4f3),
+                                                    width: 2,
                                                   ),
                                                 ),
-                                                actions: <Widget>[
-                                                  TextButton(
-                                                    onPressed: () =>
-                                                        Navigator.pop(context,
-                                                            'Continue'),
-                                                    child: Text(
-                                                      'Continue',
-                                                      style: TextStyle(
-                                                        color:
-                                                            Color(0xff0eb4f3),
-                                                        fontSize: 20,
-                                                      ),
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                    ),
+                                                child: Text(
+                                                  "Add to Cart",
+                                                  style: TextStyle(
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Color(0xff0eb4f3),
                                                   ),
-                                                  TextButton(
-                                                    onPressed: () =>
-                                                        Navigator.pop(
-                                                            context, 'Cancel'),
-                                                    child: Text(
-                                                      'Cancel',
-                                                      style: TextStyle(
-                                                        color: Colors.red,
-                                                        fontSize: 20,
-                                                      ),
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                    ),
-                                                  ),
-                                                ],
+                                                ),
                                               ),
                                             ),
-                                            child: Container(
-                                              width: 120,
-                                              height: 20,
+                                            SizedBox(
+                                              width: 20,
+                                            ),
+                                            GestureDetector(
+                                              onTap: (){
+                                                if (quantity > 0) {
+                                                  --quantity;
+                                                }
+                                                
+                                                setState(() {
+                                                  
+                                                });
+                                              },
+                                              child: Container(
+                                                
+                                                child: Icon(Icons.remove, size: 25,))), 
+                                            
+                                            Container(
                                               alignment: Alignment.center,
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                                border: Border.all(
-                                                  color: Colors.red,
-                                                  width: 2,
-                                                ),
-                                              ),
-                                              child: Text(
-                                                "Remove Item",
-                                                style: TextStyle(
-                                                  fontSize: 10,
-                                                  color: Colors.red,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      )
-                                    ],
+                                              width: 45,
+                                            
+                                              child: Text(quantity.toString(), style: AppWidget.semiBoldTextFeildStyle(),)),
+                                           
+                                            GestureDetector(
+                                              onTap: (){
+                                                ++quantity;
+                                                setState(() {
+                                                  
+                                                });
+                                              },
+                                              child: Container(
+                                                
+                                                child: Icon(Icons.add, size: 25,)))
+                                          ],
+                                        )
+                                      ],
+                                    ),
                                   ),
+                                )
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                      // Placeholder for "Pick-up" tab
+                      ListView(
+                        padding: EdgeInsets.all(8),
+                        children: _filterProductsByType('pickup')
+                            .map<Widget>((product) {
+                          String productName = product['name'];
+                          double productPrice = product['price'];
+                          String productImageUrl = product['url'];
+                          return Container(
+                            padding: EdgeInsets.all(10),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(
+                                  width: 14.0,
                                 ),
-                              )
-                            ],
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                    // Placeholder for "Pick-up" tab
-                    ListView(
-                      padding: EdgeInsets.all(8),
-                      children: _filterProductsByType('pickup').map<Widget>((product) {
-                        String productName = product['name'];
-                        double productPrice = product['price'];
-                        String productImageUrl = product['url'];
-                        return Container(
-                          padding: EdgeInsets.all(10),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              SizedBox(
-                                width: 14.0,
-                              ),
-                              Container(
-                                height: 120,
-                                padding: EdgeInsets.all(5),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
-                                  color: Color.fromARGB(0, 0, 0, 0),
-                                  border: Border.all(
-                                    width: 3,
-                                    color: Color(0xff0EB4F3),
-                                  ),
-                                ),
-                                child: ClipRRect(
-                                  child: Image.network(
-                                     productImageUrl,// Changed image path
-                                    fit: BoxFit.fitHeight,
-                                  ),
-                                ),
-                              ),
-                              SizedBox(
-                                width: 15.0,
-                              ),
-                              Expanded(
-                                child: Container                                  (
+                                Container(
                                   height: 120,
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        child: Text(
-                                          productName,
-                                          style: TextStyle(
-                                            fontFamily: "Times New Roman",
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w800,
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 3.0,
-                                      ),
-                                      Container(
-                                        child: Text(
-                                          "Php $productPrice",
-                                          style: TextStyle(
-                                            fontFamily: "Calibri",
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w400,
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 10.0,
-                                      ),
-                                      Row(
-                                        children: [
-                                          GestureDetector(
-                                            onTap: () => showDialog<String>(
-                                              context: context,
-                                              builder: (BuildContext context) =>
-                                                  AlertDialog(
-                                                actionsPadding:
-                                                    EdgeInsets.only(
-                                                        bottom: 10),
-                                                contentPadding:
-                                                    EdgeInsets.only(top: 30),
-                                                backgroundColor: Colors.white,
-                                                content: SingleChildScrollView(
-                                                  child: ListBody(
-                                                    children: <Widget>[
-                                                      Text(
-                                                        'Are you sure you want to buy the',
-                                                        style: TextStyle(
-                                                            fontSize: 17),
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                      ),
-                                                      Text(
-                                                        '1 New Slim Container w/ water',
-                                                        style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 17),
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                      ),
-                                                      SizedBox(
-                                                        height: 10,
-                                                      ),
-                                                      Container(
-                                                        width:
-                                                            MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width,
-                                                        height: 2,
-                                                        color:
-                                                            Color(0xffbfbdbc),
-                                                      )
-                                                    ],
-                                                  ),
-                                                ),
-                                                actions: <Widget>[
-                                                  TextButton(
-                                                    onPressed: () =>
-                                                        Navigator.pop(context,
-                                                            'Continue'),
-                                                    child: Text(
-                                                      'Continue',
-                                                      style: TextStyle(
-                                                        color:
-                                                            Color(0xff0eb4f3),
-                                                        fontSize: 20,
-                                                      ),
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                    ),
-                                                  ),
-                                                  TextButton(
-                                                    onPressed: () =>
-                                                        Navigator.pop(
-                                                            context, 'Cancel'),
-                                                    child: Text(
-                                                      'Cancel',
-                                                      style: TextStyle(
-                                                        color: Colors.red,
-                                                        fontSize: 20,
-                                                      ),
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            child: Container(
-                                              width: 70,
-                                              height: 20,
-                                              alignment: Alignment.center,
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                                border: Border.all(
-                                                  color: Color(0xff0eb4f3),
-                                                  width: 2,
-                                                ),
-                                              ),
-                                              child: Text(
-                                                "Buy Now",
-                                                style: TextStyle(
-                                                  fontSize: 10,
-                                                  color: Color(0xff0eb4f3),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: 10,
-                                          ),
-                                          GestureDetector(
-                                            onTap: () => showDialog<String>(
-                                              context: context,
-                                              builder: (BuildContext context) =>
-                                                  AlertDialog(
-                                                actionsPadding:
-                                                    EdgeInsets.only(
-                                                        bottom: 10),
-                                                contentPadding:
-                                                    EdgeInsets.only(top: 30),
-                                                backgroundColor: Colors.white,
-                                                content: SingleChildScrollView(
-                                                  child: ListBody(
-                                                    children: <Widget>[
-                                                      Text(
-                                                        'Are you sure you want to',
-                                                        style: TextStyle(
-                                                          fontSize: 17,
-                                                        ),
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                      ),
-                                                      Text(
-                                                        'Remove 1 New Slim Container w/ water',
-                                                        style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 17,
-                                                        ),
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                      ),
-                                                      SizedBox(
-                                                        height: 10,
-                                                      ),
-                                                      Container(
-                                                        width:
-                                                            MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width,
-                                                        height: 2,
-                                                        color:
-                                                            Color(0xffbfbdbc),
-                                                      )
-                                                    ],
-                                                  ),
-                                                ),
-                                                actions: <Widget>[
-                                                  TextButton(
-                                                    onPressed: () =>
-                                                        Navigator.pop(context,
-                                                            'Continue'),
-                                                    child: Text(
-                                                      'Continue',
-                                                      style: TextStyle(
-                                                        color:
-                                                            Color(0xff0eb4f3),
-                                                        fontSize: 20,
-                                                      ),
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                    ),
-                                                  ),
-                                                  TextButton(
-                                                    onPressed: () =>
-                                                        Navigator.pop(
-                                                            context, 'Cancel'),
-                                                    child: Text(
-                                                      'Cancel',
-                                                      style: TextStyle(
-                                                        color: Colors.red,
-                                                        fontSize: 20,
-                                                      ),
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            child: Container(
-                                              width: 120,
-                                              height: 20,
-                                              alignment: Alignment.center,
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                                border: Border.all(
-                                                  color: Colors.red,
-                                                  width: 2,
-                                                ),
-                                              ),
-                                              child: Text(
-                                                "Remove Item",
-                                                style: TextStyle(
-                                                  fontSize: 10,
-                                                  color: Colors.red,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      )
-                                    ],
+                                  padding: EdgeInsets.all(5),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20),
+                                    color: Color.fromARGB(0, 0, 0, 0),
+                                    border: Border.all(
+                                      width: 3,
+                                      color: Color(0xff0EB4F3),
+                                    ),
+                                  ),
+                                  child: ClipRRect(
+                                    child: Image.network(
+                                      productImageUrl, // Changed image path
+                                      fit: BoxFit.fitHeight,
+                                    ),
                                   ),
                                 ),
-                              )
-                            ],
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                  ],
+                                SizedBox(
+                                  width: 15.0,
+                                ),
+                                Expanded(
+                                  child: Container(
+                                    height: 120,
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          child: Text(
+                                            productName,
+                                            style: TextStyle(
+                                              fontFamily: "Times New Roman",
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.w800,
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: 3.0,
+                                        ),
+                                        Container(
+                                          child: Text(
+                                            "Php $productPrice",
+                                            style: TextStyle(
+                                              fontFamily: "Calibri",
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w400,
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: 10.0,
+                                        ),
+                                        Row(
+                                          children: [
+                                            GestureDetector(
+                                              onTap: () => showDialog<String>(
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) =>
+                                                        AlertDialog(
+                                                  actionsPadding:
+                                                      EdgeInsets.only(
+                                                          bottom: 10),
+                                                  contentPadding:
+                                                      EdgeInsets.only(top: 30),
+                                                  backgroundColor: Colors.white,
+                                                  content:
+                                                      SingleChildScrollView(
+                                                    child: ListBody(
+                                                      children: <Widget>[
+                                                        Text(
+                                                          'Are you sure you want to buy the',
+                                                          style: TextStyle(
+                                                              fontSize: 17),
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                        ),
+                                                        Text(
+                                                          '1 New Slim Container w/ water',
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: 17),
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                        ),
+                                                        SizedBox(
+                                                          height: 10,
+                                                        ),
+                                                        Container(
+                                                          width: MediaQuery.of(
+                                                                  context)
+                                                              .size
+                                                              .width,
+                                                          height: 2,
+                                                          color:
+                                                              Color(0xffbfbdbc),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  actions: <Widget>[
+                                                    TextButton(
+                                                      onPressed: () =>
+                                                          Navigator.pop(context,
+                                                              'Continue'),
+                                                      child: Text(
+                                                        'Continue',
+                                                        style: TextStyle(
+                                                          color:
+                                                              Color(0xff0eb4f3),
+                                                          fontSize: 20,
+                                                        ),
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                      ),
+                                                    ),
+                                                    TextButton(
+                                                      onPressed: () =>
+                                                          Navigator.pop(context,
+                                                              'Cancel'),
+                                                      child: Text(
+                                                        'Cancel',
+                                                        style: TextStyle(
+                                                          color: Colors.red,
+                                                          fontSize: 20,
+                                                        ),
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              child: Container(
+                                                width: 100,
+                                                height: 28,
+                                                alignment: Alignment.center,
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(15),
+                                                  border: Border.all(
+                                                    color: Color(0xff0eb4f3),
+                                                    width: 2,
+                                                  ),
+                                                ),
+                                                child: Text(
+                                                  "Add to Cart",
+                                                  style: TextStyle(
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Color(0xff0eb4f3),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: 10,
+                                            ),
+                                            GestureDetector(
+                                              onTap: (){
+                                                if (quantity > 0) {
+                                                  --quantity;
+                                                }
+                                                
+                                                setState(() {
+                                                  
+                                                });
+                                              },
+                                              child: Container(
+                                                
+                                                child: Icon(Icons.remove, size: 25,))), 
+                                            
+                                            Container(
+                                              alignment: Alignment.center,
+                                              width: 45,
+                                            
+                                              child: Text(quantity.toString(), style: AppWidget.semiBoldTextFeildStyle(),)),
+                                           
+                                            GestureDetector(
+                                              onTap: (){
+                                                ++quantity;
+                                                setState(() {
+                                                  
+                                                });
+                                              },
+                                              child: Container(
+                                                
+                                                child: Icon(Icons.add, size: 25,)))
+                                          ],
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ],
+                  ),
                 ),
               ),
+              Container(
+                padding: EdgeInsets.only(bottom: 20),
+                child: GestureDetector(
+                  child: Container(
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(15), color: Color(0xff0eb4f3)),
+                    height: 60,
+                    width: MediaQuery.of(context).size.width,
+                    child: Text('View Cart', style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold, fontFamily: 'Poppins', color: Colors.white),),
+                  
+                  ),
+                ),
+              )
+              
             ],
           ),
+          
         ),
+        
       ),
+      
+ 
     );
   }
 
   List<dynamic> _filterProductsByType(String type) {
-    return widget.products.where((product) => product['type'] == type || product['type'] == 'deliver&pickup').toList();
+    return widget.products
+        .where((product) =>
+            product['type'] == type || product['type'] == 'deliver&pickup')
+        .toList();
   }
 }
-
-
