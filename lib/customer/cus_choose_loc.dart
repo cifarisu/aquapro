@@ -179,7 +179,7 @@ class _CusChooseLocationState extends State<CusChooseLocation> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => letsgo()),
+              MaterialPageRoute(builder: (context) => CusNavbar()),
             );
           },
           child: Text(
