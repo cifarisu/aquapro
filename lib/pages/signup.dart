@@ -2,6 +2,7 @@
 
 import 'package:aquapro/pages/home.dart';
 import 'package:aquapro/pages/login.dart';
+import 'package:aquapro/store/store_manual_registration.dart';
 import 'package:aquapro/widget/widget_support.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +28,13 @@ class _SignUpState extends State<SignUp> {
   final _formkey=GlobalKey<FormState>();
 
 registration() async {
-  if (password != null) {
+  if (_formkey.currentState!.validate()) {
+    setState(() {
+      email = mailcontroller.text;
+      name = namecontroller.text;
+      password = passwordcontroller.text;
+    });
+
     try {
       UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
 
@@ -51,7 +58,13 @@ registration() async {
           ),
         )),
       );
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> const LogIn()));
+
+      // Check if selectedType is "Store"
+      if (selectedType == "Store") {
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => StoreReg()));
+      } else {
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LogIn()));
+      }
     } on FirebaseException catch (e) {
       if (e.code == 'weak-password') {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -69,6 +82,7 @@ registration() async {
     }
   }
 }
+
 
 
 
