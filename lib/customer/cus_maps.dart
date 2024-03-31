@@ -48,7 +48,7 @@ class _CusMapsState extends State<CusMaps> {
                       zoom: 17,
                     )
                   : CameraPosition(
-                      target: LatLng(0, 0),
+                      target: LatLng(13.139211621744149, 123.73457236435291),
                       zoom: 17,
                     ),
               onMapCreated: (GoogleMapController controller) {
@@ -149,22 +149,23 @@ class _CusMapsState extends State<CusMaps> {
   }
 
   // Calculate distance between two LatLng points using Haversine formula
-  double _calculateDistance(LatLng point1, LatLng point2) {
-    const double earthRadius = 6371.0; // Earth's radius in kilometers
-    double lat1Radians = point1.latitude * (pi / 180);
-    double lon1Radians = point1.longitude * (pi / 180);
-    double lat2Radians = point2.latitude * (pi / 180);
-    double lon2Radians = point2.longitude * (pi / 180);
+double _calculateDistance(LatLng point1, LatLng point2) {
+  const double earthRadius = 6371.0; // Earth's radius in kilometers
+  double lat1Radians = point1.latitude * pi / 180.0;
+  double lon1Radians = point1.longitude * pi / 180.0;
+  double lat2Radians = point2.latitude * pi / 180.0;
+  double lon2Radians = point2.longitude * pi / 180.0;
 
-    double lonDiff = lon2Radians - lon1Radians;
-    double latDiff = lat2Radians - lat1Radians;
+  double lonDiff = lon2Radians - lon1Radians;
+  double latDiff = lat2Radians - lat1Radians;
 
-    double a = pow(sin(latDiff / 2), 2) +
-        cos(lat1Radians) * cos(lat2Radians) * pow(sin(lonDiff / 2), 2);
-    double c = 2 * asin(sqrt(a));
+  double a = pow(sin(latDiff / 2), 2) +
+      cos(lat1Radians) * cos(lat2Radians) * pow(sin(lonDiff / 2), 2);
+  double c = 2 * asin(sqrt(a));
 
-    return earthRadius * c;
-  }
+  return earthRadius * c;
+}
+
 
   // Apply filter to show only locations within the specified radius of the current user
   Future<void> _applyFilter() async {

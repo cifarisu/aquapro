@@ -14,7 +14,7 @@ class StoresNearYou extends StatefulWidget {
 
 class _StoresNearYouState extends State<StoresNearYou> {
   final FirebaseAuth _auth = FirebaseAuth.instance; // Initialize FirebaseAuth
-  double maxDistance = 50.0; // Maximum distance in kilometers
+  double maxDistance = 3.0; // Maximum distance in kilometers
   bool sortByDistance = true; // Initially sort by shortest distance
 
   // Function to calculate distance between two coordinates using Haversine formula
@@ -117,7 +117,7 @@ class _StoresNearYouState extends State<StoresNearYou> {
                   min: 0.5,
                   max: 10.0,
                   divisions: 19,
-                  label: maxDistance.toStringAsFixed(1),
+                  label: maxDistance.toStringAsFixed(2),
                   onChanged: (value) {
                     setState(() {
                       maxDistance = value;
@@ -187,6 +187,16 @@ class _StoresNearYouState extends State<StoresNearYou> {
                             final contact = store['contact'];
                             final time = store['time'];
                             final imageUrl = store['url'];
+                            
+                            final storeLocation = store['coordinates'] as GeoPoint;
+                            final storeLatitude = storeLocation.latitude;
+                            final storeLongitude = storeLocation.longitude;
+                            final distanceToStore = distance(
+                              userLatitude,
+                              userLongitude,
+                              storeLatitude,
+                              storeLongitude,
+                            );
 
                             return GestureDetector(
                               onTap: () async {
@@ -290,6 +300,11 @@ class _StoresNearYouState extends State<StoresNearYou> {
                                               ),
                                             )
                                           ],
+                                        ),
+                                        SizedBox(height: 12.0),
+                                        Text(
+                                          "Distance: ${distanceToStore.toStringAsFixed(2)} km",
+                                          style: TextStyle(fontFamily: 'Callibri', fontSize: 13, fontWeight: FontWeight.w500),
                                         ),
                                       ],
                                     ),
