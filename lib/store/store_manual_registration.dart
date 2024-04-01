@@ -1,10 +1,12 @@
 import 'dart:io';
+import 'package:aquapro/pages/login.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
 
 void main() {
   runApp(MyApp());
@@ -42,7 +44,7 @@ class _StoreRegState extends State<StoreReg> {
   // Declare variables for user input
   String address = '';
   String contact = '';
-  String? email; // Initially set email to null
+  late String email; // Initialize email to an empty string
   String id = '';
   String name = '';
   String time = '';
@@ -94,6 +96,14 @@ class _StoreRegState extends State<StoreReg> {
         type: 'deliver&pickup',
         url:
             'https://firebasestorage.googleapis.com/v0/b/aquapro-b890e.appspot.com/o/small.png?alt=media&token=d21b8e32-eee0-4c47-9bbf-26139a2e7dfc'));
+
+    // Retrieve the currently logged-in user's email
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      setState(() {
+        email = user.email!;
+      });
+    }
   }
 
   Future getImage() async {
@@ -108,15 +118,15 @@ class _StoreRegState extends State<StoreReg> {
     });
   }
 
-  Future uploadImageToFirebase(BuildContext context) async {
+Future uploadImageToFirebase(BuildContext context) async {
+  try {
     if (_image == null) {
       print('No image selected.');
       return;
     }
 
-    String fileName = _image!.path.split('/').last; // get the filename from path
-    Reference firebaseStorageRef =
-        FirebaseStorage.instance.ref().child('Stores_images/$fileName'); // upload to 'Stores_images' folder
+    String fileName = _image!.path.split('/').last;
+    Reference firebaseStorageRef = FirebaseStorage.instance.ref().child('Stores_images/$fileName');
     UploadTask uploadTask = firebaseStorageRef.putFile(_image!);
     TaskSnapshot taskSnapshot = await uploadTask;
     String imageUrl = await taskSnapshot.ref.getDownloadURL();
@@ -125,33 +135,44 @@ class _StoreRegState extends State<StoreReg> {
     final userId = FirebaseAuth.instance.currentUser!.uid;
     GeoPoint coordinates = GeoPoint(latitude, longitude);
 
-    // Create a new document in the 'Store' collection with a unique ID
-    DocumentReference storeRef = FirebaseFirestore.instance.collection('Store').doc();
+    DocumentReference storeRef = FirebaseFirestore.instance.collection('Store').doc(userId);
 
     await storeRef.set({
+      'id': userId,
       'address': address,
       'contact': contact,
       'email': email,
       'name': name,
       'time': time,
-      'url': imageUrl, // storing URL in Firestore
-      'coordinates': coordinates, // Store coordinates as a single GeoPoint
+      'url': imageUrl,
+      'coordinates': coordinates,
     });
 
-    // Create a new subcollection named 'Products' under the document
+    await FirebaseAuth.instance.currentUser!.updateEmail(email);
+
     CollectionReference productsRef = storeRef.collection('Products');
 
-    // Add documents to the 'Products' subcollection
-    products.forEach((product) async {
-      // Here we set the product name as the document ID and store the price as a field
+    for (var product in products) {
       await productsRef.doc(product.name).set({
         'price': product.price,
         'type': product.type,
-        'name': product.name,
         'url': product.url,
       });
-    });
+    }
+
+    print('Upload successful');
+
+    // Navigate to login page
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => LogIn()),
+    );
+  } catch (e, stackTrace) {
+    print('Error uploading image: $e');
+    print('Stack trace: $stackTrace');
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -177,12 +198,13 @@ class _StoreRegState extends State<StoreReg> {
               contact = value;
             },
           ),
-          TextField(
+          TextFormField(
             decoration: InputDecoration(
               labelText: 'Email',
             ),
+            initialValue: email, // Set the initial value of email field
             onChanged: (value) {
-              email = value;
+              email = value; // Update email variable here
             },
           ),
           TextField(
@@ -265,4 +287,3 @@ class Product {
 
   Product({required this.name, this.price = 0.0, required this.type, required this.url});
 }
-
