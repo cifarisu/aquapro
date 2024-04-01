@@ -1,3 +1,4 @@
+import 'package:aquapro/customer/cart.dart';
 import 'package:aquapro/customer/cus_maps.dart';
 import 'package:aquapro/widget/widget_support.dart';
 import 'package:flutter/cupertino.dart';
@@ -39,7 +40,6 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -55,13 +55,42 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
           ),
         ),
         title: Text(
-          widget.name,
+          'Stores',
           style: TextStyle(
             fontFamily: 'Poppins',
             fontSize: 25,
             fontWeight: FontWeight.bold,
           ),
         ),
+        titleSpacing: 0,
+        actions: [
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => Cart()));
+            },
+            child: Container(
+              padding: EdgeInsets.only(right: 20),
+              child: Column(
+                children: [
+                  Icon(
+                    Icons.shopping_cart_outlined,
+                    size: 50,
+                  ),
+                  Text(
+                    'View Cart',
+                    style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontSize: 13,
+                    ),
+                    textAlign: TextAlign.start,
+                  )
+                ],
+              ),
+            ),
+          )
+        ],
+        toolbarHeight: 80,
       ),
       body: Container(
         padding: EdgeInsets.only(
@@ -88,9 +117,8 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
             children: [
               Container(
                 padding: EdgeInsets.only(left: 10),
-                
                 height: 100,
-                width: MediaQuery.of(context).size.width ,
+                width: MediaQuery.of(context).size.width,
                 child: Row(
                   children: [
                     Container(
@@ -108,7 +136,6 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Container(
-                          
                           width: 365,
                           child: Text(
                             widget.name,
@@ -218,7 +245,7 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                 ],
               ),
               SizedBox(
-                height: 25,
+                height: 15,
               ),
               Container(
                 decoration: BoxDecoration(
@@ -228,13 +255,13 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                     ),
                   ),
                 ),
-                child: TabBar(
+                child: TabBar.secondary(
                   indicatorColor: Color(0xff0eb4f3),
                   labelColor: Color(0xff0eb4f3),
                   labelStyle: TextStyle(
                     fontFamily: 'Calibri',
                     fontSize: 20,
-                    fontWeight: FontWeight.w400,
+                    fontWeight: FontWeight.w500,
                   ),
                   controller: _tabController,
                   tabs: [
@@ -247,7 +274,6 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                   ],
                 ),
               ),
-              
               Expanded(
                 child: Container(
                   width: double.maxFinite,
@@ -257,14 +283,14 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                     children: [
                       // Placeholder for "Deliver" tab
                       ListView(
-                        padding: EdgeInsets.all(8),
+                        padding: EdgeInsets.all(6),
                         children: _filterProductsByType('deliver')
                             .map<Widget>((product) {
                           String productName = product['name'];
                           double productPrice = product['price'];
                           String productImageUrl = product['url'];
                           return Container(
-                            padding: EdgeInsets.all(10),
+                            padding: EdgeInsets.all(8),
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -349,7 +375,9 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                                                               TextAlign.center,
                                                         ),
                                                         Text(
-                                                          '1 New Slim Container w/ water',
+                                                          quantity.toString() +
+                                                              " " +
+                                                              productName,
                                                           style: TextStyle(
                                                               fontWeight:
                                                                   FontWeight
@@ -374,40 +402,104 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                                                     ),
                                                   ),
                                                   actions: <Widget>[
-                                                    TextButton(
-                                                      onPressed: () =>
-                                                          Navigator.pop(context,
-                                                              'Continue'),
-                                                      child: Text(
-                                                        'Continue',
-                                                        style: TextStyle(
-                                                          color:
-                                                              Color(0xff0eb4f3),
-                                                          fontSize: 20,
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceEvenly,
+                                                      children: [
+                                                        TextButton(
+                                                          onPressed: () =>
+                                                              Navigator.pop(
+                                                                  context,
+                                                                  'Continue'),
+                                                          child: Text(
+                                                            'Continue',
+                                                            style: TextStyle(
+                                                              color: Color(
+                                                                  0xff0eb4f3),
+                                                              fontSize: 20,
+                                                            ),
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                          ),
                                                         ),
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                      ),
-                                                    ),
-                                                    TextButton(
-                                                      onPressed: () =>
-                                                          Navigator.pop(context,
-                                                              'Cancel'),
-                                                      child: Text(
-                                                        'Cancel',
-                                                        style: TextStyle(
-                                                          color: Colors.red,
-                                                          fontSize: 20,
+                                                        TextButton(
+                                                          onPressed: () =>
+                                                              Navigator.pop(
+                                                                  context,
+                                                                  'Cancel'),
+                                                          child: Text(
+                                                            'Cancel',
+                                                            style: TextStyle(
+                                                              color: Colors.red,
+                                                              fontSize: 20,
+                                                            ),
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                          ),
                                                         ),
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                      ),
+                                                      ],
                                                     ),
                                                   ],
                                                 ),
                                               ),
                                               child: Container(
-                                                width: 100,
+                                                width: 77,
+                                                height: 28,
+                                                alignment: Alignment.center,
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(15),
+                                                  border: Border.all(
+                                                    color: Color(0xff0eb4f3),
+                                                    width: 2,
+                                                  ),
+                                                ),
+                                                child: Text(
+                                                  "Buy Now",
+                                                  style: TextStyle(
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Color(0xff0eb4f3),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: 10,
+                                            ),
+                                            GestureDetector(
+                                              onTap: () => showDialog(
+                                                context: context,
+                                                builder: (context) {
+                                                  // Schedule a delayed dismissal of the alert dialog after 3 seconds
+                                                  Future.delayed(
+                                                      Duration(seconds: 3), () {
+                                                    Navigator.of(context)
+                                                        .pop(); // Close the dialog
+                                                  });
+
+                                                  // Return the AlertDialog widget
+                                                  return AlertDialog(
+                                                    title: Row(
+                                                      children: [
+                                                        Text("Added to Cart"),
+                                                        Icon(Icons.done_rounded, color: Color(0xff0eb4f3),
+                                                        size: 60, )
+                                                      ],
+                                                    ),
+                                                    shape: RoundedRectangleBorder(
+                                                        side: BorderSide(
+                                                            color: Color(0xff0eb4f3), width: 3),
+                                                        borderRadius:
+                                                            BorderRadius.all(
+                                                                Radius.circular(
+                                                                    35))),
+                                                  );
+                                                },
+                                              ),
+                                              child: Container(
+                                                width: 95,
                                                 height: 28,
                                                 alignment: Alignment.center,
                                                 decoration: BoxDecoration(
@@ -429,38 +521,40 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                                               ),
                                             ),
                                             SizedBox(
-                                              width: 20,
+                                              width: 10,
                                             ),
                                             GestureDetector(
-                                              onTap: (){
-                                                if (quantity > 0) {
-                                                  --quantity;
-                                                }
-                                                
-                                                setState(() {
-                                                  
-                                                });
-                                              },
-                                              child: Container(
-                                                
-                                                child: Icon(Icons.remove, size: 25,))), 
-                                            
+                                                onTap: () {
+                                                  if (quantity > 0) {
+                                                    --quantity;
+                                                  }
+
+                                                  setState(() {});
+                                                },
+                                                child: Container(
+                                                    child: Icon(
+                                                  Icons.remove,
+                                                  size: 20,
+                                                ))),
                                             Container(
-                                              alignment: Alignment.center,
-                                              width: 45,
-                                            
-                                              child: Text(quantity.toString(), style: AppWidget.semiBoldTextFeildStyle(),)),
-                                           
+                                                alignment: Alignment.center,
+                                                width: 45,
+                                                child: Text(quantity.toString(),
+                                                    style: TextStyle(
+                                                        fontFamily: 'Poppins',
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        fontSize: 15))),
                                             GestureDetector(
-                                              onTap: (){
-                                                ++quantity;
-                                                setState(() {
-                                                  
-                                                });
-                                              },
-                                              child: Container(
-                                                
-                                                child: Icon(Icons.add, size: 25,)))
+                                                onTap: () {
+                                                  ++quantity;
+                                                  setState(() {});
+                                                },
+                                                child: Container(
+                                                    child: Icon(
+                                                  Icons.add,
+                                                  size: 25,
+                                                )))
                                           ],
                                         )
                                       ],
@@ -481,7 +575,7 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                           double productPrice = product['price'];
                           String productImageUrl = product['url'];
                           return Container(
-                            padding: EdgeInsets.all(10),
+                            padding: EdgeInsets.only(top: 8, bottom: 8),
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -563,14 +657,16 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                                                     child: ListBody(
                                                       children: <Widget>[
                                                         Text(
-                                                          'Are you sure you want to buy the',
+                                                          'Are you sure you want to reserve the',
                                                           style: TextStyle(
                                                               fontSize: 17),
                                                           textAlign:
                                                               TextAlign.center,
                                                         ),
                                                         Text(
-                                                          '1 New Slim Container w/ water',
+                                                          quantity.toString() +
+                                                              " " +
+                                                              productName,
                                                           style: TextStyle(
                                                               fontWeight:
                                                                   FontWeight
@@ -595,40 +691,104 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                                                     ),
                                                   ),
                                                   actions: <Widget>[
-                                                    TextButton(
-                                                      onPressed: () =>
-                                                          Navigator.pop(context,
-                                                              'Continue'),
-                                                      child: Text(
-                                                        'Continue',
-                                                        style: TextStyle(
-                                                          color:
-                                                              Color(0xff0eb4f3),
-                                                          fontSize: 20,
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceEvenly,
+                                                      children: [
+                                                        TextButton(
+                                                          onPressed: () =>
+                                                              Navigator.pop(
+                                                                  context,
+                                                                  'Continue'),
+                                                          child: Text(
+                                                            'Continue',
+                                                            style: TextStyle(
+                                                              color: Color(
+                                                                  0xff0eb4f3),
+                                                              fontSize: 20,
+                                                            ),
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                          ),
                                                         ),
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                      ),
-                                                    ),
-                                                    TextButton(
-                                                      onPressed: () =>
-                                                          Navigator.pop(context,
-                                                              'Cancel'),
-                                                      child: Text(
-                                                        'Cancel',
-                                                        style: TextStyle(
-                                                          color: Colors.red,
-                                                          fontSize: 20,
+                                                        TextButton(
+                                                          onPressed: () =>
+                                                              Navigator.pop(
+                                                                  context,
+                                                                  'Cancel'),
+                                                          child: Text(
+                                                            'Cancel',
+                                                            style: TextStyle(
+                                                              color: Colors.red,
+                                                              fontSize: 20,
+                                                            ),
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                          ),
                                                         ),
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                      ),
+                                                      ],
                                                     ),
                                                   ],
                                                 ),
                                               ),
                                               child: Container(
-                                                width: 100,
+                                                width: 105,
+                                                height: 28,
+                                                alignment: Alignment.center,
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(15),
+                                                  border: Border.all(
+                                                    color: Color(0xff0eb4f3),
+                                                    width: 2,
+                                                  ),
+                                                ),
+                                                child: Text(
+                                                  "Reserve Now",
+                                                  style: TextStyle(
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Color(0xff0eb4f3),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: 10,
+                                            ),
+                                            GestureDetector(
+                                              onTap: () => showDialog(
+                                                context: context,
+                                                builder: (context) {
+                                                  // Schedule a delayed dismissal of the alert dialog after 3 seconds
+                                                  Future.delayed(
+                                                      Duration(seconds: 3), () {
+                                                    Navigator.of(context)
+                                                        .pop(); // Close the dialog
+                                                  });
+
+                                                  // Return the AlertDialog widget
+                                                  return AlertDialog(
+                                                    title: Row(
+                                                      children: [
+                                                        Text("Added to Cart"),
+                                                        Icon(Icons.done_rounded, color: Color(0xff0eb4f3),
+                                                        size: 60, )
+                                                      ],
+                                                    ),
+                                                    shape: RoundedRectangleBorder(
+                                                        side: BorderSide(
+                                                            color: Color(0xff0eb4f3), width: 3),
+                                                        borderRadius:
+                                                            BorderRadius.all(
+                                                                Radius.circular(
+                                                                    35))),
+                                                  );
+                                                },
+                                              ),
+                                              child: Container(
+                                                width: 95,
                                                 height: 28,
                                                 alignment: Alignment.center,
                                                 decoration: BoxDecoration(
@@ -653,35 +813,37 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                                               width: 10,
                                             ),
                                             GestureDetector(
-                                              onTap: (){
-                                                if (quantity > 0) {
-                                                  --quantity;
-                                                }
-                                                
-                                                setState(() {
-                                                  
-                                                });
-                                              },
-                                              child: Container(
-                                                
-                                                child: Icon(Icons.remove, size: 25,))), 
-                                            
+                                                onTap: () {
+                                                  if (quantity > 0) {
+                                                    --quantity;
+                                                  }
+
+                                                  setState(() {});
+                                                },
+                                                child: Container(
+                                                    child: Icon(
+                                                  Icons.remove,
+                                                  size: 18,
+                                                ))),
                                             Container(
-                                              alignment: Alignment.center,
-                                              width: 45,
-                                            
-                                              child: Text(quantity.toString(), style: AppWidget.semiBoldTextFeildStyle(),)),
-                                           
+                                                alignment: Alignment.center,
+                                                width: 40,
+                                                child: Text(quantity.toString(),
+                                                    style: TextStyle(
+                                                        fontFamily: 'Poppins',
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        fontSize: 14))),
                                             GestureDetector(
-                                              onTap: (){
-                                                ++quantity;
-                                                setState(() {
-                                                  
-                                                });
-                                              },
-                                              child: Container(
-                                                
-                                                child: Icon(Icons.add, size: 25,)))
+                                                onTap: () {
+                                                  ++quantity;
+                                                  setState(() {});
+                                                },
+                                                child: Container(
+                                                    child: Icon(
+                                                  Icons.add,
+                                                  size: 22,
+                                                )))
                                           ],
                                         )
                                       ],
@@ -697,28 +859,10 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                   ),
                 ),
               ),
-              Container(
-                padding: EdgeInsets.only(bottom: 20),
-                child: GestureDetector(
-                  child: Container(
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(15), color: Color(0xff0eb4f3)),
-                    height: 60,
-                    width: MediaQuery.of(context).size.width,
-                    child: Text('View Cart', style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold, fontFamily: 'Poppins', color: Colors.white),),
-                  
-                  ),
-                ),
-              )
-              
             ],
           ),
-          
         ),
-        
       ),
-      
- 
     );
   }
 
