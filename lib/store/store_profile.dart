@@ -56,11 +56,18 @@ class _StoreProfileState extends State<StoreProfile> {
                 right: -2,
                 child: Icon(Icons.photo_camera, size: 40, color: Color(0xff0eb4f3),))] ),
               Container(
-                padding: EdgeInsets.only(left: 10),
+                padding: EdgeInsets.only(left: 30),
                 
-                alignment: Alignment.center,
+                // alignment: Alignment.center,
                 width: 280,
-                child: Text('Joylan Water Refilling Station', style:TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Color(0xff0eb4f3)), textAlign: TextAlign.center,))
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Joylan Water Refilling Station', style:TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Color(0xff0eb4f3)),),
+                    Text('Followers 46', textAlign: TextAlign.left, style: TextStyle(fontFamily: 'Times New Roman', 
+                    fontSize: 15, fontWeight: FontWeight.w500),)
+                  ],
+                ))
             ],
           ),
           Container(child: Row(

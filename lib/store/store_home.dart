@@ -154,19 +154,256 @@ class _StoreHomeState extends State<StoreHome> {
                                     SizedBox(
                                       width: 9,
                                     ),
-                                    Container(
-                                      height: 80,
-                                      width: 70,
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        "View\nOrders",
-                                        style: TextStyle(
-                                          fontFamily: 'Poppins',
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.bold,
-                                          color: Color(0xff0eb4f3),
+                                    GestureDetector(
+                                      onTap: () => showDialog<String>(
+                                    context: context,
+                                    builder: (BuildContext context) =>
+                                        AlertDialog(
+                                      contentPadding: EdgeInsets.only(
+                                          top: 30, left: 10, right: 10, bottom: 20),
+                                      backgroundColor: Colors.white,
+                                      content: SingleChildScrollView(
+                                        child: ListBody(
+                                          children: <Widget>[
+                                            Row(
+                                              children: [
+                                                Container(
+                                                    child: Image.asset(
+                                                  "images/profile.png",
+                                                  height: 120,
+                                                )),
+                                                SizedBox(
+                                                  width: 10,
+                                                ),
+                                                Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceEvenly,
+                                                  children: [
+                                                    Container(
+                                                      constraints:
+                                                          BoxConstraints(
+                                                              maxWidth: 230),
+                                                      child: Text(
+                                                          "Adrian Jones Abache",
+                                                          style: TextStyle(
+                                                              fontFamily:
+                                                                  'Times New Roman',
+                                                              fontSize: 15),
+                                                          overflow: TextOverflow
+                                                              .ellipsis),
+                                                    ),
+                                                    Container(
+                                                      constraints:
+                                                          BoxConstraints(
+                                                              maxWidth: 250),
+                                                      child: Text(
+                                                        "Barangay 2, Em's Barrio South, Legazpi City",
+                                                        style: TextStyle(
+                                                            fontFamily:
+                                                                'Times New Roman',
+                                                            fontSize: 15),
+                                                      ),
+                                                    ),
+                                                    Container(
+                                                      constraints:
+                                                          BoxConstraints(
+                                                              maxWidth: 230),
+                                                      child: Text("09954464587",
+                                                          style: TextStyle(
+                                                              fontFamily:
+                                                                  'Times New Roman',
+                                                              fontSize: 15),
+                                                          overflow: TextOverflow
+                                                              .ellipsis),
+                                                    )
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                            SizedBox(
+                                              height: 10,
+                                            ),
+                                            Text(
+                                              'Orders',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 20),
+                                              textAlign: TextAlign.left,
+                                            ),
+                                            SizedBox(
+                                              height: 10,
+                                            ),
+                                            Container(
+                                              padding: EdgeInsets.only(bottom: 15),
+                                              child: Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: [
+                                                  Container(
+                                                    height: 100,
+                                                    padding: EdgeInsets.all(5),
+                                                    decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                                20),
+                                                        color: Color.fromARGB(
+                                                            0, 0, 0, 0),
+                                                        border: Border.all(
+                                                          width: 3,
+                                                          color:
+                                                              Color(0xff0EB4F3),
+                                                        )),
+                                                    child: ClipRRect(
+                                                      child: Image.asset(
+                                                        "images/round.png",
+                                                        height: 90,
+                                                        width: 90,
+                                                        fit: BoxFit.cover,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 16.0,
+                                                  ),
+                                                  Column(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceEvenly,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment.start,
+                                                    children: [
+                                                      Container(
+                                                          child: Text(
+                                                              "New Round Container w/ water x1",
+                                                              style: TextStyle(
+                                                                  fontFamily:
+                                                                      "Times New Roman",
+                                                                  fontSize: 12,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w800))),
+                                                      Container(
+                                                          child: Text(
+                                                              "Php " +
+                                                                  "230.00" +
+                                                                  "     |     " +
+                                                                  "Deliver",
+                                                              style: TextStyle(
+                                                                  fontFamily:
+                                                                      "Callibri",
+                                                                  fontSize: 14,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400))),
+                                                      Container(
+                                                          child: Text(
+                                                              "Undelivered",
+                                                              style: TextStyle(
+                                                                  fontFamily:
+                                                                      "Callibri",
+                                                                  fontSize: 15,
+                                                                  color: Color(
+                                                                      0xffff3131)))),
+                                                    ],
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                            Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                Container(
+                                                  height: 100,
+                                                  padding: EdgeInsets.all(5),
+                                                  decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              20),
+                                                      color: Color.fromARGB(
+                                                          0, 0, 0, 0),
+                                                      border: Border.all(
+                                                        width: 3,
+                                                        color:
+                                                            Color(0xff0EB4F3),
+                                                      )),
+                                                  child: ClipRRect(
+                                                    child: Image.asset(
+                                                      "images/round.png",
+                                                      height: 90,
+                                                      width: 90,
+                                                      fit: BoxFit.cover,
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  width: 16.0,
+                                                ),
+                                                Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceEvenly,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Container(
+                                                        child: Text(
+                                                            "New Round Container w/ water x1",
+                                                            style: TextStyle(
+                                                                fontFamily:
+                                                                    "Times New Roman",
+                                                                fontSize: 12,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w800))),
+                                                    Container(
+                                                        child: Text(
+                                                            "Php " +
+                                                                "230.00" +
+                                                                "     |     " +
+                                                                "Deliver",
+                                                            style: TextStyle(
+                                                                fontFamily:
+                                                                    "Callibri",
+                                                                fontSize: 14,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400))),
+                                                    Container(
+                                                        child: Text(
+                                                            "Undelivered",
+                                                            style: TextStyle(
+                                                                fontFamily:
+                                                                    "Callibri",
+                                                                fontSize: 15,
+                                                                color: Color(
+                                                                    0xffff3131)))),
+                                                  ],
+                                                )
+                                              ],
+                                            ),
+                                          ],
                                         ),
-                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  ),
+                                      child: Container(
+                                        height: 80,
+                                        width: 70,
+                                        alignment: Alignment.center,
+                                        child: Text(
+                                          "View\nOrders",
+                                          style: TextStyle(
+                                            fontFamily: 'Poppins',
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
+                                            color: Color(0xff0eb4f3),
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
                                       ),
                                     )
                                   ],

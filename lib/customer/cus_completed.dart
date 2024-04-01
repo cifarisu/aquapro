@@ -1,6 +1,8 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
 
+import "package:flutter/cupertino.dart";
 import "package:flutter/material.dart";
+import 'package:rating_dialog/rating_dialog.dart';
 
 class cusCompleted extends StatefulWidget {
   const cusCompleted({super.key});
@@ -83,17 +85,28 @@ class _cusCompletedState extends State<cusCompleted> {
                                       ),
                                   ),
                                   SizedBox(width: 40.0,),
-                                  Text(
-                                      "RATE",
-                                      style: TextStyle(
-                                        fontFamily: 'Callibri',
-                                        fontSize: 14,
-                                        color: Color(0xffff3131),
-                                        decoration: TextDecoration.underline,
-                                        decorationColor: Color(0xffff3131),
-                                        decorationThickness: 2 ,
-                                        fontWeight: FontWeight.w400
-                                      ),
+                                  GestureDetector(
+                                    onTap: () => showDialog(
+                                                context: context,
+                                                builder: (context) => RatingDialog(title: Text('Rate Us!', textAlign: TextAlign.center,), 
+                                                enableComment: false,
+                                                submitButtonText: 'Submit', 
+                                                onSubmitted: (response) {print('submitted');},
+                                                showCloseButton: true,
+                                                )
+                                              ),
+                                    child: Text(
+                                        "RATE",
+                                        style: TextStyle(
+                                          fontFamily: 'Callibri',
+                                          fontSize: 14,
+                                          color: Color(0xffff3131),
+                                          decoration: TextDecoration.underline,
+                                          decorationColor: Color(0xffff3131),
+                                          decorationThickness: 2 ,
+                                          fontWeight: FontWeight.w400
+                                        ),
+                                    ),
                                   ),
                                   SizedBox(width: 115.0,),
                                 ],

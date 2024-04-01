@@ -1,4 +1,5 @@
 import "package:aquapro/widget/widget_support.dart";
+import "package:flutter/cupertino.dart";
 import "package:flutter/material.dart";
 
 class cusToPay extends StatefulWidget {
@@ -74,26 +75,104 @@ class _cusToPayState extends State<cusToPay> {
                              SizedBox(height: 10.0,),
                               Row(
                                 children: [
-                                  Container(
-                                    width: 100,
-                                    padding: EdgeInsets.only(left: 5, right: 5),
-                                   decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(30),
-                                    color: Color.fromARGB(0, 0, 0, 0),
-                                      border: Border.all(
-                                        width: 2,
-                                        color: Color(0xffff3131),
-                                      )),
-                                    child:  Center(
-                                    child: Text(
-                                      "CANCEL",
-                                      style: TextStyle(
-                                        fontFamily: 'Callibri',
-                                        fontSize: 13,
-                                        color: Color(0xffff3131)
+                                  GestureDetector(
+                                    onTap: () => showDialog<String>(
+              context: context,
+              builder: (BuildContext context) => AlertDialog(
+                actionsPadding: EdgeInsets.only(bottom: 10),
+                contentPadding: EdgeInsets.only(top: 30),
+                backgroundColor: Colors.white,
+                content: SingleChildScrollView(
+                  child: ListBody(
+                    children: <Widget>[
+                      Container(
+                        alignment: Alignment.center,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Are you sure you want to',
+                              style: TextStyle(fontSize: 17),
+                              textAlign: TextAlign.center,
+                            ),
+                            Text(
+                              " Cancel",
+                              style: TextStyle(
+                                  fontSize: 17, color: Color(0xffff3131)),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Text(
+                        'your order?',
+                        style: TextStyle(fontSize: 17),
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: 2,
+                        color: Color(0xffbfbdbc),
+                      )
+                    ],
+                  ),
+                ),
+                actions: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, 'Continue'),
+                        child: Text(
+                          'Continue',
+                          style: TextStyle(
+                            color: Color(0xff0eb4f3),
+                            fontSize: 20,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, 'Cancel'),
+                        child: Text(
+                          'Cancel',
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontSize: 20,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+                                    child: Container(
+                                      width: 100,
+                                      padding: EdgeInsets.only(left: 5, right: 5),
+                                     decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(30),
+                                      color: Color.fromARGB(0, 0, 0, 0),
+                                        border: Border.all(
+                                          width: 2,
+                                          color: Color(0xffff3131),
+                                        )),
+                                      child:  Center(
+                                      child: Text(
+                                        "CANCEL",
+                                        style: TextStyle(
+                                          fontFamily: 'Callibri',
+                                          fontSize: 13,
+                                          color: Color(0xffff3131)
+                                        ),
                                       ),
                                     ),
-                                  ),
+                                    ),
                                   ),
                                   SizedBox(width: 210.0,),
                                 ],

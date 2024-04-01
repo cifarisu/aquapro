@@ -146,8 +146,14 @@ class _cusProfileState extends State<cusProfile> {
                   right: 5,
                   child: Icon(Icons.photo_camera,
                       size: 50, color: Color(0xff0eb4f3)),
-                )
+                ),
+                
               ],
+            ),
+            Container(
+              alignment: Alignment.topLeft,
+              child: Text("Following 0", textAlign: TextAlign.left, style: TextStyle(fontFamily: 'Times New Roman',
+              fontSize: 15, fontWeight: FontWeight.w500),),
             ),
             Container(
               child: Row(
