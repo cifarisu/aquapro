@@ -1,6 +1,8 @@
 import 'package:aquapro/customer/cart.dart';
 import 'package:aquapro/customer/cus_maps.dart';
 import 'package:aquapro/widget/widget_support.dart';
+import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore
+import 'package:firebase_auth/firebase_auth.dart'; // Import FirebaseAuth
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -36,7 +38,8 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
     _tabController = TabController(length: 2, vsync: this);
   }
 
-  int quantity = 1;
+  Map<String, int> deliverQuantities = {};
+  Map<String, int> pickupQuantities = {};
 
   @override
   Widget build(BuildContext context) {
@@ -289,6 +292,7 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                           String productName = product['name'];
                           double productPrice = product['price'];
                           String productImageUrl = product['url'];
+                          int quantity = deliverQuantities[productName] ?? 0;
                           return Container(
                             padding: EdgeInsets.all(8),
                             child: Row(
@@ -352,152 +356,9 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                                         Row(
                                           children: [
                                             GestureDetector(
-                                              onTap: () => showDialog<String>(
-                                                context: context,
-                                                builder:
-                                                    (BuildContext context) =>
-                                                        AlertDialog(
-                                                  actionsPadding:
-                                                      EdgeInsets.only(
-                                                          bottom: 10),
-                                                  contentPadding:
-                                                      EdgeInsets.only(top: 30),
-                                                  backgroundColor: Colors.white,
-                                                  content:
-                                                      SingleChildScrollView(
-                                                    child: ListBody(
-                                                      children: <Widget>[
-                                                        Text(
-                                                          'Are you sure you want to buy the',
-                                                          style: TextStyle(
-                                                              fontSize: 17),
-                                                          textAlign:
-                                                              TextAlign.center,
-                                                        ),
-                                                        Text(
-                                                          quantity.toString() +
-                                                              " " +
-                                                              productName,
-                                                          style: TextStyle(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              fontSize: 17),
-                                                          textAlign:
-                                                              TextAlign.center,
-                                                        ),
-                                                        SizedBox(
-                                                          height: 10,
-                                                        ),
-                                                        Container(
-                                                          width: MediaQuery.of(
-                                                                  context)
-                                                              .size
-                                                              .width,
-                                                          height: 2,
-                                                          color:
-                                                              Color(0xffbfbdbc),
-                                                        )
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  actions: <Widget>[
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceEvenly,
-                                                      children: [
-                                                        TextButton(
-                                                          onPressed: () =>
-                                                              Navigator.pop(
-                                                                  context,
-                                                                  'Continue'),
-                                                          child: Text(
-                                                            'Continue',
-                                                            style: TextStyle(
-                                                              color: Color(
-                                                                  0xff0eb4f3),
-                                                              fontSize: 20,
-                                                            ),
-                                                            textAlign: TextAlign
-                                                                .center,
-                                                          ),
-                                                        ),
-                                                        TextButton(
-                                                          onPressed: () =>
-                                                              Navigator.pop(
-                                                                  context,
-                                                                  'Cancel'),
-                                                          child: Text(
-                                                            'Cancel',
-                                                            style: TextStyle(
-                                                              color: Colors.red,
-                                                              fontSize: 20,
-                                                            ),
-                                                            textAlign: TextAlign
-                                                                .center,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                              child: Container(
-                                                width: 77,
-                                                height: 28,
-                                                alignment: Alignment.center,
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(15),
-                                                  border: Border.all(
-                                                    color: Color(0xff0eb4f3),
-                                                    width: 2,
-                                                  ),
-                                                ),
-                                                child: Text(
-                                                  "Buy Now",
-                                                  style: TextStyle(
-                                                    fontSize: 12,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Color(0xff0eb4f3),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              width: 10,
-                                            ),
-                                            GestureDetector(
-                                              onTap: () => showDialog(
-                                                context: context,
-                                                builder: (context) {
-                                                  // Schedule a delayed dismissal of the alert dialog after 3 seconds
-                                                  Future.delayed(
-                                                      Duration(seconds: 3), () {
-                                                    Navigator.of(context)
-                                                        .pop(); // Close the dialog
-                                                  });
-
-                                                  // Return the AlertDialog widget
-                                                  return AlertDialog(
-                                                    title: Row(
-                                                      children: [
-                                                        Text("Added to Cart"),
-                                                        Icon(Icons.done_rounded, color: Color(0xff0eb4f3),
-                                                        size: 60, )
-                                                      ],
-                                                    ),
-                                                    shape: RoundedRectangleBorder(
-                                                        side: BorderSide(
-                                                            color: Color(0xff0eb4f3), width: 3),
-                                                        borderRadius:
-                                                            BorderRadius.all(
-                                                                Radius.circular(
-                                                                    35))),
-                                                  );
-                                                },
-                                              ),
+                                              onTap: () {
+                                                _addToCart(widget.name, productName, quantity, productPrice, 'deliver', productImageUrl);
+                                              },
                                               child: Container(
                                                 width: 95,
                                                 height: 28,
@@ -520,41 +381,45 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                                                 ),
                                               ),
                                             ),
-                                            SizedBox(
-                                              width: 10,
-                                            ),
+                                            SizedBox(width: 10),
                                             GestureDetector(
-                                                onTap: () {
-                                                  if (quantity > 0) {
-                                                    --quantity;
-                                                  }
-
-                                                  setState(() {});
-                                                },
-                                                child: Container(
-                                                    child: Icon(
+                                              onTap: () {
+                                                if (quantity > 0) {
+                                                  setState(() {
+                                                    deliverQuantities[productName] =
+                                                        quantity - 1;
+                                                  });
+                                                }
+                                              },
+                                              child: Container(
+                                                child: Icon(
                                                   Icons.remove,
                                                   size: 20,
-                                                ))),
+                                                ),
+                                              ),
+                                            ),
                                             Container(
-                                                alignment: Alignment.center,
-                                                width: 45,
-                                                child: Text(quantity.toString(),
-                                                    style: TextStyle(
-                                                        fontFamily: 'Poppins',
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                        fontSize: 15))),
+                                              alignment: Alignment.center,
+                                              width: 45,
+                                              child: Text(quantity.toString(),
+                                                  style: TextStyle(
+                                                      fontFamily: 'Poppins',
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      fontSize: 15))),
                                             GestureDetector(
-                                                onTap: () {
-                                                  ++quantity;
-                                                  setState(() {});
-                                                },
-                                                child: Container(
-                                                    child: Icon(
-                                                  Icons.add,
-                                                  size: 25,
-                                                )))
+                                              onTap: () {
+                                                setState(() {
+                                                  deliverQuantities[productName] =
+                                                      quantity + 1;
+                                                });
+                                              },
+                                              child: Container(
+                                                  child: Icon(
+                                                Icons.add,
+                                                size: 25,
+                                              )),
+                                            )
                                           ],
                                         )
                                       ],
@@ -574,6 +439,7 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                           String productName = product['name'];
                           double productPrice = product['price'];
                           String productImageUrl = product['url'];
+                          int quantity = pickupQuantities[productName] ?? 0;
                           return Container(
                             padding: EdgeInsets.only(top: 8, bottom: 8),
                             child: Row(
@@ -641,152 +507,9 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                                         Row(
                                           children: [
                                             GestureDetector(
-                                              onTap: () => showDialog<String>(
-                                                context: context,
-                                                builder:
-                                                    (BuildContext context) =>
-                                                        AlertDialog(
-                                                  actionsPadding:
-                                                      EdgeInsets.only(
-                                                          bottom: 10),
-                                                  contentPadding:
-                                                      EdgeInsets.only(top: 30),
-                                                  backgroundColor: Colors.white,
-                                                  content:
-                                                      SingleChildScrollView(
-                                                    child: ListBody(
-                                                      children: <Widget>[
-                                                        Text(
-                                                          'Are you sure you want to reserve the',
-                                                          style: TextStyle(
-                                                              fontSize: 17),
-                                                          textAlign:
-                                                              TextAlign.center,
-                                                        ),
-                                                        Text(
-                                                          quantity.toString() +
-                                                              " " +
-                                                              productName,
-                                                          style: TextStyle(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              fontSize: 17),
-                                                          textAlign:
-                                                              TextAlign.center,
-                                                        ),
-                                                        SizedBox(
-                                                          height: 10,
-                                                        ),
-                                                        Container(
-                                                          width: MediaQuery.of(
-                                                                  context)
-                                                              .size
-                                                              .width,
-                                                          height: 2,
-                                                          color:
-                                                              Color(0xffbfbdbc),
-                                                        )
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  actions: <Widget>[
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceEvenly,
-                                                      children: [
-                                                        TextButton(
-                                                          onPressed: () =>
-                                                              Navigator.pop(
-                                                                  context,
-                                                                  'Continue'),
-                                                          child: Text(
-                                                            'Continue',
-                                                            style: TextStyle(
-                                                              color: Color(
-                                                                  0xff0eb4f3),
-                                                              fontSize: 20,
-                                                            ),
-                                                            textAlign: TextAlign
-                                                                .center,
-                                                          ),
-                                                        ),
-                                                        TextButton(
-                                                          onPressed: () =>
-                                                              Navigator.pop(
-                                                                  context,
-                                                                  'Cancel'),
-                                                          child: Text(
-                                                            'Cancel',
-                                                            style: TextStyle(
-                                                              color: Colors.red,
-                                                              fontSize: 20,
-                                                            ),
-                                                            textAlign: TextAlign
-                                                                .center,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                              child: Container(
-                                                width: 105,
-                                                height: 28,
-                                                alignment: Alignment.center,
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(15),
-                                                  border: Border.all(
-                                                    color: Color(0xff0eb4f3),
-                                                    width: 2,
-                                                  ),
-                                                ),
-                                                child: Text(
-                                                  "Reserve Now",
-                                                  style: TextStyle(
-                                                    fontSize: 12,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Color(0xff0eb4f3),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              width: 10,
-                                            ),
-                                            GestureDetector(
-                                              onTap: () => showDialog(
-                                                context: context,
-                                                builder: (context) {
-                                                  // Schedule a delayed dismissal of the alert dialog after 3 seconds
-                                                  Future.delayed(
-                                                      Duration(seconds: 3), () {
-                                                    Navigator.of(context)
-                                                        .pop(); // Close the dialog
-                                                  });
-
-                                                  // Return the AlertDialog widget
-                                                  return AlertDialog(
-                                                    title: Row(
-                                                      children: [
-                                                        Text("Added to Cart"),
-                                                        Icon(Icons.done_rounded, color: Color(0xff0eb4f3),
-                                                        size: 60, )
-                                                      ],
-                                                    ),
-                                                    shape: RoundedRectangleBorder(
-                                                        side: BorderSide(
-                                                            color: Color(0xff0eb4f3), width: 3),
-                                                        borderRadius:
-                                                            BorderRadius.all(
-                                                                Radius.circular(
-                                                                    35))),
-                                                  );
-                                                },
-                                              ),
+                                              onTap: () {
+                                                _addToCart(widget.name, productName, quantity, productPrice, 'pickup', productImageUrl);
+                                              },
                                               child: Container(
                                                 width: 95,
                                                 height: 28,
@@ -809,41 +532,46 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                                                 ),
                                               ),
                                             ),
-                                            SizedBox(
-                                              width: 10,
-                                            ),
+                                            SizedBox(width: 10),
                                             GestureDetector(
-                                                onTap: () {
-                                                  if (quantity > 0) {
-                                                    --quantity;
-                                                  }
-
-                                                  setState(() {});
-                                                },
-                                                child: Container(
-                                                    child: Icon(
+                                              onTap: () {
+                                                if (quantity > 0) {
+                                                  setState(() {
+                                                    pickupQuantities[productName] =
+                                                        quantity - 1;
+                                                  });
+                                                }
+                                              },
+                                              child: Container(
+                                                child: Icon(
                                                   Icons.remove,
                                                   size: 18,
-                                                ))),
+                                                ),
+                                              ),
+                                            ),
                                             Container(
-                                                alignment: Alignment.center,
-                                                width: 40,
-                                                child: Text(quantity.toString(),
-                                                    style: TextStyle(
-                                                        fontFamily: 'Poppins',
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                        fontSize: 14))),
+                                              alignment: Alignment.center,
+                                              width: 40,
+                                              child: Text(quantity.toString(),
+                                                  style: TextStyle(
+                                                      fontFamily: 'Poppins',
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      fontSize: 14))),
                                             GestureDetector(
-                                                onTap: () {
-                                                  ++quantity;
-                                                  setState(() {});
-                                                },
-                                                child: Container(
-                                                    child: Icon(
+                                              onTap: () {
+                                                setState(() {
+                                                  pickupQuantities[productName] =
+                                                      quantity + 1;
+                                                });
+                                              },
+                                              child: Container(
+                                                child: Icon(
                                                   Icons.add,
                                                   size: 22,
-                                                )))
+                                                ),
+                                              ),
+                                            )
                                           ],
                                         )
                                       ],
@@ -871,5 +599,88 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
         .where((product) =>
             product['type'] == type || product['type'] == 'deliver&pickup')
         .toList();
+  }
+
+  void _addToCart(String storeName, String productName, int quantity, double productPrice, String type, String imageUrl) async {
+    try {
+      // Get the currently logged-in user
+      User? user = FirebaseAuth.instance.currentUser;
+
+      // Check if the user is authenticated
+      if (user != null) {
+        // Get the user ID
+        String userId = user.uid;
+
+        // Generate a unique identifier for each cart item
+        String cartItemId = '$storeName-$productName';
+
+        // Add to Firestore
+        final cartRef = FirebaseFirestore.instance
+            .collection('Customer')
+            .doc(userId)
+            .collection('Cart');
+
+        // Check if the product exists in the cart
+        final productDoc = cartRef.doc(cartItemId);
+        final productSnapshot = await productDoc.get();
+
+        if (productSnapshot.exists) {
+          // If the product exists, update its quantity
+          await productDoc.update({
+            'quantity': FieldValue.increment(quantity),
+            'price': productPrice,
+            'storeName': storeName,
+            'type': type,
+            'name': productName, // Adding the name field
+            'url': imageUrl, // Adding the URL field
+          });
+        } else {
+          // If the product doesn't exist, add it to the cart
+          await productDoc.set({
+            'quantity': quantity,
+            'price': productPrice,
+            'storeName': storeName,
+            'type': type,
+            'name': productName, // Adding the name field
+            'url': imageUrl, // Adding the URL field
+          });
+        }
+
+        // Show confirmation dialog
+        showDialog(
+          context: context,
+          builder: (context) {
+            // Schedule a delayed dismissal of the alert dialog after 3 seconds
+            Future.delayed(Duration(seconds: 3), () {
+              Navigator.of(context).pop(); // Close the dialog
+            });
+
+            // Return the AlertDialog widget
+            return AlertDialog(
+              title: Row(
+                children: [
+                  Text("Added to Cart"),
+                  Icon(
+                    Icons.done_rounded,
+                    color: Color(0xff0eb4f3),
+                    size: 60,
+                  )
+                ],
+              ),
+              shape: RoundedRectangleBorder(
+                  side: BorderSide(color: Color(0xff0eb4f3), width: 3),
+                  borderRadius: BorderRadius.all(Radius.circular(35))),
+            );
+          },
+        );
+      } else {
+        // If the user is not authenticated, you can handle it accordingly
+        print("User not authenticated");
+      }
+    } catch (error, stackTrace) {
+      // Print the error and stack trace
+      print('Error: $error');
+      print('Stack Trace: $stackTrace');
+    }
   }
 }
