@@ -7,7 +7,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-
 void main() {
   runApp(MyApp());
 }
@@ -118,61 +117,61 @@ class _StoreRegState extends State<StoreReg> {
     });
   }
 
-Future uploadImageToFirebase(BuildContext context) async {
-  try {
-    if (_image == null) {
-      print('No image selected.');
-      return;
-    }
+  Future uploadImageToFirebase(BuildContext context) async {
+    try {
+      if (_image == null) {
+        print('No image selected.');
+        return;
+      }
 
-    String fileName = _image!.path.split('/').last;
-    Reference firebaseStorageRef = FirebaseStorage.instance.ref().child('Stores_images/$fileName');
-    UploadTask uploadTask = firebaseStorageRef.putFile(_image!);
-    TaskSnapshot taskSnapshot = await uploadTask;
-    String imageUrl = await taskSnapshot.ref.getDownloadURL();
+      String fileName = _image!.path.split('/').last;
+      Reference firebaseStorageRef = FirebaseStorage.instance.ref().child('Stores_images/$fileName');
+      UploadTask uploadTask = firebaseStorageRef.putFile(_image!);
+      TaskSnapshot taskSnapshot = await uploadTask;
+      String imageUrl = await taskSnapshot.ref.getDownloadURL();
 
-    print("Done: $imageUrl");
-    final userId = FirebaseAuth.instance.currentUser!.uid;
-    GeoPoint coordinates = GeoPoint(latitude, longitude);
+      print("Done: $imageUrl");
+      final userId = FirebaseAuth.instance.currentUser!.uid;
+      GeoPoint coordinates = GeoPoint(latitude, longitude);
 
-    DocumentReference storeRef = FirebaseFirestore.instance.collection('Store').doc(userId);
+      DocumentReference storeRef = FirebaseFirestore.instance.collection('Store').doc(userId);
 
-    await storeRef.set({
-      'id': userId,
-      'address': address,
-      'contact': contact,
-      'email': email,
-      'name': name,
-      'time': time,
-      'url': imageUrl,
-      'coordinates': coordinates,
-    });
-
-    await FirebaseAuth.instance.currentUser!.updateEmail(email);
-
-    CollectionReference productsRef = storeRef.collection('Products');
-
-    for (var product in products) {
-      await productsRef.doc(product.name).set({
-        'price': product.price,
-        'type': product.type,
-        'url': product.url,
+      await storeRef.set({
+        'id': userId,
+        'address': address,
+        'contact': contact,
+        'email': email,
+        'name': name,
+        'time': time,
+        'url': imageUrl,
+        'coordinates': coordinates,
       });
+
+      await FirebaseAuth.instance.currentUser!.updateEmail(email);
+
+      CollectionReference productsRef = storeRef.collection('Products');
+
+      for (var product in products) {
+        await productsRef.doc(product.name).set({
+          'name': product.name,
+          'price': product.price,
+          'type': product.type,
+          'url': product.url,
+        });
+      }
+
+      print('Upload successful');
+
+      // Navigate to login page
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => LogIn()),
+      );
+    } catch (e, stackTrace) {
+      print('Error uploading image: $e');
+      print('Stack trace: $stackTrace');
     }
-
-    print('Upload successful');
-
-    // Navigate to login page
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => LogIn()),
-    );
-  } catch (e, stackTrace) {
-    print('Error uploading image: $e');
-    print('Stack trace: $stackTrace');
   }
-}
-
 
   @override
   Widget build(BuildContext context) {

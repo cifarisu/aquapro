@@ -1,11 +1,10 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Cart extends StatefulWidget {
-  const Cart({super.key});
+  const Cart({Key? key});
 
   @override
   State<Cart> createState() => _CartState();
@@ -14,16 +13,165 @@ class Cart extends StatefulWidget {
 class _CartState extends State<Cart> with TickerProviderStateMixin {
   late TabController _tabController;
 
+  String? currentUserId;
+
+  Map<String, bool> selectedItems = {};
+  double totalPrice = 0.0;
+
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    getCurrentUserId();
+  }
+
+  void getCurrentUserId() {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      setState(() {
+        currentUserId = user.uid;
+      });
+    }
+  }
+
+  Future<void> updateQuantity(String docId, int newQuantity) async {
+    await FirebaseFirestore.instance
+        .collection('Customer')
+        .doc(currentUserId)
+        .collection('Cart')
+        .doc(docId)
+        .update({'quantity': newQuantity});
+  }
+
+  Future<void> deleteProduct(String docId) async {
+    await FirebaseFirestore.instance
+        .collection('Customer')
+        .doc(currentUserId)
+        .collection('Cart')
+        .doc(docId)
+        .delete();
+  }
+
+  Widget _buildCartItem(String docId, String url, String name, int quantity, double price, String type) {
+    return Container(
+      padding: EdgeInsets.only(bottom: 10, left: 15, top: 10),
+      color: Colors.white,
+      child: Row(
+        children: [
+          Checkbox(
+            value: selectedItems.containsKey(docId) ? selectedItems[docId] : false,
+            onChanged: (bool? value) {
+              setState(() {
+                selectedItems[docId] = value!;
+                if (value == true) {
+                  // Item is checked, add its price to the total
+                  totalPrice += quantity * price;
+                } else {
+                  // Item is unchecked, subtract its price from the total
+                  totalPrice -= quantity * price;
+                }
+              });
+            },
+            checkColor: Colors.white,
+            activeColor: Color(0xff0eb4f3),
+          ),
+          Container(
+            height: 120,
+            padding: EdgeInsets.all(5),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              color: Color.fromARGB(0, 0, 0, 0),
+              border: Border.all(
+                width: 3,
+                color: Color(0xff0EB4F3),
+              ),
+            ),
+            child: ClipRRect(
+              child: Image.network(
+                url,
+                fit: BoxFit.fitHeight,
+              ),
+            ),
+          ),
+          SizedBox(width: 15),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                name,
+                style: TextStyle(
+                  fontFamily: "Times New Roman",
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Row(
+                children: [
+                  IconButton(
+                    onPressed: () async { // Make the onPressed function asynchronous
+                      setState(() {
+                        // Decrease quantity
+                        if (quantity > 1) {
+                          quantity--;
+                          // Update the quantity in Firestore and wait for it to complete
+                          updateQuantity(docId, quantity).then((_) {
+                            // Update the local state after the Firestore update is completed
+                            setState(() {});
+                          });
+                        }
+                      });
+                    },
+                    icon: Icon(Icons.remove),
+                  ),
+                  Text(
+                    '$quantity',
+                    style: TextStyle(
+                      fontFamily: "Times New Roman",
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () async { // Make the onPressed function asynchronous
+                      setState(() {
+                        // Increase quantity
+                        quantity++;
+                        // Update the quantity in Firestore and wait for it to complete
+                        updateQuantity(docId, quantity).then((_) {
+                          // Update the local state after the Firestore update is completed
+                          setState(() {});
+                        });
+                      });
+                    },
+                    icon: Icon(Icons.add),
+                  ),
+                ],
+              ),
+              Text("$price PHP | $type")
+            ],
+          ),
+          IconButton(
+            onPressed: () {
+              setState(() {
+                deleteProduct(docId);
+              });
+            },
+            icon: Column(
+              children: [
+                Icon(
+                  Icons.delete_outlined,
+                  size: 25,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    bool? isChecked = false;
-
     return Scaffold(
       appBar: AppBar(
         shadowColor: const Color.fromARGB(0, 0, 0, 0),
@@ -46,105 +194,6 @@ class _CartState extends State<Cart> with TickerProviderStateMixin {
           ),
         ),
         titleSpacing: 0,
-        actions: [
-          GestureDetector(
-            onTap: () => showDialog<String>(
-              context: context,
-              builder: (BuildContext context) => AlertDialog(
-                actionsPadding: EdgeInsets.only(bottom: 10),
-                contentPadding: EdgeInsets.only(top: 30),
-                backgroundColor: Colors.white,
-                content: SingleChildScrollView(
-                  child: ListBody(
-                    children: <Widget>[
-                      Container(
-                        alignment: Alignment.center,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              'Are you sure you want to',
-                              style: TextStyle(fontSize: 17),
-                              textAlign: TextAlign.center,
-                            ),
-                            Text(
-                              " Delete",
-                              style: TextStyle(
-                                  fontSize: 17, color: Color(0xffff3131)),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        ),
-                      ),
-                      Text(
-                        'the selected Item/s',
-                        style: TextStyle(fontSize: 17),
-                        textAlign: TextAlign.center,
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Container(
-                        width: MediaQuery.of(context).size.width,
-                        height: 2,
-                        color: Color(0xffbfbdbc),
-                      )
-                    ],
-                  ),
-                ),
-                actions: <Widget>[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context, 'Continue'),
-                        child: Text(
-                          'Continue',
-                          style: TextStyle(
-                            color: Color(0xff0eb4f3),
-                            fontSize: 20,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: () => Navigator.pop(context, 'Cancel'),
-                        child: Text(
-                          'Cancel',
-                          style: TextStyle(
-                            color: Colors.red,
-                            fontSize: 20,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            child: Container(
-              padding: EdgeInsets.only(right: 20, top: 5),
-              child: Column(
-                children: [
-                  Icon(
-                    Icons.delete_outlined,
-                    size: 45,
-                  ),
-                  Text(
-                    'Delete',
-                    style: TextStyle(
-                      fontFamily: 'Poppins',
-                      fontSize: 13,
-                    ),
-                    textAlign: TextAlign.start,
-                  )
-                ],
-              ),
-            ),
-          )
-        ],
         toolbarHeight: 90,
         shape: Border(bottom: BorderSide(color: Color(0xffbfbdbc), width: 2)),
       ),
@@ -152,431 +201,178 @@ class _CartState extends State<Cart> with TickerProviderStateMixin {
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
         color: Color(0xfff2f2f2),
-        child: StatefulBuilder(
-            builder: (BuildContext context, StateSetter setState) {
-          return Column(
-            children: [
-              SizedBox(
-                height: 15,
-              ),
-              Expanded(
-                child: ListView(
-                  children: [
-                    StatefulBuilder(
-                        builder: (BuildContext context, StateSetter setState) {
-                      return Container(
-                        padding: EdgeInsets.only(bottom: 10, left: 15, top: 10),
-                        color: Colors.white,
-                        child: Column(
-                          children: [
-                            Row(
-                              children: [
-                                Transform.scale(
-                                  scale: 1.3,
-                                  child: Checkbox(
-                                    value: isChecked,
-                                    onChanged: (bool? value) {
-                                      setState(() {
-                                        isChecked = value!;
-                                      });
-                                    },
-                                    checkColor: Colors.white,
-                                    activeColor: Color(0xff0eb4f3),
-                                  ),
-                                ),
-                                Text(
-                                  'Joylan Water Refilling Station',
-                                  style: TextStyle(
-                                      fontFamily: 'Times New Roman',
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold),
-                                )
-                              ],
-                            ),
-                            Container(
-                              padding: EdgeInsets.only(top: 10, bottom: 10),
-                              child: Row(
-                                children: [
-                                  StatefulBuilder(builder:
-                                      (BuildContext context,
-                                          StateSetter setState) {
-                                    return Transform.scale(
-                                      scale: 1.3,
-                                      child: Checkbox(
-                                        value: isChecked,
-                                        onChanged: (bool? value) {
-                                          setState(() {
-                                            isChecked = value!;
-                                          });
-                                        },
-                                        checkColor: Colors.white,
-                                        activeColor: Color(0xff0eb4f3),
-                                      ),
-                                    );
-                                  }),
-                                  Container(
-                                    height: 120,
-                                    padding: EdgeInsets.all(5),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(20),
-                                      color: Color.fromARGB(0, 0, 0, 0),
-                                      border: Border.all(
-                                        width: 3,
-                                        color: Color(0xff0EB4F3),
-                                      ),
-                                    ),
-                                    child: ClipRRect(
-                                      child: Image.asset(
-                                        'images/round.png', // Changed image path
-                                        fit: BoxFit.fitHeight,
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 15,
-                                  ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "New Slim Container w/ water",
-                                        style: TextStyle(
-                                            fontFamily: "Times New Roman",
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      Text("x1",
-                                          style: TextStyle(
-                                              fontFamily: "Times New Roman",
-                                              fontSize: 13,
-                                              fontWeight: FontWeight.bold)),
-                                      Text("Php 230.00" +
-                                          "     |     " +
-                                          "Deliver")
-                                    ],
-                                  )
-                                ],
-                              ),
-                            ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.only(top: 10, bottom: 10),
-                              child: Row(
-                                children: [
-                                  StatefulBuilder(builder:
-                                      (BuildContext context,
-                                          StateSetter setState) {
-                                    return Transform.scale(
-                                      scale: 1.3,
-                                      child: Checkbox(
-                                        value: isChecked,
-                                        onChanged: (bool? value) {
-                                          setState(() {
-                                            isChecked = value!;
-                                          });
-                                        },
-                                        checkColor: Colors.white,
-                                        activeColor: Color(0xff0eb4f3),
-                                      ),
-                                    );
-                                  }),
-                                  Container(
-                                    height: 120,
-                                    padding: EdgeInsets.all(5),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(20),
-                                      color: Color.fromARGB(0, 0, 0, 0),
-                                      border: Border.all(
-                                        width: 3,
-                                        color: Color(0xff0EB4F3),
-                                      ),
-                                    ),
-                                    child: ClipRRect(
-                                      child: Image.asset(
-                                        'images/round.png', // Changed image path
-                                        fit: BoxFit.fitHeight,
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 15,
-                                  ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "New Slim Container w/ water",
-                                        style: TextStyle(
-                                            fontFamily: "Times New Roman",
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      Text("x1",
-                                          style: TextStyle(
-                                              fontFamily: "Times New Roman",
-                                              fontSize: 13,
-                                              fontWeight: FontWeight.bold)),
-                                      Text("Php 230.00" +
-                                          "     |     " +
-                                          "Pick-up")
-                                    ],
-                                  )
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    StatefulBuilder(
-                        builder: (BuildContext context, StateSetter setState) {
-                      return Container(
-                        padding: EdgeInsets.only(bottom: 10, left: 15, top: 10),
-                        color: Colors.white,
-                        child: Column(
-                          children: [
-                            Row(
-                              children: [
-                                Transform.scale(
-                                  scale: 1.3,
-                                  child: Checkbox(
-                                    value: isChecked,
-                                    onChanged: (bool? value) {
-                                      setState(() {
-                                        isChecked = value!;
-                                      });
-                                    },
-                                    checkColor: Colors.white,
-                                    activeColor: Color(0xff0eb4f3),
-                                  ),
-                                ),
-                                Text(
-                                  'Joylan Water Refilling Station',
-                                  style: TextStyle(
-                                      fontFamily: 'Times New Roman',
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold),
-                                )
-                              ],
-                            ),
-                            Container(
-                              padding: EdgeInsets.only(top: 10, bottom: 10),
-                              child: Row(
-                                children: [
-                                  StatefulBuilder(builder:
-                                      (BuildContext context,
-                                          StateSetter setState) {
-                                    return Transform.scale(
-                                      scale: 1.3,
-                                      child: Checkbox(
-                                        value: isChecked,
-                                        onChanged: (bool? value) {
-                                          setState(() {
-                                            isChecked = value!;
-                                          });
-                                        },
-                                        checkColor: Colors.white,
-                                        activeColor: Color(0xff0eb4f3),
-                                      ),
-                                    );
-                                  }),
-                                  Container(
-                                    height: 120,
-                                    padding: EdgeInsets.all(5),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(20),
-                                      color: Color.fromARGB(0, 0, 0, 0),
-                                      border: Border.all(
-                                        width: 3,
-                                        color: Color(0xff0EB4F3),
-                                      ),
-                                    ),
-                                    child: ClipRRect(
-                                      child: Image.asset(
-                                        'images/round.png', // Changed image path
-                                        fit: BoxFit.fitHeight,
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 15,
-                                  ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "New Slim Container w/ water",
-                                        style: TextStyle(
-                                            fontFamily: "Times New Roman",
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      Text("x1",
-                                          style: TextStyle(
-                                              fontFamily: "Times New Roman",
-                                              fontSize: 13,
-                                              fontWeight: FontWeight.bold)),
-                                      Text("Php 230.00" +
-                                          "     |     " +
-                                          "Deliver")
-                                    ],
-                                  )
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    })
-                  ],
-                ),
-              ),
-              Container(
-                padding: EdgeInsets.only(left: 10, right: 10),
-                height: 80,
-                color: Colors.white,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Transform.scale(
-                          scale: 1.3,
-                          child: Checkbox(
-                            value: isChecked,
-                            onChanged: (bool? value) {
-                              setState(() {
-                                isChecked = value!;
-                              });
-                            },
-                            checkColor: Colors.white,
-                            activeColor: Color(0xff0eb4f3),
+        child: StreamBuilder(
+          stream: FirebaseFirestore.instance
+              .collection('Customer')
+              .doc(currentUserId)
+              .collection('Cart')
+              .snapshots(),
+          builder: (BuildContext context,
+              AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+              return Center(
+                child: Text("No items in cart"),
+              );
+            }
+            // Reset total price before calculating
+            totalPrice = 0.0;
+            return ListView.builder(
+              itemCount: snapshot.data!.docs.length,
+              itemBuilder: (context, index) {
+                var document = snapshot.data!.docs[index];
+                // Accessing fields from the document
+                String docId = document.id; // get document ID
+                String storeName = document['storeName'];
+                String url = document['url']; // Assuming this is the URL field for the image
+                String name = document['name'];
+                int quantity = document['quantity'];
+                double price = document['price'];
+                String type = document['type'];
+
+                // Include the price in the total if the item is checked
+                if (selectedItems.containsKey(docId) && selectedItems[docId]!) {
+                  totalPrice += quantity * price;
+                }
+
+                // Check if the current store name is different from the previous one
+                // If so, display the store name
+                if (index == 0 || storeName != snapshot.data!.docs[index - 1]['storeName']) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        padding: EdgeInsets.only(left: 10, top: 10),
+                        child: Text(
+                          storeName,
+                          style: TextStyle(
+                            fontFamily: 'Times New Roman',
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
                           ),
-                        ),
-                        Text(
-                          "All",
-                          style: TextStyle(
-                              fontFamily: 'Times New Roman',
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold),
-                        )
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Text(
-                          'Total:',
-                          style: TextStyle(
-                              fontFamily: 'Times New Roman',
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          ' Php 0.00',
-                          style: TextStyle(
-                              fontFamily: 'Times New Roman',
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold),
-                        )
-                      ],
-                    ),
-                    GestureDetector(
-                      onTap: () => showDialog<String>(
-                        context: context,
-                        builder: (BuildContext context) => AlertDialog(
-                          actionsPadding: EdgeInsets.only(bottom: 10),
-                          contentPadding: EdgeInsets.only(top: 30),
-                          backgroundColor: Colors.white,
-                          content: SingleChildScrollView(
-                            child: ListBody(
-                              children: <Widget>[
-                                Text(
-                                  'Are you sure you want to reserve the',
-                                  style: TextStyle(fontSize: 17),
-                                  textAlign: TextAlign.center,
-                                ),
-                                Text(
-                                  "1 " + " " + "New Slim Container w/ water",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 17),
-                                  textAlign: TextAlign.center,
-                                ),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                Container(
-                                  width: MediaQuery.of(context).size.width,
-                                  height: 2,
-                                  color: Color(0xffbfbdbc),
-                                )
-                              ],
-                            ),
-                          ),
-                          actions: <Widget>[
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                TextButton(
-                                  onPressed: () =>
-                                      Navigator.pop(context, 'Continue'),
-                                  child: Text(
-                                    'Continue',
-                                    style: TextStyle(
-                                      color: Color(0xff0eb4f3),
-                                      fontSize: 20,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                                TextButton(
-                                  onPressed: () =>
-                                      Navigator.pop(context, 'Cancel'),
-                                  child: Text(
-                                    'Cancel',
-                                    style: TextStyle(
-                                      color: Colors.red,
-                                      fontSize: 20,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
                         ),
                       ),
-                      child: Container(
-                        alignment: Alignment.center,
-                        padding: EdgeInsets.all(5),
-                        height: 50,
-                        width: 140,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            color: Color(0xff0eb4f3)),
-                        child: Text(
-                          "Check Out",
-                          style: TextStyle(
-                              fontFamily: 'Times New Roman',
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                              fontSize: 16),
+                      _buildCartItem(docId, url, name, quantity, price, type),
+                    ],
+                  );
+                } else {
+                  // If the current store name is the same as the previous one, just display the item
+                  return _buildCartItem(docId, url, name, quantity, price, type);
+                }
+              },
+            );
+          },
+        ),
+      ),
+      bottomNavigationBar: Container(
+        padding: EdgeInsets.only(left: 10, right: 10),
+        height: 80,
+        color: Colors.white,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                Text(
+                  'Total:',
+                  style: TextStyle(
+                      fontFamily: 'Times New Roman',
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  ' Php ${totalPrice.toStringAsFixed(2)}',
+                  style: TextStyle(
+                      fontFamily: 'Times New Roman',
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold),
+                )
+              ],
+            ),
+            GestureDetector(
+              onTap: () => showDialog<String>(
+                context: context,
+                builder: (BuildContext context) => AlertDialog(
+                  actionsPadding: EdgeInsets.only(bottom: 10),
+                  contentPadding: EdgeInsets.only(top: 30),
+                  backgroundColor: Colors.white,
+                  content: SingleChildScrollView(
+                    child: ListBody(
+                      children: <Widget>[
+                        Text(
+                          'Are you sure you want to reserve the selected items?',
+                          style: TextStyle(fontSize: 17),
                           textAlign: TextAlign.center,
                         ),
-                      ),
-                    )
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Container(
+                          width: MediaQuery.of(context).size.width,
+                          height: 2,
+                          color: Color(0xffbfbdbc),
+                        )
+                      ],
+                    ),
+                  ),
+                  actions: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        TextButton(
+                          onPressed: () =>
+                              Navigator.pop(context, 'Continue'),
+                          child: Text(
+                            'Continue',
+                            style: TextStyle(
+                              color: Color(0xff0eb4f3),
+                              fontSize: 20,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () =>
+                              Navigator.pop(context, 'Cancel'),
+                          child: Text(
+                            'Cancel',
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontSize: 20,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
-              )
-            ],
-          );
-        }),
+              ),
+              child: Container(
+                alignment: Alignment.center,
+                padding: EdgeInsets.all(5),
+                height: 50,
+                width: 140,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: Color(0xff0eb4f3)),
+                child: Text(
+                  "Check Out",
+                  style: TextStyle(
+                      fontFamily: 'Times New Roman',
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      fontSize: 16),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
