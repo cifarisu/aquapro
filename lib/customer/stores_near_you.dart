@@ -182,6 +182,7 @@ class _StoresNearYouState extends State<StoresNearYou> {
                           itemCount: filteredStores.length,
                           itemBuilder: (context, index) {
                             final store = filteredStores[index];
+                            final storeId = store['id'];
                             final name = store['name'];
                             final address = store['address'];
                             final contact = store['contact'];
@@ -212,6 +213,7 @@ class _StoresNearYouState extends State<StoresNearYou> {
                                       time: time,
                                       imageUrl: imageUrl,
                                       products: products,
+                                      storeId: storeId,
                                     ),
                                   ),
                                 );

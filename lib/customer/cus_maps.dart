@@ -216,6 +216,7 @@ double _calculateDistance(LatLng point1, LatLng point2) {
       DocumentSnapshot<Map<String, dynamic>> storeDoc = snapshot.docs.first;
       // Extract store details
       String storeName = storeDoc['name'];
+      String storeId = storeDoc['id'];
       String storeAddress = storeDoc['address'];
       String storeContact = storeDoc['contact'];
       String storeTime = storeDoc['time'];
@@ -231,11 +232,13 @@ double _calculateDistance(LatLng point1, LatLng point2) {
         MaterialPageRoute(
           builder: (context) => Stores(
             name: storeName,
+            storeId: storeId,
             address: storeAddress,
             contact: storeContact,
             time: storeTime,
             imageUrl: storeImageUrl,
             products: products,
+            
           ),
         ),
       );

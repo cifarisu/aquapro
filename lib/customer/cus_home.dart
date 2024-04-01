@@ -167,6 +167,8 @@ class _CusHomeState extends State<CusHome> {
                           scrollDirection: Axis.horizontal,
                           child: Row(
                             children: stores.map((store) {
+                              
+                              final storeId = store['id'];
                               final name = store['name'];
                               final address = store['address'];
                               final contact = store['contact'];
@@ -184,6 +186,7 @@ class _CusHomeState extends State<CusHome> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => Stores(
+                                        storeId: storeId,
                                         name: name,
                                         address: address,
                                         contact: contact,

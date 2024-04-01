@@ -13,6 +13,7 @@ class Stores extends StatefulWidget {
   final String contact;
   final String time;
   final String imageUrl;
+  final String storeId;
   final List<dynamic> products;
 
   const Stores({
@@ -23,6 +24,7 @@ class Stores extends StatefulWidget {
     required this.time,
     required this.imageUrl,
     required this.products,
+    required this.storeId,
   }) : super(key: key);
 
   @override
@@ -357,7 +359,15 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                                           children: [
                                             GestureDetector(
                                               onTap: () {
-                                                _addToCart(widget.name, productName, quantity, productPrice, 'deliver', productImageUrl);
+                                                _addToCart(
+                                                  widget.name,
+                                                  productName,
+                                                  quantity,
+                                                  productPrice,
+                                                  'deliver',
+                                                  productImageUrl,
+                                                  widget.storeId,
+                                                );
                                               },
                                               child: Container(
                                                 width: 95,
@@ -386,7 +396,8 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                                               onTap: () {
                                                 if (quantity > 0) {
                                                   setState(() {
-                                                    deliverQuantities[productName] =
+                                                    deliverQuantities[
+                                                            productName] =
                                                         quantity - 1;
                                                   });
                                                 }
@@ -401,17 +412,19 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                                             Container(
                                               alignment: Alignment.center,
                                               width: 45,
-                                              child: Text(quantity.toString(),
+                                              child: Text(
+                                                  quantity.toString(),
                                                   style: TextStyle(
                                                       fontFamily: 'Poppins',
                                                       fontWeight:
                                                           FontWeight.w500,
-                                                      fontSize: 15))),
+                                                      fontSize: 15)),
+                                            ),
                                             GestureDetector(
                                               onTap: () {
                                                 setState(() {
-                                                  deliverQuantities[productName] =
-                                                      quantity + 1;
+                                                  deliverQuantities[
+                                                      productName] = quantity + 1;
                                                 });
                                               },
                                               child: Container(
@@ -508,7 +521,15 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                                           children: [
                                             GestureDetector(
                                               onTap: () {
-                                                _addToCart(widget.name, productName, quantity, productPrice, 'pickup', productImageUrl);
+                                                _addToCart(
+                                                  widget.name,
+                                                  productName,
+                                                  quantity,
+                                                  productPrice,
+                                                  'pickup',
+                                                  productImageUrl,
+                                                  widget.storeId,
+                                                );
                                               },
                                               child: Container(
                                                 width: 95,
@@ -537,7 +558,8 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                                               onTap: () {
                                                 if (quantity > 0) {
                                                   setState(() {
-                                                    pickupQuantities[productName] =
+                                                    pickupQuantities[
+                                                            productName] =
                                                         quantity - 1;
                                                   });
                                                 }
@@ -552,7 +574,8 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                                             Container(
                                               alignment: Alignment.center,
                                               width: 40,
-                                              child: Text(quantity.toString(),
+                                              child: Text(
+                                                  quantity.toString(),
                                                   style: TextStyle(
                                                       fontFamily: 'Poppins',
                                                       fontWeight:
@@ -561,8 +584,8 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                                             GestureDetector(
                                               onTap: () {
                                                 setState(() {
-                                                  pickupQuantities[productName] =
-                                                      quantity + 1;
+                                                  pickupQuantities[
+                                                      productName] = quantity + 1;
                                                 });
                                               },
                                               child: Container(
@@ -601,7 +624,15 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
         .toList();
   }
 
-  void _addToCart(String storeName, String productName, int quantity, double productPrice, String type, String imageUrl) async {
+  void _addToCart(
+    String storeName,
+    String productName,
+    int quantity,
+    double productPrice,
+    String type,
+    String imageUrl,
+    String storeId,
+  ) async {
     try {
       // Get the currently logged-in user
       User? user = FirebaseAuth.instance.currentUser;
@@ -633,6 +664,7 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
             'type': type,
             'name': productName, // Adding the name field
             'url': imageUrl, // Adding the URL field
+            'storeId': storeId, // Adding the storeId field
           });
         } else {
           // If the product doesn't exist, add it to the cart
@@ -643,6 +675,7 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
             'type': type,
             'name': productName, // Adding the name field
             'url': imageUrl, // Adding the URL field
+            'storeId': storeId, // Adding the storeId field
           });
         }
 

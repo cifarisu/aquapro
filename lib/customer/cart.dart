@@ -52,6 +52,67 @@ class _CartState extends State<Cart> with TickerProviderStateMixin {
         .delete();
   }
 
+  Future<void> checkOut() async {
+    final userDoc =
+        await FirebaseFirestore.instance.collection('Customer').doc(currentUserId).get();
+
+    // Start a Firestore transaction
+    await FirebaseFirestore.instance.runTransaction((transaction) async {
+      final cartSnapshot = await FirebaseFirestore.instance
+          .collection('Customer')
+          .doc(currentUserId)
+          .collection('Cart')
+          .get();
+
+      // Create a map to hold order data grouped by storeId
+      Map<String, List<Map<String, dynamic>>> ordersByStore = {};
+
+      cartSnapshot.docs.forEach((doc) async {
+        if (selectedItems.containsKey(doc.id) && selectedItems[doc.id]!) {
+          final storeId = doc['storeId'];
+
+          // Construct order item data
+          Map<String, dynamic> orderItemData = {
+            'itemName': doc['name'],
+            'quantity': doc['quantity'],
+            'price': doc['price'],
+            'type': doc['type'],
+          };
+
+          // Create or update order list for the store
+          if (!ordersByStore.containsKey(storeId)) {
+            ordersByStore[storeId] = [];
+          }
+          ordersByStore[storeId]!.add(orderItemData);
+
+          // Delete the item from the cart
+          await doc.reference.delete();
+        }
+      });
+
+      // Add orders to Firestore for each store
+      ordersByStore.forEach((storeId, orderItems) async {
+        final orderId =
+            FirebaseFirestore.instance.collection('Store').doc(storeId).collection('Orders').doc().id;
+
+        // Construct order data
+        Map<String, dynamic> orderData = {
+          'orderId': orderId,
+          'customerId': currentUserId,
+          'items': orderItems, // Include list of items in the order
+          'customerName': userDoc['name'],
+          'address': userDoc['address'],
+          'coordinates': userDoc['coordinates'],
+          'phone': userDoc['phone'],
+          'timestamp': FieldValue.serverTimestamp(),
+        };
+
+        // Add the order under the 'Orders' collection of the store
+        await FirebaseFirestore.instance.collection('Store').doc(storeId).collection('Orders').doc(orderId).set(orderData);
+      });
+    });
+  }
+
   Widget _buildCartItem(String docId, String url, String name, int quantity, double price, String type) {
     return Container(
       padding: EdgeInsets.only(bottom: 10, left: 15, top: 10),
@@ -64,10 +125,8 @@ class _CartState extends State<Cart> with TickerProviderStateMixin {
               setState(() {
                 selectedItems[docId] = value!;
                 if (value == true) {
-                  // Item is checked, add its price to the total
                   totalPrice += quantity * price;
                 } else {
-                  // Item is unchecked, subtract its price from the total
                   totalPrice -= quantity * price;
                 }
               });
@@ -108,14 +167,11 @@ class _CartState extends State<Cart> with TickerProviderStateMixin {
               Row(
                 children: [
                   IconButton(
-                    onPressed: () async { // Make the onPressed function asynchronous
+                    onPressed: () async {
                       setState(() {
-                        // Decrease quantity
                         if (quantity > 1) {
                           quantity--;
-                          // Update the quantity in Firestore and wait for it to complete
                           updateQuantity(docId, quantity).then((_) {
-                            // Update the local state after the Firestore update is completed
                             setState(() {});
                           });
                         }
@@ -132,13 +188,10 @@ class _CartState extends State<Cart> with TickerProviderStateMixin {
                     ),
                   ),
                   IconButton(
-                    onPressed: () async { // Make the onPressed function asynchronous
+                    onPressed: () async {
                       setState(() {
-                        // Increase quantity
                         quantity++;
-                        // Update the quantity in Firestore and wait for it to complete
                         updateQuantity(docId, quantity).then((_) {
-                          // Update the local state after the Firestore update is completed
                           setState(() {});
                         });
                       });
@@ -202,13 +255,8 @@ class _CartState extends State<Cart> with TickerProviderStateMixin {
         width: MediaQuery.of(context).size.width,
         color: Color(0xfff2f2f2),
         child: StreamBuilder(
-          stream: FirebaseFirestore.instance
-              .collection('Customer')
-              .doc(currentUserId)
-              .collection('Cart')
-              .snapshots(),
-          builder: (BuildContext context,
-              AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+          stream: FirebaseFirestore.instance.collection('Customer').doc(currentUserId).collection('Cart').snapshots(),
+          builder: (BuildContext context, AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(
                 child: CircularProgressIndicator(),
@@ -219,28 +267,23 @@ class _CartState extends State<Cart> with TickerProviderStateMixin {
                 child: Text("No items in cart"),
               );
             }
-            // Reset total price before calculating
             totalPrice = 0.0;
             return ListView.builder(
               itemCount: snapshot.data!.docs.length,
               itemBuilder: (context, index) {
                 var document = snapshot.data!.docs[index];
-                // Accessing fields from the document
-                String docId = document.id; // get document ID
+                String docId = document.id;
                 String storeName = document['storeName'];
-                String url = document['url']; // Assuming this is the URL field for the image
+                String url = document['url'];
                 String name = document['name'];
                 int quantity = document['quantity'];
                 double price = document['price'];
                 String type = document['type'];
 
-                // Include the price in the total if the item is checked
                 if (selectedItems.containsKey(docId) && selectedItems[docId]!) {
                   totalPrice += quantity * price;
                 }
 
-                // Check if the current store name is different from the previous one
-                // If so, display the store name
                 if (index == 0 || storeName != snapshot.data!.docs[index - 1]['storeName']) {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -260,7 +303,6 @@ class _CartState extends State<Cart> with TickerProviderStateMixin {
                     ],
                   );
                 } else {
-                  // If the current store name is the same as the previous one, just display the item
                   return _buildCartItem(docId, url, name, quantity, price, type);
                 }
               },
@@ -324,8 +366,10 @@ class _CartState extends State<Cart> with TickerProviderStateMixin {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         TextButton(
-                          onPressed: () =>
-                              Navigator.pop(context, 'Continue'),
+                          onPressed: () {
+                            checkOut();
+                            Navigator.pop(context, 'Continue');
+                          },
                           child: Text(
                             'Continue',
                             style: TextStyle(
@@ -336,8 +380,7 @@ class _CartState extends State<Cart> with TickerProviderStateMixin {
                           ),
                         ),
                         TextButton(
-                          onPressed: () =>
-                              Navigator.pop(context, 'Cancel'),
+                          onPressed: () => Navigator.pop(context, 'Cancel'),
                           child: Text(
                             'Cancel',
                             style: TextStyle(

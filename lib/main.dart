@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:aquapro/customer/cart.dart';
 import 'package:aquapro/customer/cus_home.dart';
 import 'package:aquapro/customer/cus_manualLocation.dart';
