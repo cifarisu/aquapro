@@ -77,6 +77,7 @@ class _CartState extends State<Cart> with TickerProviderStateMixin {
             'quantity': doc['quantity'],
             'price': doc['price'],
             'type': doc['type'],
+            'url': doc['url'], // Include URL in order item data
           };
 
           // Create or update order list for the store
@@ -103,8 +104,9 @@ class _CartState extends State<Cart> with TickerProviderStateMixin {
           'customerName': userDoc['name'],
           'address': userDoc['address'],
           'coordinates': userDoc['coordinates'],
-          'phone': userDoc['phone'],
+          'contact': userDoc['contact'],
           'timestamp': FieldValue.serverTimestamp(),
+          'status': 'Pending',
         };
 
         // Add the order under the 'Orders' collection of the store

@@ -684,7 +684,7 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
           context: context,
           builder: (context) {
             // Schedule a delayed dismissal of the alert dialog after 3 seconds
-            Future.delayed(Duration(seconds: 3), () {
+            Future.delayed(Duration(seconds: 1), () {
               Navigator.of(context).pop(); // Close the dialog
             });
 

@@ -15,12 +15,12 @@ class _cusProfileState extends State<cusProfile> {
 
   late TextEditingController _nameController;
   late TextEditingController _addressController;
-  late TextEditingController _phoneController;
+  late TextEditingController _contactController;
 
   String _name = '';
   String _email = '';
   String _address = '';
-  String _phone = '';
+  String _contact = '';
 
   bool _isEditing = false;
 
@@ -34,7 +34,7 @@ class _cusProfileState extends State<cusProfile> {
   void dispose() {
     _nameController.dispose();
     _addressController.dispose();
-    _phoneController.dispose();
+    _contactController.dispose();
     super.dispose();
   }
 
@@ -47,10 +47,10 @@ class _cusProfileState extends State<cusProfile> {
         _name = userDoc.get('name') ?? '';
         _email = user.email ?? '';
         _address = userDoc.get('address') ?? '';
-        _phone = userDoc.get('phone') ?? '';
+        _contact = userDoc.get('contact') ?? '';
         _nameController = TextEditingController(text: _name);
         _addressController = TextEditingController(text: _address);
-        _phoneController = TextEditingController(text: _phone);
+        _contactController = TextEditingController(text: _contact);
       });
     }
   }
@@ -61,12 +61,12 @@ class _cusProfileState extends State<cusProfile> {
       await _firestore.collection('Customer').doc(user.uid).update({
         'name': _nameController.text,
         'address': _addressController.text,
-        'phone': _phoneController.text,
+        'contact': _contactController.text,
       });
       setState(() {
         _name = _nameController.text;
         _address = _addressController.text;
-        _phone = _phoneController.text;
+        _contact = _contactController.text;
         _isEditing = false;
       });
     }
@@ -264,14 +264,14 @@ class _cusProfileState extends State<cusProfile> {
                   _isEditing
                       ? Expanded(
                           child: TextField(
-                            controller: _phoneController,
+                            controller: _contactController,
                             decoration: InputDecoration(
-                              hintText: 'Enter your phone number',
+                              hintText: 'Enter your contact number',
                             ),
                           ),
                         )
                       : Text(
-                          _phone,
+                          _contact,
                           style: TextStyle(
                             fontFamily: 'Times New Roman',
                             fontSize: 17.5,

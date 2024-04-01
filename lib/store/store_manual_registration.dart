@@ -41,11 +41,6 @@ class _StoreRegState extends State<StoreReg> {
   String? _imageUrl;
 
   // Declare variables for user input
-  String address = '';
-  String contact = '';
-  late String email; // Initialize email to an empty string
-  String id = '';
-  String name = '';
   String time = '';
   double latitude = 0.0;
   double longitude = 0.0;
@@ -100,7 +95,7 @@ class _StoreRegState extends State<StoreReg> {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       setState(() {
-        email = user.email!;
+        // No need to set email and name here as they are removed
       });
     }
   }
@@ -136,28 +131,35 @@ class _StoreRegState extends State<StoreReg> {
 
       DocumentReference storeRef = FirebaseFirestore.instance.collection('Store').doc(userId);
 
-      await storeRef.set({
-        'id': userId,
-        'address': address,
-        'contact': contact,
-        'email': email,
-        'name': name,
-        'time': time,
-        'url': imageUrl,
-        'coordinates': coordinates,
-      });
-
-      await FirebaseAuth.instance.currentUser!.updateEmail(email);
+      // Check if the document exists
+      var documentSnapshot = await storeRef.get();
+      if (documentSnapshot.exists) {
+        // If the document exists, update the existing fields
+        await storeRef.update({
+          'time': time,
+          'url': imageUrl,
+          'coordinates': coordinates,
+        });
+      } else {
+        // If the document doesn't exist, set the initial values
+        await storeRef.set({
+          'id': userId,
+          'time': time,
+          'url': imageUrl,
+          'coordinates': coordinates,
+        });
+      }
 
       CollectionReference productsRef = storeRef.collection('Products');
 
       for (var product in products) {
+        // Update or add each product individually
         await productsRef.doc(product.name).set({
           'name': product.name,
           'price': product.price,
           'type': product.type,
           'url': product.url,
-        });
+        }, SetOptions(merge: true)); // Use merge option to update without overwriting
       }
 
       print('Upload successful');
@@ -181,39 +183,6 @@ class _StoreRegState extends State<StoreReg> {
       ),
       body: ListView(
         children: <Widget>[
-          TextField(
-            decoration: InputDecoration(
-              labelText: 'Address',
-            ),
-            onChanged: (value) {
-              address = value;
-            },
-          ),
-          TextField(
-            decoration: InputDecoration(
-              labelText: 'Contact',
-            ),
-            onChanged: (value) {
-              contact = value;
-            },
-          ),
-          TextFormField(
-            decoration: InputDecoration(
-              labelText: 'Email',
-            ),
-            initialValue: email, // Set the initial value of email field
-            onChanged: (value) {
-              email = value; // Update email variable here
-            },
-          ),
-          TextField(
-            decoration: InputDecoration(
-              labelText: 'Name',
-            ),
-            onChanged: (value) {
-              name = value;
-            },
-          ),
           TextField(
             decoration: InputDecoration(
               labelText: 'Time',
