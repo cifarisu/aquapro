@@ -66,24 +66,8 @@ class _StoreAcceptedState extends State<StoreAccepted> {
                 var order = snapshot.data!.docs[index];
                 var items = order['items'] as List<dynamic>;
 
-                // Check the statuses of all items
-                bool allForPickup = true;
-                bool allForDelivery = true;
-
-                for (var item in items) {
-                  if (item['type'] == 'Pickup') {
-                    allForDelivery = false;
-                  } else if (item['type'] == 'Delivery') {
-                    allForPickup = false;
-                  }
-                }
-
                 // Determine the status for the order
-                String orderStatus = allForPickup
-                    ? 'To Pick-up'
-                    : allForDelivery
-                        ? 'To Deliver'
-                        : 'Pending'; // Or any other default status
+                String orderStatus = order['status'];
 
                 return Container(
                   margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
@@ -179,28 +163,27 @@ class _StoreAcceptedState extends State<StoreAccepted> {
                         style: TextStyle(fontSize: 14),
                       ),
                       SizedBox(height: 10),
-                      // Conditionally render button
-                      if (orderStatus == 'To Pick-up')
-                        TextButton(
-                          onPressed: () {
-                            // Update order status to Completed
-                            FirebaseFirestore.instance
-                                .collection('Store')
-                                .doc(currentUserId)
-                                .collection('Orders')
-                                .doc(order.id)
-                                .update({'status': 'Completed'}).then((_) {
-                              // Handle the action here
-                            }).catchError((error) {
-                              print("Failed to update order status: $error");
-                              // Handle error accordingly
-                            });
-                          },
-                          child: Text(
-                            'Complete Order',
-                            style: TextStyle(color: Colors.green),
-                          ),
+                      // Render button for completing order
+                      TextButton(
+                        onPressed: () {
+                          // Update order status to Completed
+                          FirebaseFirestore.instance
+                              .collection('Store')
+                              .doc(currentUserId)
+                              .collection('Orders')
+                              .doc(order.id)
+                              .update({'status': 'Completed'}).then((_) {
+                            // Handle the action here
+                          }).catchError((error) {
+                            print("Failed to update order status: $error");
+                            // Handle error accordingly
+                          });
+                        },
+                        child: Text(
+                          'Complete Order',
+                          style: TextStyle(color: Colors.green),
                         ),
+                      ),
                     ],
                   ),
                 );
