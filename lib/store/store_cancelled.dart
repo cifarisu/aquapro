@@ -3,14 +3,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/widgets.dart';
 
-class StoreHome extends StatefulWidget {
-  const StoreHome({Key? key});
+class StoreCancelled extends StatefulWidget {
+  const StoreCancelled({Key? key});
 
   @override
-  State<StoreHome> createState() => _StoreHomeState();
+  State<StoreCancelled> createState() => _StoreCancelledState();
 }
 
-class _StoreHomeState extends State<StoreHome> {
+class _StoreCancelledState extends State<StoreCancelled> {
   late String? currentUserId;
 
   @override
@@ -45,7 +45,7 @@ class _StoreHomeState extends State<StoreHome> {
               .collection('Store')
               .doc(currentUserId)
               .collection('Orders')
-              .where('status', whereIn: ['Pending']).snapshots(),
+              .where('status', whereIn: ['Cancelled']).snapshots(),
           builder:
               (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -178,51 +178,6 @@ class _StoreHomeState extends State<StoreHome> {
                         style: TextStyle(fontSize: 14),
                       ),
                       SizedBox(height: 10),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          TextButton(
-                            onPressed: () {
-                              // Update order status to "Accepted"
-                              FirebaseFirestore.instance
-                                  .collection('Store')
-                                  .doc(currentUserId)
-                                  .collection('Orders')
-                                  .doc(order.id)
-                                  .update({'status': 'Accepted'}).then((_) {
-                                // Handle the action here
-                              }).catchError((error) {
-                                print("Failed to update order status: $error");
-                                // Handle error accordingly
-                              });
-                            },
-                            child: Text(
-                              'Accept Order',
-                              style: TextStyle(color: Colors.green),
-                            ),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              // Update order status to "Declined"
-                              FirebaseFirestore.instance
-                                  .collection('Store')
-                                  .doc(currentUserId)
-                                  .collection('Orders')
-                                  .doc(order.id)
-                                  .update({'status': 'Declined'}).then((_) {
-                                // Handle the action here
-                              }).catchError((error) {
-                                print("Failed to update order status: $error");
-                                // Handle error accordingly
-                              });
-                            },
-                            child: Text(
-                              'Decline Order',
-                              style: TextStyle(color: Colors.red),
-                            ),
-                          ),
-                        ],
-                      ),
                     ],
                   ),
                 );

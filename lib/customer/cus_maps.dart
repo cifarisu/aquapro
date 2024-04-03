@@ -100,8 +100,11 @@ class _CusMapsState extends State<CusMaps> {
       String uid = FirebaseAuth.instance.currentUser!.uid;
 
       // Get the document from Firestore for the current user
-      DocumentSnapshot<Map<String, dynamic>> userDoc =
-          await FirebaseFirestore.instance.collection('Customer').doc(uid).get();
+      DocumentSnapshot<Map<String, dynamic>> userDoc = await FirebaseFirestore
+          .instance
+          .collection('Customer')
+          .doc(uid)
+          .get();
 
       // Extract coordinates from the document
       GeoPoint? userGeoPoint = userDoc.data()?['coordinates'];
@@ -125,8 +128,7 @@ class _CusMapsState extends State<CusMaps> {
 
       setState(() {
         originalCoordinatesList = geoPoints
-            .map((geoPoint) =>
-                LatLng(geoPoint.latitude, geoPoint.longitude))
+            .map((geoPoint) => LatLng(geoPoint.latitude, geoPoint.longitude))
             .toList();
         // Initially set filtered list to original list
         filteredCoordinatesList = List.from(originalCoordinatesList);
@@ -149,23 +151,22 @@ class _CusMapsState extends State<CusMaps> {
   }
 
   // Calculate distance between two LatLng points using Haversine formula
-double _calculateDistance(LatLng point1, LatLng point2) {
-  const double earthRadius = 6371.0; // Earth's radius in kilometers
-  double lat1Radians = point1.latitude * pi / 180.0;
-  double lon1Radians = point1.longitude * pi / 180.0;
-  double lat2Radians = point2.latitude * pi / 180.0;
-  double lon2Radians = point2.longitude * pi / 180.0;
+  double _calculateDistance(LatLng point1, LatLng point2) {
+    const double earthRadius = 6371.0; // Earth's radius in kilometers
+    double lat1Radians = point1.latitude * pi / 180.0;
+    double lon1Radians = point1.longitude * pi / 180.0;
+    double lat2Radians = point2.latitude * pi / 180.0;
+    double lon2Radians = point2.longitude * pi / 180.0;
 
-  double lonDiff = lon2Radians - lon1Radians;
-  double latDiff = lat2Radians - lat1Radians;
+    double lonDiff = lon2Radians - lon1Radians;
+    double latDiff = lat2Radians - lat1Radians;
 
-  double a = pow(sin(latDiff / 2), 2) +
-      cos(lat1Radians) * cos(lat2Radians) * pow(sin(lonDiff / 2), 2);
-  double c = 2 * asin(sqrt(a));
+    double a = pow(sin(latDiff / 2), 2) +
+        cos(lat1Radians) * cos(lat2Radians) * pow(sin(lonDiff / 2), 2);
+    double c = 2 * asin(sqrt(a));
 
-  return earthRadius * c;
-}
-
+    return earthRadius * c;
+  }
 
   // Apply filter to show only locations within the specified radius of the current user
   Future<void> _applyFilter() async {
@@ -207,7 +208,8 @@ double _calculateDistance(LatLng point1, LatLng point2) {
     // Find the store closest to the tapped marker
     GeoPoint storeGeoPoint =
         GeoPoint(storeLocation.latitude, storeLocation.longitude);
-    QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore.instance
+    QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
+        .instance
         .collection('Store')
         .where('coordinates', isEqualTo: storeGeoPoint)
         .limit(1)
@@ -223,7 +225,11 @@ double _calculateDistance(LatLng point1, LatLng point2) {
       String storeImageUrl = storeDoc['url'];
 
       // Check if the "Products" subcollection exists
-      QuerySnapshot productsSnapshot = await FirebaseFirestore.instance.collection('Store').doc(storeDoc.id).collection('Products').get();
+      QuerySnapshot productsSnapshot = await FirebaseFirestore.instance
+          .collection('Store')
+          .doc(storeDoc.id)
+          .collection('Products')
+          .get();
       List<DocumentSnapshot> products = productsSnapshot.docs;
 
       // Navigate to Stores widget with store details
@@ -238,7 +244,6 @@ double _calculateDistance(LatLng point1, LatLng point2) {
             time: storeTime,
             imageUrl: storeImageUrl,
             products: products,
-            
           ),
         ),
       );

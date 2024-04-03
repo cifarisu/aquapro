@@ -51,43 +51,63 @@ class _StoreRegState extends State<StoreReg> {
     super.initState();
     // Add your products here
     products.add(Product(
-        name: 'New Gallon (Round)',
-        type: 'deliver&pickup',
+        name: 'New Gallon (Round)(Delivery)',
+        type: 'Delivery',
         url:
             'https://firebasestorage.googleapis.com/v0/b/aquapro-b890e.appspot.com/o/round.png?alt=media&token=1cf52ada-6380-4511-b112-c02927ec1d0c'));
     products.add(Product(
-        name: 'New Gallon (Slim)',
-        type: 'deliver&pickup',
+        name: 'New Gallon (Slim)(Delivery)',
+        type: 'Delivery',
+        url:
+            'https://firebasestorage.googleapis.com/v0/b/aquapro-b890e.appspot.com/o/flat.png?alt=media&token=5be47884-2fbf-49b0-9e81-21910fb03b6f'));
+    products.add(Product(
+        name: 'New Gallon (Round)(Pick-up)',
+        type: 'Pick-up',
+        url:
+            'https://firebasestorage.googleapis.com/v0/b/aquapro-b890e.appspot.com/o/round.png?alt=media&token=1cf52ada-6380-4511-b112-c02927ec1d0c'));
+    products.add(Product(
+        name: 'New Gallon (Slim)(Pick-up)',
+        type: 'Pick-up',
         url:
             'https://firebasestorage.googleapis.com/v0/b/aquapro-b890e.appspot.com/o/flat.png?alt=media&token=5be47884-2fbf-49b0-9e81-21910fb03b6f'));
     products.add(Product(
         name: 'Refill (Round)(Pick-up)',
-        type: 'pickup',
+        type: 'Pick-up',
         url:
             'https://firebasestorage.googleapis.com/v0/b/aquapro-b890e.appspot.com/o/round.png?alt=media&token=1cf52ada-6380-4511-b112-c02927ec1d0c'));
     products.add(Product(
         name: 'Refill (Slim)(Pick-up)',
-        type: 'pickup',
+        type: 'Pick-up',
         url:
             'https://firebasestorage.googleapis.com/v0/b/aquapro-b890e.appspot.com/o/flat.png?alt=media&token=5be47884-2fbf-49b0-9e81-21910fb03b6f'));
     products.add(Product(
-        name: 'Refill (Round)(Deliver)',
-        type: 'deliver',
+        name: 'Refill (Round)(Delivery)',
+        type: 'Delivery',
         url:
             'https://firebasestorage.googleapis.com/v0/b/aquapro-b890e.appspot.com/o/round.png?alt=media&token=1cf52ada-6380-4511-b112-c02927ec1d0c'));
     products.add(Product(
-        name: 'Refill (Slim)(Deliver)',
-        type: 'deliver',
+        name: 'Refill (Slim)(Delivery)',
+        type: 'Delivery',
         url:
             'https://firebasestorage.googleapis.com/v0/b/aquapro-b890e.appspot.com/o/flat.png?alt=media&token=5be47884-2fbf-49b0-9e81-21910fb03b6f'));
     products.add(Product(
-        name: 'Refill 15-10 Liter',
-        type: 'deliver&pickup',
+        name: 'Refill 15-10 Liter(Delivery)',
+        type: 'Delivery',
         url:
             'https://firebasestorage.googleapis.com/v0/b/aquapro-b890e.appspot.com/o/small.png?alt=media&token=d21b8e32-eee0-4c47-9bbf-26139a2e7dfc'));
     products.add(Product(
-        name: 'Refill 8-5 Liters',
-        type: 'deliver&pickup',
+        name: 'Refill 8-5 Liters(Delivery)',
+        type: 'Delivery',
+        url:
+            'https://firebasestorage.googleapis.com/v0/b/aquapro-b890e.appspot.com/o/small.png?alt=media&token=d21b8e32-eee0-4c47-9bbf-26139a2e7dfc'));
+    products.add(Product(
+        name: 'Refill 15-10 Liter(Pick-up)',
+        type: 'Pick-up',
+        url:
+            'https://firebasestorage.googleapis.com/v0/b/aquapro-b890e.appspot.com/o/small.png?alt=media&token=d21b8e32-eee0-4c47-9bbf-26139a2e7dfc'));
+    products.add(Product(
+        name: 'Refill 8-5 Liters(Pick-up)',
+        type: 'Pick-up',
         url:
             'https://firebasestorage.googleapis.com/v0/b/aquapro-b890e.appspot.com/o/small.png?alt=media&token=d21b8e32-eee0-4c47-9bbf-26139a2e7dfc'));
 
@@ -120,7 +140,8 @@ class _StoreRegState extends State<StoreReg> {
       }
 
       String fileName = _image!.path.split('/').last;
-      Reference firebaseStorageRef = FirebaseStorage.instance.ref().child('Stores_images/$fileName');
+      Reference firebaseStorageRef =
+          FirebaseStorage.instance.ref().child('Stores_images/$fileName');
       UploadTask uploadTask = firebaseStorageRef.putFile(_image!);
       TaskSnapshot taskSnapshot = await uploadTask;
       String imageUrl = await taskSnapshot.ref.getDownloadURL();
@@ -129,7 +150,8 @@ class _StoreRegState extends State<StoreReg> {
       final userId = FirebaseAuth.instance.currentUser!.uid;
       GeoPoint coordinates = GeoPoint(latitude, longitude);
 
-      DocumentReference storeRef = FirebaseFirestore.instance.collection('Store').doc(userId);
+      DocumentReference storeRef =
+          FirebaseFirestore.instance.collection('Store').doc(userId);
 
       // Check if the document exists
       var documentSnapshot = await storeRef.get();
@@ -154,12 +176,15 @@ class _StoreRegState extends State<StoreReg> {
 
       for (var product in products) {
         // Update or add each product individually
-        await productsRef.doc(product.name).set({
-          'name': product.name,
-          'price': product.price,
-          'type': product.type,
-          'url': product.url,
-        }, SetOptions(merge: true)); // Use merge option to update without overwriting
+        await productsRef.doc(product.name).set(
+            {
+              'name': product.name,
+              'price': product.price,
+              'type': product.type,
+              'url': product.url,
+            },
+            SetOptions(
+                merge: true)); // Use merge option to update without overwriting
       }
 
       print('Upload successful');
@@ -253,5 +278,9 @@ class Product {
   final String type; // New field for product type
   final String url; // New field for product URL
 
-  Product({required this.name, this.price = 0.0, required this.type, required this.url});
+  Product(
+      {required this.name,
+      this.price = 0.0,
+      required this.type,
+      required this.url});
 }

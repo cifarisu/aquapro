@@ -46,7 +46,10 @@ class _CusHomeState extends State<CusHome> {
     Map<String, double> coordinates = {};
     final User? user = _auth.currentUser;
     if (user != null) {
-      final userData = await FirebaseFirestore.instance.collection('Customer').doc(user.uid).get();
+      final userData = await FirebaseFirestore.instance
+          .collection('Customer')
+          .doc(user.uid)
+          .get();
       final userCoordinates = userData['coordinates'] as GeoPoint?;
       if (userCoordinates != null) {
         coordinates['latitude'] = userCoordinates.latitude;
@@ -103,20 +106,36 @@ class _CusHomeState extends State<CusHome> {
                     children: [
                       Text(
                         "Browse",
-                        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 24, fontWeight: FontWeight.bold),
                       ),
                       GestureDetector(
                         onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => CusMaps()));
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => CusMaps()));
                         },
                         child: Column(
                           children: [
                             Container(
                               padding: const EdgeInsets.all(3),
-                              decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(10)),
-                              child: Icon(Icons.map_rounded, color: Colors.white, size: 40,),
+                              decoration: BoxDecoration(
+                                  color: Colors.black,
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: Icon(
+                                Icons.map_rounded,
+                                color: Colors.white,
+                                size: 40,
+                              ),
                             ),
-                            Text("Open Maps", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black),)
+                            Text(
+                              "Open Maps",
+                              style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black),
+                            )
                           ],
                         ),
                       ),
@@ -128,37 +147,55 @@ class _CusHomeState extends State<CusHome> {
                     children: [
                       Text(
                         "Nearest Water Refilling Stations",
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                       GestureDetector(
                         onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => StoresNearYou()));
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => StoresNearYou()));
                         },
                         child: Text(
-                          "View all>", 
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.blue),
+                          "View all>",
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.blue),
                         ),
                       ),
                     ],
                   ),
                   SizedBox(height: 20),
                   StreamBuilder<QuerySnapshot>(
-                    stream: FirebaseFirestore.instance.collection('Store').snapshots(),
+                    stream: FirebaseFirestore.instance
+                        .collection('Store')
+                        .snapshots(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return Center(child: CircularProgressIndicator());
                       } else if (snapshot.hasError) {
                         return Text('Error: ${snapshot.error}');
                       } else {
-                        final List<QueryDocumentSnapshot> stores = snapshot.data!.docs;
+                        final List<QueryDocumentSnapshot> stores =
+                            snapshot.data!.docs;
 
                         // Sorting stores based on distance from user's location
                         stores.sort((a, b) {
                           final aLocation = a['coordinates'] as GeoPoint;
                           final bLocation = b['coordinates'] as GeoPoint;
 
-                          final aDistance = calculateDistance(userLatitude, userLongitude, aLocation.latitude, aLocation.longitude);
-                          final bDistance = calculateDistance(userLatitude, userLongitude, bLocation.latitude, bLocation.longitude);
+                          final aDistance = calculateDistance(
+                              userLatitude,
+                              userLongitude,
+                              aLocation.latitude,
+                              aLocation.longitude);
+                          final bDistance = calculateDistance(
+                              userLatitude,
+                              userLongitude,
+                              bLocation.latitude,
+                              bLocation.longitude);
 
                           return aDistance.compareTo(bDistance);
                         });
@@ -167,7 +204,6 @@ class _CusHomeState extends State<CusHome> {
                           scrollDirection: Axis.horizontal,
                           child: Row(
                             children: stores.map((store) {
-                              
                               final storeId = store['id'];
                               final name = store['name'];
                               final address = store['address'];
@@ -176,12 +212,22 @@ class _CusHomeState extends State<CusHome> {
                               final imageUrl = store['url'];
                               final storeLocation = store['coordinates'];
 
-                              final distance = calculateDistance(userLatitude, userLongitude, storeLocation.latitude, storeLocation.longitude);
+                              final distance = calculateDistance(
+                                  userLatitude,
+                                  userLongitude,
+                                  storeLocation.latitude,
+                                  storeLocation.longitude);
 
                               return GestureDetector(
                                 onTap: () async {
-                                  final productsSnapshot = await FirebaseFirestore.instance.collection('Store').doc(store.id).collection('Products').get();
-                                  final List<DocumentSnapshot> products = productsSnapshot.docs;
+                                  final productsSnapshot =
+                                      await FirebaseFirestore.instance
+                                          .collection('Store')
+                                          .doc(store.id)
+                                          .collection('Products')
+                                          .get();
+                                  final List<DocumentSnapshot> products =
+                                      productsSnapshot.docs;
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -198,32 +244,40 @@ class _CusHomeState extends State<CusHome> {
                                   );
                                 },
                                 child: SizedBox(
-                                  width: 330, // Set a fixed width for the container
+                                  width:
+                                      330, // Set a fixed width for the container
                                   child: Container(
                                     margin: EdgeInsets.all(5),
                                     decoration: BoxDecoration(
-                                      border: Border.all(color: Color(0xff0EB4F3), width: 3),
+                                      border: Border.all(
+                                          color: Color(0xff0EB4F3), width: 3),
                                       borderRadius: BorderRadius.circular(20),
                                     ),
                                     child: Material(
                                       elevation: 5.0,
                                       borderRadius: BorderRadius.circular(20),
                                       child: ConstrainedBox(
-                                        constraints: BoxConstraints(minHeight: 500), // Set a fixed height for the container
+                                        constraints: BoxConstraints(
+                                            minHeight:
+                                                500), // Set a fixed height for the container
                                         child: Container(
                                           padding: EdgeInsets.all(20),
                                           child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                             children: [
                                               Container(
                                                 alignment: Alignment.topCenter,
-                                                width: 300, // Set a fixed width for the image container
-                                                height: 150, // Set a fixed height for the image container
+                                                width:
+                                                    300, // Set a fixed width for the image container
+                                                height:
+                                                    150, // Set a fixed height for the image container
                                                 child: imageUrl == null
                                                     ? Placeholder()
                                                     : Image.network(
                                                         imageUrl,
-                                                        fit: BoxFit.cover, // Adjust the fit to cover the container
+                                                        fit: BoxFit
+                                                            .cover, // Adjust the fit to cover the container
                                                         width: double.infinity,
                                                         height: double.infinity,
                                                       ),
@@ -232,66 +286,93 @@ class _CusHomeState extends State<CusHome> {
                                               Text(
                                                 name,
                                                 textAlign: TextAlign.center,
-                                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                                style: TextStyle(
+                                                    fontSize: 18,
+                                                    fontWeight:
+                                                        FontWeight.bold),
                                               ),
                                               SizedBox(height: 5.0),
                                               Row(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
                                                 children: [
-                                                  Icon(Icons.location_on, color: Color(0xff0EB4F3), size: 30),
+                                                  Icon(Icons.location_on,
+                                                      color: Color(0xff0EB4F3),
+                                                      size: 30),
                                                   SizedBox(width: 8),
                                                   Container(
-                                                    constraints: BoxConstraints(maxWidth: 220),
+                                                    constraints: BoxConstraints(
+                                                        maxWidth: 220),
                                                     child: Text(
                                                       address,
-                                                      style: TextStyle(fontSize: 16),
+                                                      style: TextStyle(
+                                                          fontSize: 16),
                                                     ),
                                                   )
                                                 ],
                                               ),
                                               SizedBox(height: 12.0),
                                               Row(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
                                                 children: [
                                                   SizedBox(width: 2),
                                                   Container(
-                                                    constraints: BoxConstraints(maxWidth: 25, minWidth: 25, minHeight: 25),
-                                                    decoration: BoxDecoration(color: Color(0xff0EB4F3), borderRadius: BorderRadius.circular(20)),
-                                                    child: Icon(Icons.phone, color: Colors.white, size: 20),
+                                                    constraints: BoxConstraints(
+                                                        maxWidth: 25,
+                                                        minWidth: 25,
+                                                        minHeight: 25),
+                                                    decoration: BoxDecoration(
+                                                        color:
+                                                            Color(0xff0EB4F3),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(20)),
+                                                    child: Icon(Icons.phone,
+                                                        color: Colors.white,
+                                                        size: 20),
                                                   ),
                                                   SizedBox(width: 13),
                                                   Container(
-                                                    constraints: BoxConstraints(maxWidth: 240),
+                                                    constraints: BoxConstraints(
+                                                        maxWidth: 240),
                                                     child: Text(
                                                       contact,
-                                                      style: TextStyle(fontSize: 16),
+                                                      style: TextStyle(
+                                                          fontSize: 16),
                                                     ),
                                                   )
                                                 ],
                                               ),
                                               SizedBox(height: 12.0),
                                               Row(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
                                                 children: [
                                                   Container(
-                                                    child: Icon(Icons.access_time, color: Color(0xff0EB4F3), size: 30),
+                                                    child: Icon(
+                                                        Icons.access_time,
+                                                        color:
+                                                            Color(0xff0EB4F3),
+                                                        size: 30),
                                                   ),
                                                   SizedBox(width: 10),
                                                   Container(
-                                                    constraints: BoxConstraints(maxWidth: 230),
+                                                    constraints: BoxConstraints(
+                                                        maxWidth: 230),
                                                     child: Text(
                                                       time,
-                                                      style: TextStyle(fontSize: 16),
+                                                      style: TextStyle(
+                                                          fontSize: 16),
                                                     ),
                                                   )
                                                 ],
                                               ),
-                                                SizedBox(height: 12.0),
-                                                Text(
-                                                  '${distance >= 1 ? "${distance.toStringAsFixed(2)} km" : "${(distance * 1000).toStringAsFixed(0)} meters"} away from you',
-                                                  style: TextStyle(fontSize: 16),
-                                                ),
-
+                                              SizedBox(height: 12.0),
+                                              Text(
+                                                '${distance >= 1 ? "${distance.toStringAsFixed(2)} km" : "${(distance * 1000).toStringAsFixed(0)} meters"} away from you',
+                                                style: TextStyle(fontSize: 16),
+                                              ),
                                             ],
                                           ),
                                         ),
@@ -317,19 +398,24 @@ class _CusHomeState extends State<CusHome> {
                     children: [
                       GestureDetector(
                         onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => Details()));
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Details()));
                         },
                         child: Container(
                           margin: EdgeInsets.all(5),
                           decoration: BoxDecoration(
-                            border: Border.all(color: Color(0xff0EB4F3), width: 3),
+                            border:
+                                Border.all(color: Color(0xff0EB4F3), width: 3),
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Material(
                             elevation: 5.0,
                             borderRadius: BorderRadius.circular(20),
                             child: Container(
-                              constraints: BoxConstraints(minWidth: 120, maxWidth: 120),
+                              constraints:
+                                  BoxConstraints(minWidth: 120, maxWidth: 120),
                               padding: EdgeInsets.all(5),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -337,7 +423,8 @@ class _CusHomeState extends State<CusHome> {
                                   Container(
                                     alignment: Alignment.topCenter,
                                     width: MediaQuery.of(context).size.height,
-                                    child: Image.asset("images/flat.png", fit: BoxFit.fill),
+                                    child: Image.asset("images/flat.png",
+                                        fit: BoxFit.fill),
                                   ),
                                 ],
                               ),
@@ -348,27 +435,33 @@ class _CusHomeState extends State<CusHome> {
                       SizedBox(width: 15.0),
                       GestureDetector(
                         onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => Details()));
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Details()));
                         },
                         child: Container(
                           margin: EdgeInsets.all(5),
                           decoration: BoxDecoration(
-                            border: Border.all(color: Color(0xff0EB4F3), width: 3),
+                            border:
+                                Border.all(color: Color(0xff0EB4F3), width: 3),
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Material(
                             elevation: 5.0,
                             borderRadius: BorderRadius.circular(20),
                             child: Container(
-                              constraints: BoxConstraints(minWidth: 120, maxWidth: 120),
+                              constraints:
+                                  BoxConstraints(minWidth: 120, maxWidth: 120),
                               padding: EdgeInsets.all(5),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Container(
                                     alignment: Alignment.topCenter,
-                                    width: MediaQuery.of(context).size.height,                                
-                                    child: Image.asset("images/round.png", fit: BoxFit.fill),
+                                    width: MediaQuery.of(context).size.height,
+                                    child: Image.asset("images/round.png",
+                                        fit: BoxFit.fill),
                                   ),
                                 ],
                               ),
@@ -379,19 +472,24 @@ class _CusHomeState extends State<CusHome> {
                       SizedBox(width: 15.0),
                       GestureDetector(
                         onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => Details()));
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Details()));
                         },
                         child: Container(
                           margin: EdgeInsets.all(5),
                           decoration: BoxDecoration(
-                            border: Border.all(color: Color(0xff0EB4F3), width: 3),
+                            border:
+                                Border.all(color: Color(0xff0EB4F3), width: 3),
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Material(
                             elevation: 5.0,
                             borderRadius: BorderRadius.circular(20),
                             child: Container(
-                              constraints: BoxConstraints(minWidth: 120, maxWidth: 120),
+                              constraints:
+                                  BoxConstraints(minWidth: 120, maxWidth: 120),
                               padding: EdgeInsets.all(5),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -399,7 +497,8 @@ class _CusHomeState extends State<CusHome> {
                                   Container(
                                     alignment: Alignment.topCenter,
                                     width: MediaQuery.of(context).size.height,
-                                    child: Image.asset("images/small.png", fit: BoxFit.fill),
+                                    child: Image.asset("images/small.png",
+                                        fit: BoxFit.fill),
                                   ),
                                 ],
                               ),

@@ -1,65 +1,238 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
-
-import "package:aquapro/pages/details.dart";
-import "package:aquapro/widget/widget_support.dart";
-import "package:flutter/cupertino.dart";
-import "package:flutter/material.dart";
-import "package:flutter/widgets.dart";
+import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/widgets.dart';
 
 class RiderHome extends StatefulWidget {
-  const RiderHome({super.key});
+  const RiderHome({Key? key});
 
   @override
   State<RiderHome> createState() => _RiderHomeState();
 }
 
 class _RiderHomeState extends State<RiderHome> {
-  
+  late String? currentUserId;
+  late String? storeId; // Declare storeId here
+
+  @override
+  void initState() {
+    super.initState();
+    getCurrentUserId();
+  }
+
+  void getCurrentUserId() {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      setState(() {
+        currentUserId = user.uid;
+      });
+    }
+  }
+
+  void startDelivery(String orderId) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('Store')
+          .doc(storeId) // Use storeId here
+          .collection('Orders')
+          .doc(orderId)
+          .update({'status': 'Out for Delivery'});
+    } catch (e) {
+      print('Error starting delivery: $e');
+      // Handle error as needed, for example, show a snackbar
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error starting delivery. Please try again later.'),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-     var _screenHeight = MediaQuery.of(context).size.height/1.2;
     return Scaffold(
-      
-      
-      appBar: AppBar(
-        toolbarHeight: 60,
-        backgroundColor: Color(0xff81e6eb),
-        flexibleSpace: SafeArea(
-          
-          
-            child: Column(
-              
-              children: [
-                 SizedBox(height: 10,),
-                  Row(
-                    
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      SizedBox(width: 25,),
-                      Text(
-                        "Active Orders",
-                        style: TextStyle(
-                          fontFamily: 'Poppins',
-                          fontSize: 25,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                 
-                ],),
-          )),
       body: Container(
-            padding: EdgeInsets.only(left: 25, top: 10, right: 25, bottom: 20),
-            alignment: Alignment.topLeft,
-            width: double.infinity,
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [Color(0xff81e6eb), Color(0xffffffff)]),
-            ),
-            child: Text("Active Orders", style: AppWidget.boldTextFieldStyle(),),)
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xff81e6eb), Color(0xffffffff)]),
+        ),
+        child: StreamBuilder(
+          stream: FirebaseFirestore.instance
+              .collection('Rider') // Accessing Rider collection
+              .doc(currentUserId) // Document ID is the current user ID
+              .snapshots(),
+          builder:
+              (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            }
+            if (!snapshot.hasData) {
+              return Center(child: Text('No data available for this rider'));
+            }
+
+            // Extracting store ID from Rider document
+            storeId = snapshot.data!['storeId']; // Assign storeId here
+
+            // Display orders for the current rider's stores
+            return StreamBuilder(
+              stream: FirebaseFirestore.instance
+                  .collection('Store') // Accessing Store collection
+                  .doc(storeId) // Document ID is the store ID
+                  .collection('Orders') // Accessing Orders subcollection
+                  .where('status', isEqualTo: 'To Deliver')
+                  .snapshots(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                }
+                if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                }
+                if (snapshot.data == null || snapshot.data!.docs.isEmpty) {
+                  return Center(
+                      child: Text('No orders available for this store'));
+                }
+
+                // Display orders for the current store
+                return Column(
+                  children: [
+                    SizedBox(height: 50), // Added space from top
+                    ElevatedButton(
+                      onPressed: () {
+                        // Call startDelivery function when button is pressed
+                        for (var doc in snapshot.data!.docs) {
+                          if (doc['status'] == 'To Deliver') {
+                            startDelivery(doc.id);
+                          }
+                        }
+                      },
+                      child: Text('Start Delivery'),
+                    ),
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: snapshot.data!.docs.length,
+                        itemBuilder: (context, index) {
+                          var order = snapshot.data!.docs[index];
+                          var items = order['items'] as List<dynamic>;
+
+                          return Container(
+                            margin: EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 20),
+                            padding: EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.5),
+                                  spreadRadius: 2,
+                                  blurRadius: 5,
+                                  offset: Offset(0, 3),
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(height: 10),
+                                Text(
+                                  'Order ID: ${order['orderId']}',
+                                  style: TextStyle(fontSize: 14),
+                                ),
+                                Text(
+                                  'Customer Name: ${order['customerName']}',
+                                  style: TextStyle(fontSize: 14),
+                                ),
+                                Text(
+                                  'Contact: ${order['contact']}',
+                                  style: TextStyle(fontSize: 14),
+                                ),
+                                Text(
+                                  'Address: ${order['address']}',
+                                  style: TextStyle(fontSize: 14),
+                                ),
+                                Text(
+                                  'Status: To Deliver',
+                                  style: TextStyle(fontSize: 14),
+                                ),
+                                ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  itemCount: items.length,
+                                  itemBuilder: (context, index) {
+                                    var item = items[index];
+                                    return Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Image.network(
+                                              item['url'],
+                                              height: 100,
+                                              width: 100,
+                                              fit: BoxFit.cover,
+                                            ),
+                                            SizedBox(width: 10),
+                                            Flexible(
+                                              // Wrap the Text widget in Flexible
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    'Item: ${item['itemName']}',
+                                                    style:
+                                                        TextStyle(fontSize: 14),
+                                                  ),
+                                                  Text(
+                                                    'Quantity: ${item['quantity']}',
+                                                    style:
+                                                        TextStyle(fontSize: 14),
+                                                  ),
+                                                  Text(
+                                                    'Total: ${item['total']}',
+                                                    style:
+                                                        TextStyle(fontSize: 14),
+                                                  ),
+                                                  Text(
+                                                    'Type: ${item['type']}',
+                                                    style:
+                                                        TextStyle(fontSize: 14),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(height: 10),
+                                      ],
+                                    );
+                                  },
+                                ),
+                                Text(
+                                  'Total Amount: ${order['totalAmount']}',
+                                  style: TextStyle(fontSize: 14),
+                                ),
+                                SizedBox(height: 10),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                );
+              },
+            );
+          },
+        ),
+      ),
     );
   }
 }

@@ -17,6 +17,7 @@ import 'package:aquapro/pages/rider_info.dart';
 import 'package:aquapro/pages/signup.dart';
 import 'package:aquapro/rider/rider_choose_loc.dart';
 import 'package:aquapro/rider/rider_navbar.dart';
+import 'package:aquapro/rider/rider_storeselection.dart';
 import 'package:aquapro/store/store_manual_registration.dart';
 import 'package:aquapro/store/store_navbar.dart';
 import 'package:aquapro/trialapi/newhome.dart';
@@ -26,8 +27,7 @@ import 'package:flutter/material.dart';
 import 'firebase_options.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -63,8 +63,7 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent),
           useMaterial3: true,
         ),
-        home: LogIn()
-    );
+        home: LogIn());
   }
 }
 

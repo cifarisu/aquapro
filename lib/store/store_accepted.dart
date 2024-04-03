@@ -1,326 +1,211 @@
-// ignore_for_file: prefer_adjacent_string_concatenation, prefer_interpolation_to_compose_strings, prefer_const_constructors
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/widgets.dart';
 
 class StoreAccepted extends StatefulWidget {
-  const StoreAccepted({super.key});
+  const StoreAccepted({Key? key});
 
   @override
   State<StoreAccepted> createState() => _StoreAcceptedState();
 }
 
 class _StoreAcceptedState extends State<StoreAccepted> {
-  int total = 1;
+  late String? currentUserId;
+
+  @override
+  void initState() {
+    super.initState();
+    getCurrentUserId();
+  }
+
+  void getCurrentUserId() {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      setState(() {
+        currentUserId = user.uid;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-            padding: EdgeInsets.only(left: 25, top: 20, right: 25, bottom: 20),
-            alignment: Alignment.topLeft,
-            width: double.infinity,
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [Color(0xff81e6eb), Color(0xffffffff)]),
-            ),
-            child: Column(
-              children:[ Expanded(
-                child: ListView(
-                  children: [
-                    GestureDetector(
-                          child: 
-                              Container(
-                                width: MediaQuery.of(context).size.width ,
-                               
-                                padding: EdgeInsets.only(
-                                    left: 5, right: 5, top: 15, bottom: 15),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(25),
-                                  color: Color.fromARGB(255, 255, 255, 255),
-                                ),
-                                child: Column(
-                                  children: [
-                                    Row(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xff81e6eb), Color(0xffffffff)]),
+        ),
+        child: StreamBuilder(
+          stream: FirebaseFirestore.instance
+              .collection('Store')
+              .doc(currentUserId)
+              .collection('Orders')
+              .where('status',
+                  whereIn: ['To Deliver', 'To Pick-up']).snapshots(),
+          builder:
+              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            }
+            if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            }
+            if (snapshot.data == null || snapshot.data!.docs.isEmpty) {
+              return Center(child: Text('No orders available'));
+            }
+
+            // Display orders for the current store
+            return ListView.builder(
+              itemCount: snapshot.data!.docs.length,
+              itemBuilder: (context, index) {
+                var order = snapshot.data!.docs[index];
+                var items = order['items'] as List<dynamic>;
+
+                // Check the statuses of all items
+                bool allForPickup = true;
+                bool allForDelivery = true;
+
+                for (var item in items) {
+                  if (item['type'] == 'Pickup') {
+                    allForDelivery = false;
+                  } else if (item['type'] == 'Delivery') {
+                    allForPickup = false;
+                  }
+                }
+
+                // Determine the status for the order
+                String orderStatus = allForPickup
+                    ? 'To Pick-up'
+                    : allForDelivery
+                        ? 'To Deliver'
+                        : 'Pending'; // Or any other default status
+
+                return Container(
+                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                  padding: EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.5),
+                        spreadRadius: 2,
+                        blurRadius: 5,
+                        offset: Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 10),
+                      Text(
+                        'Order ID: ${order['orderId']}',
+                        style: TextStyle(fontSize: 14),
+                      ),
+                      Text(
+                        'Customer Name: ${order['customerName']}',
+                        style: TextStyle(fontSize: 14),
+                      ),
+                      Text(
+                        'Contact: ${order['contact']}',
+                        style: TextStyle(fontSize: 14),
+                      ),
+                      Text(
+                        'Address: ${order['address']}',
+                        style: TextStyle(fontSize: 14),
+                      ),
+                      Text(
+                        'Status: $orderStatus',
+                        style: TextStyle(fontSize: 14),
+                      ),
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: items.length,
+                        itemBuilder: (context, index) {
+                          var item = items[index];
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Image.network(
+                                    item['url'],
+                                    height: 100,
+                                    width: 100,
+                                    fit: BoxFit.cover,
+                                  ),
+                                  SizedBox(width: 10),
+                                  Flexible(
+                                    // Wrap the Text widget in Flexible
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
-                                        SizedBox(
-                                          width: 25,
+                                        Text(
+                                          'Item: ${item['itemName']}',
+                                          style: TextStyle(fontSize: 14),
                                         ),
-                                        Container(
-                                            child: Image.asset(
-                                          "images/profile.png",
-                                          height: 40,
-                                          
-                                        )),
-                                        SizedBox(
-                                          width: 10,
+                                        Text(
+                                          'Quantity: ${item['quantity']}',
+                                          style: TextStyle(fontSize: 14),
                                         ),
-                                            Container(
-                                              constraints: BoxConstraints(maxWidth: 230),
-                                              child: Text("John F. Kenedy",
-                                                  style: TextStyle(
-                                                      fontFamily: 'Times New Roman',
-                                                      fontSize: 15,
-                                                      fontWeight: FontWeight.bold),
-                                                  overflow: TextOverflow.ellipsis),
-                                            ),
-                                          
-                                        
+                                        Text(
+                                          'Total: ${item['total']}',
+                                          style: TextStyle(fontSize: 14),
+                                        ),
+                                        Text(
+                                          'Type: ${item['type']}',
+                                          style: TextStyle(fontSize: 14),
+                                        ),
                                       ],
                                     ),
-                                    SizedBox(height: 10,),
-                                    Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            
-                            SizedBox(width: 14.0,),
-                            Container(
-                              height: 100,
-                              padding: EdgeInsets.all(5),
-                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                color: Color.fromARGB(0, 0, 0, 0),
-                                  border: Border.all(
-                                    width: 3,
-                                    color: Color(0xff0EB4F3),
-                                  )),
-                              child: ClipRRect(
-                                child: Image.asset(
-                                "images/flat.png",
-                                height: 90, 
-                                width: 90, 
-                                fit: BoxFit.cover,),
+                                  ),
+                                ],
                               ),
-                            ),
-                            SizedBox(width: 17.0,),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                              Container(
-                                
-                                child: Text("New Slim Container w/ water" + "     x" + total.toString(),
-                                style: TextStyle(fontFamily: "Times New Roman", fontSize: 13, fontWeight: FontWeight.w800))
-                              ),
-                              
-                              Container(
-                                
-                                child: Text("Php " + "35.00" + "     |     " + "Deliver",
-                                style: TextStyle(fontFamily: "Callibri", fontSize: 14, fontWeight: FontWeight.w400))
-                              ),
-                             
-                              Container(
-                                
-                                child: Text("Out for Delivery",
-                                style: TextStyle(fontFamily: "Callibri", fontSize: 15, 
-                                color: Color(0xff4cdbc4)))
-                              ),
-                             
-                              
-                            ],)
-                          ],
+                              SizedBox(height: 10),
+                            ],
+                          );
+                        },
+                      ),
+                      Text(
+                        'Total Amount: ${order['totalAmount']}',
+                        style: TextStyle(fontSize: 14),
+                      ),
+                      SizedBox(height: 10),
+                      TextButton(
+                        onPressed: () {
+                          // Update order status
+                          FirebaseFirestore.instance
+                              .collection('Store')
+                              .doc(currentUserId)
+                              .collection('Orders')
+                              .doc(order.id)
+                              .update({'status': orderStatus}).then((_) {
+                            // Handle the action here
+                          }).catchError((error) {
+                            print("Failed to update order status: $error");
+                            // Handle error accordingly
+                          });
+                        },
+                        child: Text(
+                          'Accept Order',
+                          style: TextStyle(color: Colors.green),
                         ),
-                         SizedBox(height: 10,),
-                                    Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            
-                            SizedBox(width: 14.0,),
-                            Container(
-                              height: 100,
-                              padding: EdgeInsets.all(5),
-                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                color: Color.fromARGB(0, 0, 0, 0),
-                                  border: Border.all(
-                                    width: 3,
-                                    color: Color(0xff0EB4F3),
-                                  )),
-                              child: ClipRRect(
-                                child: Image.asset(
-                                "images/flat.png",
-                                height: 90, 
-                                width: 90, 
-                                fit: BoxFit.cover,),
-                              ),
-                            ),
-                            SizedBox(width: 17.0,),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                              Container(
-                                
-                                child: Text("Refill Slim Container" + "     x5" ,
-                                style: TextStyle(fontFamily: "Times New Roman", fontSize: 13, fontWeight: FontWeight.w800))
-                              ),
-                              
-                              Container(
-                                
-                                child: Text("Php " + "175.00" + "     |     " + "Deliver",
-                                style: TextStyle(fontFamily: "Callibri", fontSize: 14, fontWeight: FontWeight.w400))
-                              ),
-                             
-                              Container(
-                                
-                                child: Text("Out for Delivery",
-                                style: TextStyle(fontFamily: "Callibri", fontSize: 15, 
-                                color: Color(0xff4cdbc4)))
-                              ),
-                             
-                              
-                            ],)
-                          ],
-                        ),
-                                  ],
-                                ),
-                              ),
-                            
-                        ),
-                        SizedBox(height: 30,),
-                        GestureDetector(
-                          child: 
-                              Container(
-                                width: MediaQuery.of(context).size.width ,
-                               
-                                padding: EdgeInsets.only(
-                                    left: 5, right: 5, top: 15, bottom: 15),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(25),
-                                  color: Color.fromARGB(255, 255, 255, 255),
-                                ),
-                                child: Column(
-                                  children: [
-                                    Row(
-                                      children: [
-                                        SizedBox(
-                                          width: 25,
-                                        ),
-                                        Container(
-                                            child: Image.asset(
-                                          "images/profile.png",
-                                          height: 40,
-                                          
-                                        )),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                            Container(
-                                              constraints: BoxConstraints(maxWidth: 230),
-                                              child: Text("John F. Kenedy",
-                                                  style: TextStyle(
-                                                      fontFamily: 'Times New Roman',
-                                                      fontSize: 15,
-                                                      fontWeight: FontWeight.bold),
-                                                  overflow: TextOverflow.ellipsis),
-                                            ),
-                                          
-                                        
-                                      ],
-                                    ),
-                                    SizedBox(height: 10,),
-                                    Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            
-                            SizedBox(width: 14.0,),
-                            Container(
-                              height: 100,
-                              padding: EdgeInsets.all(5),
-                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                color: Color.fromARGB(0, 0, 0, 0),
-                                  border: Border.all(
-                                    width: 3,
-                                    color: Color(0xff0EB4F3),
-                                  )),
-                              child: ClipRRect(
-                                child: Image.asset(
-                                "images/round.png",
-                                height: 90, 
-                                width: 90, 
-                                fit: BoxFit.cover,),
-                              ),
-                            ),
-                            SizedBox(width: 17.0,),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                              Container(
-                                
-                                child: Text("New Round Container w/ water" + "     x" + total.toString(),
-                                style: TextStyle(fontFamily: "Times New Roman", fontSize: 12, fontWeight: FontWeight.w800))
-                              ),
-                              
-                              Container(
-                                
-                                child: Text("Php " + "230.00" + "     |     " + "Pick-up",
-                                style: TextStyle(fontFamily: "Callibri", fontSize: 14, fontWeight: FontWeight.w400))
-                              ),
-                             
-                              Container(
-                                
-                                child: Text("Reserved",
-                                style: TextStyle(fontFamily: "Callibri", fontSize: 15, 
-                                color: Color(0xff4cdbc4)))
-                              ),
-                               Row(
-                                 children: [
-                                   Container(
-                                    alignment: Alignment.center,
-                                    width: 110,
-                                    decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20),
-                                    color: Color.fromARGB(0, 0, 0, 0),
-                                      border: Border.all(
-                                        width: 2,
-                                        color: Color(0xff0EB4F3),
-                                      )),
-                                    child: Text("Completed",
-                                    style: TextStyle(fontFamily: "Callibri", fontSize: 13, 
-                                    color: Color(0xff0eb4f3)))
-                                                                 ),
-                                                                 SizedBox(width: 20,),
-                                                                 Container(
-                                    alignment: Alignment.center,
-                                    width: 110,
-                                    decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20),
-                                    color: Color.fromARGB(0, 0, 0, 0),
-                                      border: Border.all(
-                                        width: 2,
-                                        color: Color(0xffff3131),
-                                      )),
-                                    child: Text("Cancelled",
-                                    style: TextStyle(fontFamily: "Callibri", fontSize: 13, 
-                                    color: Color(0xffff3131)))
-                                                                 ),
-                                 ],
-                               ),
-                             
-                              
-                            ],)
-                          ],
-                        ),
-                      
-                                
-                                  ],
-                                ),
-                              ),
-                            
-                        ),
-                        
-                        
-                        
-                        
-                  ],
-                ),
-              ),
-              ]
-      ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }

@@ -289,7 +289,7 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                       // Placeholder for "Deliver" tab
                       ListView(
                         padding: EdgeInsets.all(6),
-                        children: _filterProductsByType('deliver')
+                        children: _filterProductsByType('Delivery')
                             .map<Widget>((product) {
                           String productName = product['name'];
                           double productPrice = product['price'];
@@ -364,7 +364,7 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                                                   productName,
                                                   quantity,
                                                   productPrice,
-                                                  'deliver',
+                                                  'Delivery',
                                                   productImageUrl,
                                                   widget.storeId,
                                                 );
@@ -412,8 +412,7 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                                             Container(
                                               alignment: Alignment.center,
                                               width: 45,
-                                              child: Text(
-                                                  quantity.toString(),
+                                              child: Text(quantity.toString(),
                                                   style: TextStyle(
                                                       fontFamily: 'Poppins',
                                                       fontWeight:
@@ -424,7 +423,8 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                                               onTap: () {
                                                 setState(() {
                                                   deliverQuantities[
-                                                      productName] = quantity + 1;
+                                                          productName] =
+                                                      quantity + 1;
                                                 });
                                               },
                                               child: Container(
@@ -447,7 +447,7 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                       // Placeholder for "Pick-up" tab
                       ListView(
                         padding: EdgeInsets.all(8),
-                        children: _filterProductsByType('pickup')
+                        children: _filterProductsByType('Pick-up')
                             .map<Widget>((product) {
                           String productName = product['name'];
                           double productPrice = product['price'];
@@ -526,7 +526,7 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                                                   productName,
                                                   quantity,
                                                   productPrice,
-                                                  'pickup',
+                                                  'Pick-up',
                                                   productImageUrl,
                                                   widget.storeId,
                                                 );
@@ -572,20 +572,20 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                                               ),
                                             ),
                                             Container(
-                                              alignment: Alignment.center,
-                                              width: 40,
-                                              child: Text(
-                                                  quantity.toString(),
-                                                  style: TextStyle(
-                                                      fontFamily: 'Poppins',
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                      fontSize: 14))),
+                                                alignment: Alignment.center,
+                                                width: 40,
+                                                child: Text(quantity.toString(),
+                                                    style: TextStyle(
+                                                        fontFamily: 'Poppins',
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        fontSize: 14))),
                                             GestureDetector(
                                               onTap: () {
                                                 setState(() {
                                                   pickupQuantities[
-                                                      productName] = quantity + 1;
+                                                          productName] =
+                                                      quantity + 1;
                                                 });
                                               },
                                               child: Container(
@@ -618,10 +618,7 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
   }
 
   List<dynamic> _filterProductsByType(String type) {
-    return widget.products
-        .where((product) =>
-            product['type'] == type || product['type'] == 'deliver&pickup')
-        .toList();
+    return widget.products.where((product) => product['type'] == type).toList();
   }
 
   void _addToCart(

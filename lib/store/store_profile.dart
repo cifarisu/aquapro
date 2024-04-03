@@ -1,17 +1,93 @@
-import "package:aquapro/widget/widget_support.dart";
-import "package:flutter/material.dart";
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 
 class StoreProfile extends StatefulWidget {
-  const StoreProfile({super.key});
+  const StoreProfile({Key? key}) : super(key: key);
 
   @override
   State<StoreProfile> createState() => _StoreProfileState();
 }
 
 class _StoreProfileState extends State<StoreProfile> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  late TextEditingController _nameController;
+  late TextEditingController _addressController;
+  late TextEditingController _contactController;
+
+  String _name = '';
+  String _email = '';
+  String _address = '';
+  String _contact = '';
+
+  bool _isEditing = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserData();
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _addressController.dispose();
+    _contactController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _fetchUserData() async {
+    User? user = _auth.currentUser;
+    if (user != null) {
+      DocumentSnapshot userDoc =
+          await _firestore.collection('Store').doc(user.uid).get();
+      setState(() {
+        _name = userDoc.get('name') ?? '';
+        _email = user.email ?? '';
+        _address = userDoc.get('address') ?? '';
+        _contact = userDoc.get('contact') ?? '';
+        _nameController = TextEditingController(text: _name);
+        _addressController = TextEditingController(text: _address);
+        _contactController = TextEditingController(text: _contact);
+      });
+    }
+  }
+
+  Future<void> _updateUserData() async {
+    User? user = _auth.currentUser;
+    if (user != null) {
+      await _firestore.collection('Store').doc(user.uid).update({
+        'name': _nameController.text,
+        'address': _addressController.text,
+        'contact': _contactController.text,
+      });
+      setState(() {
+        _name = _nameController.text;
+        _address = _addressController.text;
+        _contact = _contactController.text;
+        _isEditing = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Profile'),
+        actions: _isEditing
+            ? [
+                IconButton(
+                  onPressed: () async {
+                    await _updateUserData();
+                  },
+                  icon: Icon(Icons.save),
+                ),
+              ]
+            : [],
+      ),
       body: Container(
         padding: EdgeInsets.only(left: 35, right: 35),
         width: MediaQuery.of(context).size.width,
@@ -21,115 +97,216 @@ class _StoreProfileState extends State<StoreProfile> {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [Color(0xff81e6eb), Color(0xffffffff)]),
-        ),  
-        child: 
-        Column(
+        ),
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-          
-          Container(
-            height: 60,
-            padding: EdgeInsets.only(bottom: 0),
-            alignment: Alignment.bottomCenter,
-            
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              
-              children: [
-              Text(
-                      "Profile",
-                      style:TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+            Container(
+              height: 60,
+              padding: EdgeInsets.only(bottom: 0),
+              alignment: Alignment.bottomCenter,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Profile",
+                    style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _isEditing = !_isEditing;
+                      });
+                    },
+                    child: Text(
+                      "Edit",
+                      style: TextStyle(
+                          fontSize: 18,
+                          decoration: TextDecoration.underline,
+                          decorationColor: Color(0xff0eb4f3),
+                          fontFamily: 'Times New Roman',
+                          color: Color(0xff0eb4f3),
+                          fontWeight: FontWeight.w600),
                     ),
-              Container(
-               
-                child: Text("Edit", style:TextStyle(fontSize: 18, decoration: TextDecoration.underline, decorationColor: Color(0xff0eb4f3) ,fontFamily: 'Times New Roman', 
-                color: Color(0xff0eb4f3), fontWeight: FontWeight.w600),
-                ))
-            ],),
-
-          ),
-          Row(
-            children: [
-              Stack(children:[Container(child: Image.asset('images/profile.png', height: 140,)),
-              Positioned(
-                bottom: -3, 
-                right: -2,
-                child: Icon(Icons.photo_camera, size: 40, color: Color(0xff0eb4f3),))] ),
-              Container(
-                padding: EdgeInsets.only(left: 30),
-                
-                // alignment: Alignment.center,
-                width: 280,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Joylan Water Refilling Station', style:TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Color(0xff0eb4f3)),),
-                    Text('Followers 46', textAlign: TextAlign.left, style: TextStyle(fontFamily: 'Times New Roman', 
-                    fontSize: 15, fontWeight: FontWeight.w500),)
-                  ],
-                ))
-            ],
-          ),
-          Container(child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-            Text('Name:', style: TextStyle(color: Color(0xff545454), fontFamily: 'Times New Roman',
-            fontSize: 20, ),),
-            Text("Adrian Jones Abache", style: TextStyle( fontFamily: 'Times New Roman',
-            fontSize: 20, fontWeight: FontWeight.w600))
-          ],),),
-           Container(
-            
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-            Text('Address:', style: TextStyle(color: Color(0xff545454), fontFamily: 'Times New Roman',
-            fontSize: 20, ),),
+                  )
+                ],
+              ),
+            ),
+            Stack(
+              children: [
+                Container(
+                  child: Image.asset(
+                    'images/profile.png',
+                    height: 200,
+                  ),
+                ),
+                Positioned(
+                  bottom: -4,
+                  right: 5,
+                  child: Icon(Icons.photo_camera,
+                      size: 50, color: Color(0xff0eb4f3)),
+                ),
+              ],
+            ),
             Container(
-              alignment: Alignment.centerRight,
-              
-              width: 300,
-              child: Text("Barangay 2 Em’s Barrio South, Legazpi City, Albay", style: TextStyle( fontFamily: 'Times New Roman',
-              fontSize: 17.5, fontWeight: FontWeight.w600), textAlign: TextAlign.right,),
-            )
-          ],),),
-           Container(child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-            Text('Email:', style: TextStyle(color: Color(0xff545454), fontFamily: 'Times New Roman',
-            fontSize: 20, ),),
+              alignment: Alignment.topLeft,
+              child: Text(
+                "Following 0",
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                    fontFamily: 'Times New Roman',
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500),
+              ),
+            ),
             Container(
-              
-              width: 320,
-              child: Text("ajtheinventor23@gmail.com", style: TextStyle( fontFamily: 'Times New Roman',
-              fontSize: 17.5, fontWeight: FontWeight.w600), textAlign: TextAlign.right),
-            )
-          ],),),
-           Container(child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-            Text('Phone:', style: TextStyle(color: Color(0xff545454), fontFamily: 'Times New Roman',
-            fontSize: 20, ),),
-            Text("09954464587", style: TextStyle( fontFamily: 'Times New Roman',
-            fontSize: 17.5, fontWeight: FontWeight.w600))
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Name:',
+                    style: TextStyle(
+                      color: Color(0xff545454),
+                      fontFamily: 'Times New Roman',
+                      fontSize: 20,
+                    ),
+                  ),
+                  _isEditing
+                      ? Expanded(
+                          child: TextField(
+                            controller: _nameController,
+                            decoration: InputDecoration(
+                              hintText: 'Enter your name',
+                            ),
+                          ),
+                        )
+                      : Flexible(
+                          child: Text(
+                            _name,
+                            style: TextStyle(
+                              fontFamily: 'Times New Roman',
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                ],
+              ),
+            ),
+            Container(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Address:',
+                    style: TextStyle(
+                      color: Color(0xff545454),
+                      fontFamily: 'Times New Roman',
+                      fontSize: 20,
+                    ),
+                  ),
+                  _isEditing
+                      ? Expanded(
+                          child: TextField(
+                            controller: _addressController,
+                            decoration: InputDecoration(
+                              hintText: 'Enter your address',
+                            ),
+                          ),
+                        )
+                      : Expanded(
+                          child: Text(
+                            _address,
+                            style: TextStyle(
+                              fontFamily: 'Times New Roman',
+                              fontSize: 17.5,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            textAlign: TextAlign.right,
+                          ),
+                        ),
+                ],
+              ),
+            ),
+            Container(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Email:',
+                    style: TextStyle(
+                      color: Color(0xff545454),
+                      fontFamily: 'Times New Roman',
+                      fontSize: 20,
+                    ),
+                  ),
+                  Expanded(
+                    child: Text(
+                      _email,
+                      style: TextStyle(
+                        fontFamily: 'Times New Roman',
+                        fontSize: 17.5,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      textAlign: TextAlign.right,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Phone:',
+                    style: TextStyle(
+                      color: Color(0xff545454),
+                      fontFamily: 'Times New Roman',
+                      fontSize: 20,
+                    ),
+                  ),
+                  _isEditing
+                      ? Expanded(
+                          child: TextField(
+                            controller: _contactController,
+                            decoration: InputDecoration(
+                              hintText: 'Enter your contact number',
+                            ),
+                          ),
+                        )
+                      : Text(
+                          _contact,
+                          style: TextStyle(
+                            fontFamily: 'Times New Roman',
+                            fontSize: 17.5,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                ],
+              ),
+            ),
+            Row(children: [
+              Icon(Icons.settings, size: 50, color: Color(0xff0eb4f3)),
+              SizedBox(width: 12),
+              Text('Settings', style: TextStyle(fontSize: 22.5)),
+            ]),
+            Row(children: [
+              Icon(Icons.info, size: 50, color: Color(0xff0eb4f3)),
+              SizedBox(width: 12),
+              Text('About Us', style: TextStyle(fontSize: 22.5)),
+            ]),
+            SizedBox(height: 50)
           ],
-          ),
-          ),
-          Row(children: [
-            Icon(Icons.settings, size: 50, color: Color(0xff0eb4f3),), 
-            SizedBox(width: 12,),
-            Text('Settings', style: TextStyle(fontSize: 22.5),)
-          ],),
-          Row(children: [
-            Icon(Icons.info, size: 50, color: Color(0xff0eb4f3),), 
-            SizedBox(width: 12,),
-            Text('About Us', style: TextStyle(fontSize: 22.5),)
-          ],),
-          SizedBox(height: 50,)
-        ],)
-        
+        ),
       ),
     );
   }
+}
+
+void main() {
+  runApp(MaterialApp(
+    home: StoreProfile(),
+  ));
 }

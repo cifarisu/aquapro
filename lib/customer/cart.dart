@@ -17,6 +17,8 @@ class _CartState extends State<Cart> with TickerProviderStateMixin {
 
   Map<String, bool> selectedItems = {};
   double totalPrice = 0.0;
+  double totalAmount = 0.0;
+  String? cartType; // To store the type of the first item in the cart
 
   @override
   void initState() {
@@ -53,8 +55,10 @@ class _CartState extends State<Cart> with TickerProviderStateMixin {
   }
 
   Future<void> checkOut() async {
-    final userDoc =
-        await FirebaseFirestore.instance.collection('Customer').doc(currentUserId).get();
+    final userDoc = await FirebaseFirestore.instance
+        .collection('Customer')
+        .doc(currentUserId)
+        .get();
 
     // Start a Firestore transaction
     await FirebaseFirestore.instance.runTransaction((transaction) async {
@@ -67,9 +71,20 @@ class _CartState extends State<Cart> with TickerProviderStateMixin {
       // Create a map to hold order data grouped by storeId
       Map<String, List<Map<String, dynamic>>> ordersByStore = {};
 
+      bool hasDifferentTypes = false;
+
       cartSnapshot.docs.forEach((doc) async {
         if (selectedItems.containsKey(doc.id) && selectedItems[doc.id]!) {
           final storeId = doc['storeId'];
+          final storeName = doc['storeName'];
+
+          // Check if cartType is set and if the current item has the same type
+          if (cartType != null && doc['type'] != cartType) {
+            hasDifferentTypes = true;
+          }
+
+          // Set the cartType if not already set
+          cartType ??= doc['type'];
 
           // Construct order item data
           Map<String, dynamic> orderItemData = {
@@ -77,7 +92,9 @@ class _CartState extends State<Cart> with TickerProviderStateMixin {
             'quantity': doc['quantity'],
             'price': doc['price'],
             'type': doc['type'],
-            'url': doc['url'], // Include URL in order item data
+            'url': doc['url'],
+            'storeName': doc['storeName'], // Include URL in order item data
+            'total': doc['quantity'] * doc['price'], // Total for this item
           };
 
           // Create or update order list for the store
@@ -87,14 +104,37 @@ class _CartState extends State<Cart> with TickerProviderStateMixin {
           ordersByStore[storeId]!.add(orderItemData);
 
           // Delete the item from the cart
-          await doc.reference.delete();
+          await deleteProduct(doc.id);
         }
       });
 
+      if (hasDifferentTypes) {
+        showDialog<String>(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+            title: Text('Error'),
+            content: Text('Cannot checkout items with different types.'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context, 'OK');
+                },
+                child: Text('OK'),
+              ),
+            ],
+          ),
+        );
+        return; // Stop checkout process
+      }
+
       // Add orders to Firestore for each store
       ordersByStore.forEach((storeId, orderItems) async {
-        final orderId =
-            FirebaseFirestore.instance.collection('Store').doc(storeId).collection('Orders').doc().id;
+        final orderId = FirebaseFirestore.instance
+            .collection('Store')
+            .doc(storeId)
+            .collection('Orders')
+            .doc()
+            .id;
 
         // Construct order data
         Map<String, dynamic> orderData = {
@@ -107,29 +147,46 @@ class _CartState extends State<Cart> with TickerProviderStateMixin {
           'contact': userDoc['contact'],
           'timestamp': FieldValue.serverTimestamp(),
           'status': 'Pending',
+          'totalAmount': totalAmount, // Include total amount for the order
         };
 
         // Add the order under the 'Orders' collection of the store
-        await FirebaseFirestore.instance.collection('Store').doc(storeId).collection('Orders').doc(orderId).set(orderData);
+        await FirebaseFirestore.instance
+            .collection('Store')
+            .doc(storeId)
+            .collection('Orders')
+            .doc(orderId)
+            .set(orderData);
       });
+
+      // Show success message after successfully placing orders
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Orders placed successfully.'),
+        duration: Duration(seconds: 3),
+      ));
     });
   }
 
-  Widget _buildCartItem(String docId, String url, String name, int quantity, double price, String type) {
+  Widget _buildCartItem(String docId, String url, String name, int quantity,
+      double price, String type) {
+    double itemTotal = quantity * price; // Total for this item
+    totalAmount += itemTotal; // Update total amount
+
     return Container(
       padding: EdgeInsets.only(bottom: 10, left: 15, top: 10),
       color: Colors.white,
       child: Row(
         children: [
           Checkbox(
-            value: selectedItems.containsKey(docId) ? selectedItems[docId] : false,
+            value:
+                selectedItems.containsKey(docId) ? selectedItems[docId] : false,
             onChanged: (bool? value) {
               setState(() {
                 selectedItems[docId] = value!;
                 if (value == true) {
-                  totalPrice += quantity * price;
+                  totalPrice += itemTotal;
                 } else {
-                  totalPrice -= quantity * price;
+                  totalPrice -= itemTotal;
                 }
               });
             },
@@ -155,55 +212,57 @@ class _CartState extends State<Cart> with TickerProviderStateMixin {
             ),
           ),
           SizedBox(width: 15),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                name,
-                style: TextStyle(
-                  fontFamily: "Times New Roman",
-                  fontSize: 13,
-                  fontWeight: FontWeight.bold,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  name,
+                  style: TextStyle(
+                    fontFamily: "Times New Roman",
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-              Row(
-                children: [
-                  IconButton(
-                    onPressed: () async {
-                      setState(() {
-                        if (quantity > 1) {
-                          quantity--;
+                Row(
+                  children: [
+                    IconButton(
+                      onPressed: () async {
+                        setState(() {
+                          if (quantity > 1) {
+                            quantity--;
+                            updateQuantity(docId, quantity).then((_) {
+                              setState(() {});
+                            });
+                          }
+                        });
+                      },
+                      icon: Icon(Icons.remove),
+                    ),
+                    Text(
+                      '$quantity',
+                      style: TextStyle(
+                        fontFamily: "Times New Roman",
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () async {
+                        setState(() {
+                          quantity++;
                           updateQuantity(docId, quantity).then((_) {
                             setState(() {});
                           });
-                        }
-                      });
-                    },
-                    icon: Icon(Icons.remove),
-                  ),
-                  Text(
-                    '$quantity',
-                    style: TextStyle(
-                      fontFamily: "Times New Roman",
-                      fontSize: 13,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: () async {
-                      setState(() {
-                        quantity++;
-                        updateQuantity(docId, quantity).then((_) {
-                          setState(() {});
                         });
-                      });
-                    },
-                    icon: Icon(Icons.add),
-                  ),
-                ],
-              ),
-              Text("$price PHP | $type")
-            ],
+                      },
+                      icon: Icon(Icons.add),
+                    ),
+                  ],
+                ),
+                Text("$price PHP | $type")
+              ],
+            ),
           ),
           IconButton(
             onPressed: () {
@@ -257,8 +316,13 @@ class _CartState extends State<Cart> with TickerProviderStateMixin {
         width: MediaQuery.of(context).size.width,
         color: Color(0xfff2f2f2),
         child: StreamBuilder(
-          stream: FirebaseFirestore.instance.collection('Customer').doc(currentUserId).collection('Cart').snapshots(),
-          builder: (BuildContext context, AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+          stream: FirebaseFirestore.instance
+              .collection('Customer')
+              .doc(currentUserId)
+              .collection('Cart')
+              .snapshots(),
+          builder: (BuildContext context,
+              AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(
                 child: CircularProgressIndicator(),
@@ -270,6 +334,7 @@ class _CartState extends State<Cart> with TickerProviderStateMixin {
               );
             }
             totalPrice = 0.0;
+            totalAmount = 0.0; // Reset total amount
             return ListView.builder(
               itemCount: snapshot.data!.docs.length,
               itemBuilder: (context, index) {
@@ -286,27 +351,7 @@ class _CartState extends State<Cart> with TickerProviderStateMixin {
                   totalPrice += quantity * price;
                 }
 
-                if (index == 0 || storeName != snapshot.data!.docs[index - 1]['storeName']) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        padding: EdgeInsets.only(left: 10, top: 10),
-                        child: Text(
-                          storeName,
-                          style: TextStyle(
-                            fontFamily: 'Times New Roman',
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      _buildCartItem(docId, url, name, quantity, price, type),
-                    ],
-                  );
-                } else {
-                  return _buildCartItem(docId, url, name, quantity, price, type);
-                }
+                return _buildCartItem(docId, url, name, quantity, price, type);
               },
             );
           },
@@ -369,8 +414,16 @@ class _CartState extends State<Cart> with TickerProviderStateMixin {
                       children: [
                         TextButton(
                           onPressed: () {
-                            checkOut();
-                            Navigator.pop(context, 'Continue');
+                            try {
+                              checkOut();
+                              Navigator.pop(context, 'Continue');
+                            } catch (error) {
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(SnackBar(
+                                content: Text(error.toString()),
+                                duration: Duration(seconds: 3),
+                              ));
+                            }
                           },
                           child: Text(
                             'Continue',

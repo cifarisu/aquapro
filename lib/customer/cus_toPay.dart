@@ -1,16 +1,33 @@
-import "package:aquapro/widget/widget_support.dart";
-import "package:flutter/cupertino.dart";
-import "package:flutter/material.dart";
+import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class cusToPay extends StatefulWidget {
-  const cusToPay({super.key});
+  const cusToPay({Key? key});
 
   @override
   State<cusToPay> createState() => _cusToPayState();
 }
 
 class _cusToPayState extends State<cusToPay> {
+  late String? currentUserId;
   int total = 1;
+
+  @override
+  void initState() {
+    super.initState();
+    getCurrentUserId();
+  }
+
+  void getCurrentUserId() {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      setState(() {
+        currentUserId = user.uid;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,167 +40,222 @@ class _cusToPayState extends State<cusToPay> {
               end: Alignment.bottomRight,
               colors: [Color(0xff81e6eb), Color(0xffffffff)]),
         ),
-        child: 
-        
-        Container(
+        child: StreamBuilder(
+          stream: FirebaseFirestore.instance.collection('Store').snapshots(),
+          builder:
+              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            }
+            if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            }
+            if (snapshot.data == null || snapshot.data!.docs.isEmpty) {
+              return Center(child: Text('No orders available'));
+            }
 
-                      padding: EdgeInsets.only(left: 5, right: 5, top: 30,),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            
-                            SizedBox(width: 14.0,),
-                            Container(
-                              padding: EdgeInsets.all(5),
-                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                color: Color.fromARGB(0, 0, 0, 0),
-                                  border: Border.all(
-                                    width: 3,
-                                    color: Color(0xff0EB4F3),
-                                  )),
-                              child: ClipRRect(
-                                child: Image.asset(
-                                "images/flat.png",
-                                height: 120, 
-                                width: 120, 
-                                fit: BoxFit.cover,),
-                              ),
+            // Display orders from all stores
+            return ListView.builder(
+              itemCount: snapshot.data!.docs.length,
+              itemBuilder: (context, index) {
+                var store = snapshot.data!.docs[index];
+
+                return StreamBuilder(
+                  stream: FirebaseFirestore.instance
+                      .collection('Store')
+                      .doc(store.id)
+                      .collection('Orders')
+                      .where('customerId', isEqualTo: currentUserId)
+                      .where('status', whereIn: [
+                    'Pending',
+                    'To Deliver',
+                    'To Pick-up'
+                  ]) // Filter by status
+                      .snapshots(),
+                  builder: (BuildContext context,
+                      AsyncSnapshot<QuerySnapshot> orderSnapshot) {
+                    if (orderSnapshot.connectionState ==
+                        ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    }
+                    if (orderSnapshot.hasError) {
+                      return Center(
+                          child: Text('Error: ${orderSnapshot.error}'));
+                    }
+                    if (orderSnapshot.data == null ||
+                        orderSnapshot.data!.docs.isEmpty) {
+                      return SizedBox.shrink();
+                    }
+
+                    // Display orders for the current user in this store
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Text(
+                            'Store Name: ${store['name']}',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
                             ),
-                            SizedBox(width: 20.0,),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                SizedBox(height: 8.0,),
-                              Container(
-                                width: MediaQuery.of(context).size.width/1.6,
-                                child: Text("Joylan Water Refilling Station",
-                                style: TextStyle(fontFamily: "Times New Roman", fontSize: 15, fontWeight: FontWeight.w600))
+                          ),
+                        ),
+                        ListView.builder(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: orderSnapshot.data!.docs.length,
+                          itemBuilder: (context, index) {
+                            var order = orderSnapshot.data!.docs[index];
+                            var items = order['items'] as List<dynamic>;
+
+                            return Container(
+                              margin: EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 20),
+                              padding: EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.5),
+                                    spreadRadius: 2,
+                                    blurRadius: 5,
+                                    offset: Offset(0, 3),
+                                  ),
+                                ],
                               ),
-                              SizedBox(height: 5.0,),
-                              Container(
-                                width: MediaQuery.of(context).size.width/1.6,
-                                child: Text("New Slim Container w/ water" + "     x" + total.toString(),
-                                style: TextStyle(fontFamily: "Times New Roman", fontSize: 13, fontWeight: FontWeight.w800))
-                              ),
-                              SizedBox(height: 3.0,),
-                              Container(
-                                width: MediaQuery.of(context).size.width/1.6,
-                                child: Text("Php " + "230.00" + "     |     " + "Deliver",
-                                style: TextStyle(fontFamily: "Callibri", fontSize: 14, fontWeight: FontWeight.w400))
-                              ),
-                             SizedBox(height: 10.0,),
-                              Row(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  GestureDetector(
-                                    onTap: () => showDialog<String>(
-              context: context,
-              builder: (BuildContext context) => AlertDialog(
-                actionsPadding: EdgeInsets.only(bottom: 10),
-                contentPadding: EdgeInsets.only(top: 30),
-                backgroundColor: Colors.white,
-                content: SingleChildScrollView(
-                  child: ListBody(
-                    children: <Widget>[
-                      Container(
-                        alignment: Alignment.center,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              'Are you sure you want to',
-                              style: TextStyle(fontSize: 17),
-                              textAlign: TextAlign.center,
-                            ),
-                            Text(
-                              " Cancel",
-                              style: TextStyle(
-                                  fontSize: 17, color: Color(0xffff3131)),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        ),
-                      ),
-                      Text(
-                        'your order?',
-                        style: TextStyle(fontSize: 17),
-                        textAlign: TextAlign.center,
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Container(
-                        width: MediaQuery.of(context).size.width,
-                        height: 2,
-                        color: Color(0xffbfbdbc),
-                      )
-                    ],
-                  ),
-                ),
-                actions: <Widget>[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context, 'Continue'),
-                        child: Text(
-                          'Continue',
-                          style: TextStyle(
-                            color: Color(0xff0eb4f3),
-                            fontSize: 20,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: () => Navigator.pop(context, 'Cancel'),
-                        child: Text(
-                          'Cancel',
-                          style: TextStyle(
-                            color: Colors.red,
-                            fontSize: 20,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-                                    child: Container(
-                                      width: 100,
-                                      padding: EdgeInsets.only(left: 5, right: 5),
-                                     decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(30),
-                                      color: Color.fromARGB(0, 0, 0, 0),
-                                        border: Border.all(
-                                          width: 2,
-                                          color: Color(0xffff3131),
-                                        )),
-                                      child:  Center(
-                                      child: Text(
-                                        "CANCEL",
-                                        style: TextStyle(
-                                          fontFamily: 'Callibri',
-                                          fontSize: 13,
-                                          color: Color(0xffff3131)
+                                  SizedBox(height: 10),
+                                  Text(
+                                    'Order ID: ${order['orderId']}',
+                                    style: TextStyle(fontSize: 14),
+                                  ),
+                                  Text(
+                                    'Status: ${order['status']}',
+                                    style: TextStyle(fontSize: 14),
+                                  ),
+                                  ListView.builder(
+                                    shrinkWrap: true,
+                                    physics: NeverScrollableScrollPhysics(),
+                                    itemCount: items.length,
+                                    itemBuilder: (context, index) {
+                                      var item = items[index];
+                                      return Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Image.network(
+                                                item['url'],
+                                                height: 100,
+                                                width: 100,
+                                                fit: BoxFit.cover,
+                                              ),
+                                              SizedBox(width: 10),
+                                              Expanded(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      'Item: ${item['itemName']}',
+                                                      style: TextStyle(
+                                                          fontSize: 14),
+                                                    ),
+                                                    Text(
+                                                      'Quantity: ${item['quantity']}',
+                                                      style: TextStyle(
+                                                          fontSize: 14),
+                                                    ),
+                                                    Text(
+                                                      'Total: ${item['total']}',
+                                                      style: TextStyle(
+                                                          fontSize: 14),
+                                                    ),
+                                                    Text(
+                                                      'Type: ${item['type']}',
+                                                      style: TextStyle(
+                                                          fontSize: 14),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(height: 10),
+                                        ],
+                                      );
+                                    },
+                                  ),
+                                  Text(
+                                    'Total Amount: ${order['totalAmount']}',
+                                    style: TextStyle(fontSize: 14),
+                                  ),
+                                  SizedBox(height: 10),
+                                  TextButton(
+                                    onPressed: () {
+                                      showDialog<String>(
+                                        context: context,
+                                        builder: (BuildContext context) =>
+                                            AlertDialog(
+                                          title: Text('Cancel Order'),
+                                          content: Text(
+                                              'Are you sure you want to cancel your order?'),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.pop(
+                                                    context, 'Cancel');
+                                              },
+                                              child: Text('Cancel'),
+                                            ),
+                                            TextButton(
+                                              onPressed: () {
+                                                // Update order status to "Cancelled"
+                                                FirebaseFirestore.instance
+                                                    .collection('Store')
+                                                    .doc(store.id)
+                                                    .collection('Orders')
+                                                    .doc(order.id)
+                                                    .update({
+                                                  'status': 'Cancelled'
+                                                }).then((_) {
+                                                  Navigator.pop(
+                                                      context, 'Continue');
+                                                }).catchError((error) {
+                                                  print(
+                                                      "Failed to cancel order: $error");
+                                                  // Handle error accordingly
+                                                });
+                                              },
+                                              child: Text('Continue'),
+                                            ),
+                                          ],
                                         ),
-                                      ),
-                                    ),
+                                      );
+                                    },
+                                    child: Text(
+                                      'Cancel Order',
+                                      style: TextStyle(color: Colors.red),
                                     ),
                                   ),
-                                  SizedBox(width: 210.0,),
                                 ],
-                              )
-                             
-                              
-                            ],)
-                          ],
+                              ),
+                            );
+                          },
                         ),
-                    ),
-
+                      ],
+                    );
+                  },
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }

@@ -31,7 +31,10 @@ class _StoresNearYouState extends State<StoresNearYou> {
     Map<String, double> coordinates = {};
     final User? user = _auth.currentUser;
     if (user != null) {
-      final userData = await FirebaseFirestore.instance.collection('Customer').doc(user.uid).get();
+      final userData = await FirebaseFirestore.instance
+          .collection('Customer')
+          .doc(user.uid)
+          .get();
       final userCoordinates = userData['coordinates'] as GeoPoint?;
       if (userCoordinates != null) {
         coordinates['latitude'] = userCoordinates.latitude;
@@ -132,17 +135,23 @@ class _StoresNearYouState extends State<StoresNearYou> {
                       color: Colors.white,
                     ),
                     child: StreamBuilder<QuerySnapshot>(
-                      stream: FirebaseFirestore.instance.collection('Store').snapshots(),
+                      stream: FirebaseFirestore.instance
+                          .collection('Store')
+                          .snapshots(),
                       builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
                           return Center(child: CircularProgressIndicator());
                         }
                         if (snapshot.hasError) {
-                          return Center(child: Text('Error: ${snapshot.error}'));
+                          return Center(
+                              child: Text('Error: ${snapshot.error}'));
                         }
-                        final List<DocumentSnapshot> stores = snapshot.data!.docs;
+                        final List<DocumentSnapshot> stores =
+                            snapshot.data!.docs;
                         stores.sort((store1, store2) {
-                          final storeLocation1 = store1['coordinates'] as GeoPoint;
+                          final storeLocation1 =
+                              store1['coordinates'] as GeoPoint;
                           final storeLatitude1 = storeLocation1.latitude;
                           final storeLongitude1 = storeLocation1.longitude;
                           final dist1 = distance(
@@ -152,7 +161,8 @@ class _StoresNearYouState extends State<StoresNearYou> {
                             storeLongitude1,
                           );
 
-                          final storeLocation2 = store2['coordinates'] as GeoPoint;
+                          final storeLocation2 =
+                              store2['coordinates'] as GeoPoint;
                           final storeLatitude2 = storeLocation2.latitude;
                           final storeLongitude2 = storeLocation2.longitude;
                           final dist2 = distance(
@@ -163,11 +173,14 @@ class _StoresNearYouState extends State<StoresNearYou> {
                           );
 
                           // Sort by shortest to longest distance if sortByDistance is true, otherwise longest to shortest
-                          return sortByDistance ? dist1.compareTo(dist2) : dist2.compareTo(dist1);
+                          return sortByDistance
+                              ? dist1.compareTo(dist2)
+                              : dist2.compareTo(dist1);
                         });
 
                         final filteredStores = stores.where((store) {
-                          final storeLocation = store['coordinates'] as GeoPoint;
+                          final storeLocation =
+                              store['coordinates'] as GeoPoint;
                           final storeLatitude = storeLocation.latitude;
                           final storeLongitude = storeLocation.longitude;
                           final dist = distance(
@@ -188,8 +201,9 @@ class _StoresNearYouState extends State<StoresNearYou> {
                             final contact = store['contact'];
                             final time = store['time'];
                             final imageUrl = store['url'];
-                            
-                            final storeLocation = store['coordinates'] as GeoPoint;
+
+                            final storeLocation =
+                                store['coordinates'] as GeoPoint;
                             final storeLatitude = storeLocation.latitude;
                             final storeLongitude = storeLocation.longitude;
                             final distanceToStore = distance(
@@ -201,8 +215,11 @@ class _StoresNearYouState extends State<StoresNearYou> {
 
                             return GestureDetector(
                               onTap: () async {
-                                final productsSnapshot = await store.reference.collection('Products').get();
-                                final List<DocumentSnapshot> products = productsSnapshot.docs;
+                                final productsSnapshot = await store.reference
+                                    .collection('Products')
+                                    .get();
+                                final List<DocumentSnapshot> products =
+                                    productsSnapshot.docs;
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -221,21 +238,26 @@ class _StoresNearYouState extends State<StoresNearYou> {
                               child: Container(
                                 margin: EdgeInsets.all(5),
                                 decoration: BoxDecoration(
-                                  border: Border.all(color: Color(0xff0EB4F3), width: 3),
+                                  border: Border.all(
+                                      color: Color(0xff0EB4F3), width: 3),
                                   borderRadius: BorderRadius.circular(20),
                                 ),
                                 child: Material(
                                   elevation: 5.0,
                                   borderRadius: BorderRadius.circular(20),
                                   child: Container(
-                                    constraints: BoxConstraints(minWidth: 330, maxWidth: 330),
+                                    constraints: BoxConstraints(
+                                        minWidth: 330, maxWidth: 330),
                                     padding: EdgeInsets.all(20),
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Container(
                                           alignment: Alignment.topCenter,
-                                          width: MediaQuery.of(context).size.height,
+                                          width: MediaQuery.of(context)
+                                              .size
+                                              .height,
                                           child: SizedBox(
                                             width: 330,
                                             height: 200,
@@ -249,56 +271,90 @@ class _StoresNearYouState extends State<StoresNearYou> {
                                         Text(
                                           name,
                                           textAlign: TextAlign.center,
-                                          style: TextStyle(fontFamily: 'Times New Roman', fontSize: 16, fontWeight: FontWeight.bold),
+                                          style: TextStyle(
+                                              fontFamily: 'Times New Roman',
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold),
                                         ),
                                         SizedBox(height: 5.0),
                                         Row(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
-                                            Icon(Icons.location_on, color: Color(0xff0EB4F3), size: 30),
+                                            Icon(Icons.location_on,
+                                                color: Color(0xff0EB4F3),
+                                                size: 30),
                                             SizedBox(width: 8),
                                             Container(
-                                              constraints: BoxConstraints(maxWidth: 240),
+                                              constraints:
+                                                  BoxConstraints(maxWidth: 240),
                                               child: Text(
                                                 address,
-                                                style: TextStyle(fontFamily: 'Callibri', fontSize: 13, fontWeight: FontWeight.w500),
+                                                style: TextStyle(
+                                                    fontFamily: 'Callibri',
+                                                    fontSize: 13,
+                                                    fontWeight:
+                                                        FontWeight.w500),
                                               ),
                                             )
                                           ],
                                         ),
                                         SizedBox(height: 12.0),
                                         Row(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
                                             SizedBox(width: 2),
                                             Container(
-                                              constraints: BoxConstraints(maxWidth: 25, minWidth: 25, minHeight: 25),
-                                              decoration: BoxDecoration(color: Color(0xff0EB4F3), borderRadius: BorderRadius.circular(20)),
-                                              child: Icon(Icons.phone, color: Colors.white, size: 20),
+                                              constraints: BoxConstraints(
+                                                  maxWidth: 25,
+                                                  minWidth: 25,
+                                                  minHeight: 25),
+                                              decoration: BoxDecoration(
+                                                  color: Color(0xff0EB4F3),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          20)),
+                                              child: Icon(Icons.phone,
+                                                  color: Colors.white,
+                                                  size: 20),
                                             ),
                                             SizedBox(width: 13),
                                             Container(
-                                              constraints: BoxConstraints(maxWidth: 240),
+                                              constraints:
+                                                  BoxConstraints(maxWidth: 240),
                                               child: Text(
                                                 contact,
-                                                style: TextStyle(fontFamily: 'Callibri', fontSize: 13, fontWeight: FontWeight.w500),
+                                                style: TextStyle(
+                                                    fontFamily: 'Callibri',
+                                                    fontSize: 13,
+                                                    fontWeight:
+                                                        FontWeight.w500),
                                               ),
                                             )
                                           ],
                                         ),
                                         SizedBox(height: 12.0),
                                         Row(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
                                             Container(
-                                              child: Icon(Icons.access_time, color: Color(0xff0EB4F3), size: 30),
+                                              child: Icon(Icons.access_time,
+                                                  color: Color(0xff0EB4F3),
+                                                  size: 30),
                                             ),
                                             SizedBox(width: 10),
                                             Container(
-                                              constraints: BoxConstraints(maxWidth: 230),
+                                              constraints:
+                                                  BoxConstraints(maxWidth: 230),
                                               child: Text(
                                                 time,
-                                                style: TextStyle(fontFamily: 'Callibri', fontSize: 13, fontWeight: FontWeight.w500),
+                                                style: TextStyle(
+                                                    fontFamily: 'Callibri',
+                                                    fontSize: 13,
+                                                    fontWeight:
+                                                        FontWeight.w500),
                                               ),
                                             )
                                           ],
@@ -306,7 +362,10 @@ class _StoresNearYouState extends State<StoresNearYou> {
                                         SizedBox(height: 12.0),
                                         Text(
                                           "Distance: ${distanceToStore.toStringAsFixed(2)} km",
-                                          style: TextStyle(fontFamily: 'Callibri', fontSize: 13, fontWeight: FontWeight.w500),
+                                          style: TextStyle(
+                                              fontFamily: 'Callibri',
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.w500),
                                         ),
                                       ],
                                     ),

@@ -8,7 +8,7 @@ import "package:aquapro/rider/rider_completed.dart";
 import "package:aquapro/rider/rider_returned.dart";
 import "package:aquapro/store/store_accepted.dart";
 import "package:aquapro/store/store_completed.dart";
-import "package:aquapro/store/store_returned.dart";
+import "package:aquapro/store/store_cancelled.dart";
 import "package:aquapro/widget/widget_support.dart";
 import "package:flutter/material.dart";
 
@@ -28,31 +28,37 @@ class _TrackOrdersState extends State<TrackOrders> {
       child: Scaffold(
         appBar: AppBar(
           //title: const Text('TabBar Sample'),
-           
+
           flexibleSpace: SafeArea(
             child: TabBar.secondary(
-              labelPadding: EdgeInsets.only(top: 15, ),
-            indicatorColor: Color(0xff0eb4f3),
-            labelColor: Color(0xff0eb4f3),
-            labelStyle: TextStyle(fontFamily: 'Times New Roman', fontSize: 19, fontWeight: FontWeight.w600),
-            tabs: <Widget>[
-              Tab(
-                text: "Accepted", 
+              labelPadding: EdgeInsets.only(
+                top: 15,
               ),
-              Tab(
-                text: "Completed",
-              ),
-              Tab(
-                text: "Returned",
-              ),
-            ],
+              indicatorColor: Color(0xff0eb4f3),
+              labelColor: Color(0xff0eb4f3),
+              labelStyle: TextStyle(
+                  fontFamily: 'Times New Roman',
+                  fontSize: 19,
+                  fontWeight: FontWeight.w600),
+              tabs: <Widget>[
+                Tab(
+                  text: "Accepted",
+                ),
+                Tab(
+                  text: "Completed",
+                ),
+                Tab(
+                  text: "Cancelled",
+                ),
+              ],
+            ),
           ),
         ),
-        ),
-        body:const TabBarView(
+        body: const TabBarView(
           children: <Widget>[
-            StoreAccepted(), StoreCompleted(), StoreReturned()
-           
+            StoreAccepted(),
+            StoreCompleted(),
+            StoreCancelled()
           ],
         ),
       ),

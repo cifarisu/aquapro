@@ -1,3 +1,4 @@
+import 'package:aquapro/rider/rider_storeselection.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -35,12 +36,10 @@ class _SignUpState extends State<SignUp> {
 
       try {
         UserCredential userCredential = await FirebaseAuth.instance
-            .createUserWithEmailAndPassword(
-                email: email, password: password);
+            .createUserWithEmailAndPassword(email: email, password: password);
 
         // After successful registration, update the user profile with the name
-        await FirebaseAuth.instance.currentUser!
-            .updateDisplayName(name);
+        await FirebaseAuth.instance.currentUser!.updateDisplayName(name);
 
         // Then, you can store the user's name and ID in your Firestore database
         // Use the selectedType as the collection name
@@ -57,34 +56,37 @@ class _SignUpState extends State<SignUp> {
 
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           backgroundColor: Colors.redAccent,
-          content: Text("Registered Successfully",
-              style: TextStyle(fontSize: 20)),
+          content:
+              Text("Registered Successfully", style: TextStyle(fontSize: 20)),
         ));
 
         // Check if selectedType is "Store"
         if (selectedType == "Store") {
           Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => StoreReg()));
-        } else {
+              context, MaterialPageRoute(builder: (context) => StoreReg()));
+        } else if (selectedType == "Rider") {
+          // Check if selectedType is "Rider"
           Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                  builder: (context) => LogIn()));
+                  builder: (context) =>
+                      RiderSelection())); // Navigate to RiderSelection
+        } else {
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (context) => LogIn()));
         }
       } on FirebaseAuthException catch (e) {
         if (e.code == 'weak-password') {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             backgroundColor: Colors.orangeAccent,
-            content: Text("Password is too weak",
-                style: TextStyle(fontSize: 18)),
+            content:
+                Text("Password is too weak", style: TextStyle(fontSize: 18)),
           ));
         } else if (e.code == 'email-already-in-use') {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             backgroundColor: Colors.orangeAccent,
-            content: Text("Account already exists",
-                style: TextStyle(fontSize: 18)),
+            content:
+                Text("Account already exists", style: TextStyle(fontSize: 18)),
           ));
         }
       }
@@ -112,8 +114,8 @@ class _SignUpState extends State<SignUp> {
               ),
             ),
             Container(
-              margin: EdgeInsets.only(
-                  top: MediaQuery.of(context).size.height / 3),
+              margin:
+                  EdgeInsets.only(top: MediaQuery.of(context).size.height / 3),
               height: MediaQuery.of(context).size.height / 2,
               width: MediaQuery.of(context).size.width,
               decoration: BoxDecoration(
@@ -144,8 +146,7 @@ class _SignUpState extends State<SignUp> {
                       elevation: 5.0,
                       borderRadius: BorderRadius.circular(20),
                       child: Container(
-                        padding:
-                            const EdgeInsets.only(left: 20, right: 20),
+                        padding: const EdgeInsets.only(left: 20, right: 20),
                         width: MediaQuery.of(context).size.width,
                         height: MediaQuery.of(context).size.height / 2,
                         decoration: BoxDecoration(
@@ -176,8 +177,7 @@ class _SignUpState extends State<SignUp> {
                                   },
                                   decoration: InputDecoration(
                                       hintText: 'Name',
-                                      hintStyle:
-                                          AppWidget.boldTextFieldStyle(),
+                                      hintStyle: AppWidget.boldTextFieldStyle(),
                                       prefixIcon:
                                           const Icon(Icons.person_outlined)),
                                 ),
@@ -194,8 +194,7 @@ class _SignUpState extends State<SignUp> {
                                   },
                                   decoration: InputDecoration(
                                       hintText: 'Email',
-                                      hintStyle:
-                                          AppWidget.boldTextFieldStyle(),
+                                      hintStyle: AppWidget.boldTextFieldStyle(),
                                       prefixIcon:
                                           const Icon(Icons.email_outlined)),
                                 ),
@@ -213,10 +212,8 @@ class _SignUpState extends State<SignUp> {
                                   obscureText: true,
                                   decoration: InputDecoration(
                                     hintText: 'Password',
-                                    hintStyle:
-                                        AppWidget.boldTextFieldStyle(),
-                                    prefixIcon:
-                                        Icon(Icons.lock_outline),
+                                    hintStyle: AppWidget.boldTextFieldStyle(),
+                                    prefixIcon: Icon(Icons.lock_outline),
                                   ),
                                 ),
                                 const SizedBox(
@@ -243,10 +240,9 @@ class _SignUpState extends State<SignUp> {
                                   },
                                   decoration: InputDecoration(
                                     hintText: 'Type',
-                                    hintStyle:
-                                        AppWidget.boldTextFieldStyle(),
-                                    prefixIcon: const Icon(
-                                        Icons.person_outline),
+                                    hintStyle: AppWidget.boldTextFieldStyle(),
+                                    prefixIcon:
+                                        const Icon(Icons.person_outline),
                                   ),
                                 ),
                                 const SizedBox(
@@ -262,8 +258,7 @@ class _SignUpState extends State<SignUp> {
                                   },
                                   decoration: InputDecoration(
                                     hintText: 'Contact',
-                                    hintStyle:
-                                        AppWidget.boldTextFieldStyle(),
+                                    hintStyle: AppWidget.boldTextFieldStyle(),
                                     prefixIcon: Icon(Icons.phone),
                                   ),
                                 ),
@@ -280,22 +275,20 @@ class _SignUpState extends State<SignUp> {
                                   },
                                   decoration: InputDecoration(
                                     hintText: 'Address',
-                                    hintStyle:
-                                        AppWidget.boldTextFieldStyle(),
-                                    prefixIcon:
-                                        Icon(Icons.location_on),
+                                    hintStyle: AppWidget.boldTextFieldStyle(),
+                                    prefixIcon: Icon(Icons.location_on),
                                   ),
                                 ),
-                                const SizedBox(height: 20,),
+                                const SizedBox(
+                                  height: 20,
+                                ),
                                 GestureDetector(
                                   onTap: () async {
-                                    if (_formkey.currentState!
-                                        .validate()) {
+                                    if (_formkey.currentState!.validate()) {
                                       setState(() {
                                         email = mailcontroller.text;
                                         name = namecontroller.text;
-                                        password =
-                                            passwordcontroller.text;
+                                        password = passwordcontroller.text;
                                         contactController.text =
                                             contactController.text;
                                         addressController.text =
@@ -333,12 +326,18 @@ class _SignUpState extends State<SignUp> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 50,),
+                    SizedBox(
+                      height: 50,
+                    ),
                     GestureDetector(
-                        onTap: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=> const LogIn()));
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const LogIn()));
                         },
-                        child: const Text("Already have an account? Log In", style: TextStyle(fontSize: 15))),
+                        child: const Text("Already have an account? Log In",
+                            style: TextStyle(fontSize: 15))),
                   ],
                 ),
               ),

@@ -22,32 +22,34 @@ class _cusOrdersState extends State<cusOrders> {
       child: Scaffold(
         appBar: AppBar(
           //title: const Text('TabBar Sample'),
-           
+
           flexibleSpace: SafeArea(
             child: TabBar.secondary(
-              labelPadding: EdgeInsets.only(top: 15, ),
-            indicatorColor: Color(0xff0eb4f3),
-            labelColor: Color(0xff0eb4f3),
-            labelStyle: TextStyle(fontFamily: 'Times New Roman', fontSize: 19, fontWeight: FontWeight.w600),
-            tabs: <Widget>[
-              Tab(
-                text: "To Pay", 
+              labelPadding: EdgeInsets.only(
+                top: 15,
               ),
-              Tab(
-                text: "Completed",
-              ),
-              Tab(
-                text: "Cancelled",
-              ),
-            ],
+              indicatorColor: Color(0xff0eb4f3),
+              labelColor: Color(0xff0eb4f3),
+              labelStyle: TextStyle(
+                  fontFamily: 'Times New Roman',
+                  fontSize: 19,
+                  fontWeight: FontWeight.w600),
+              tabs: <Widget>[
+                Tab(
+                  text: "To Pay",
+                ),
+                Tab(
+                  text: "Completed",
+                ),
+                Tab(
+                  text: "Cancelled",
+                ),
+              ],
+            ),
           ),
         ),
-        ),
-        body:const TabBarView(
-          children: <Widget>[
-            cusToPay(), cusCompleted(), cusCancelled()
-           
-          ],
+        body: const TabBarView(
+          children: <Widget>[cusToPay(), cusCompleted(), cusCancelled()],
         ),
       ),
     );
