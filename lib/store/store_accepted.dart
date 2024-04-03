@@ -46,7 +46,7 @@ class _StoreAcceptedState extends State<StoreAccepted> {
               .doc(currentUserId)
               .collection('Orders')
               .where('status',
-                  whereIn: ['To Deliver', 'To Pick-up']).snapshots(),
+                  whereIn: ['To Pick-up', 'To Deliver']).snapshots(),
           builder:
               (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -179,26 +179,28 @@ class _StoreAcceptedState extends State<StoreAccepted> {
                         style: TextStyle(fontSize: 14),
                       ),
                       SizedBox(height: 10),
-                      TextButton(
-                        onPressed: () {
-                          // Update order status
-                          FirebaseFirestore.instance
-                              .collection('Store')
-                              .doc(currentUserId)
-                              .collection('Orders')
-                              .doc(order.id)
-                              .update({'status': orderStatus}).then((_) {
-                            // Handle the action here
-                          }).catchError((error) {
-                            print("Failed to update order status: $error");
-                            // Handle error accordingly
-                          });
-                        },
-                        child: Text(
-                          'Accept Order',
-                          style: TextStyle(color: Colors.green),
+                      // Conditionally render button
+                      if (orderStatus == 'To Pick-up')
+                        TextButton(
+                          onPressed: () {
+                            // Update order status to Completed
+                            FirebaseFirestore.instance
+                                .collection('Store')
+                                .doc(currentUserId)
+                                .collection('Orders')
+                                .doc(order.id)
+                                .update({'status': 'Completed'}).then((_) {
+                              // Handle the action here
+                            }).catchError((error) {
+                              print("Failed to update order status: $error");
+                              // Handle error accordingly
+                            });
+                          },
+                          child: Text(
+                            'Complete Order',
+                            style: TextStyle(color: Colors.green),
+                          ),
                         ),
-                      ),
                     ],
                   ),
                 );

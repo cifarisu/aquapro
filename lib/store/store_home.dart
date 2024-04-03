@@ -189,8 +189,26 @@ class _StoreHomeState extends State<StoreHome> {
                                   .doc(currentUserId)
                                   .collection('Orders')
                                   .doc(order.id)
-                                  .update({'status': 'Accepted'}).then((_) {
-                                // Handle the action here
+                                  .update({'status': 'To Pick-up'}).then((_) {
+                                // Check if any item in the order is for delivery
+                                bool anyForDelivery = items
+                                    .any((item) => item['type'] == 'Delivery');
+                                // If any item is for delivery, update order status to "To Deliver"
+                                if (anyForDelivery) {
+                                  FirebaseFirestore.instance
+                                      .collection('Store')
+                                      .doc(currentUserId)
+                                      .collection('Orders')
+                                      .doc(order.id)
+                                      .update({'status': 'To Deliver'}).then(
+                                          (_) {
+                                    // Handle the action here
+                                  }).catchError((error) {
+                                    print(
+                                        "Failed to update order status: $error");
+                                    // Handle error accordingly
+                                  });
+                                }
                               }).catchError((error) {
                                 print("Failed to update order status: $error");
                                 // Handle error accordingly
