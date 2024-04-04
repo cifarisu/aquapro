@@ -99,7 +99,7 @@ class _StoresNearYouState extends State<StoresNearYou> {
           final userLatitude = userCoordinates['latitude'] ?? 0.0;
           final userLongitude = userCoordinates['longitude'] ?? 0.0;
           return Container(
-            padding: EdgeInsets.only(top: 120),
+            padding: EdgeInsets.only(top: 90),
             alignment: Alignment.topLeft,
             width: double.infinity,
             decoration: const BoxDecoration(
@@ -113,7 +113,7 @@ class _StoresNearYouState extends State<StoresNearYou> {
                 SizedBox(height: 20),
                 Text(
                   "Max Distance: ${maxDistance.toStringAsFixed(1)} km",
-                  style: TextStyle(fontSize: 16),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                 ),
                 Slider(
                   value: maxDistance,
@@ -127,9 +127,10 @@ class _StoresNearYouState extends State<StoresNearYou> {
                     });
                   },
                 ),
+                SizedBox(height: 15),
                 Expanded(
                   child: Container(
-                    padding: EdgeInsets.only(left: 40, right: 40),
+                    padding: EdgeInsets.only(left: 40, right: 40, top: 10),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(30),
                       color: Colors.white,
@@ -192,6 +193,7 @@ class _StoresNearYouState extends State<StoresNearYou> {
                           return dist <= maxDistance;
                         }).toList();
                         return ListView.builder(
+                          padding: EdgeInsets.only(top: 10),
                           itemCount: filteredStores.length,
                           itemBuilder: (context, index) {
                             final store = filteredStores[index];
@@ -360,15 +362,21 @@ class _StoresNearYouState extends State<StoresNearYou> {
                                           ],
                                         ),
                                         SizedBox(height: 12.0),
-                                        Text(
-                                          "Distance: ${distanceToStore.toStringAsFixed(2)} km",
-                                          style: TextStyle(
-                                              fontFamily: 'Callibri',
-                                              fontSize: 13,
-                                              fontWeight: FontWeight.w500),
+                                        Row(
+                                          children: [
+                                            SizedBox(width: 40,),
+                                            Text(
+                                              "Distance: ${distanceToStore.toStringAsFixed(2)} km",
+                                              style: TextStyle(
+                                                  fontFamily: 'Callibri',
+                                                  fontSize: 13,
+                                                  fontWeight: FontWeight.w500),
+                                            ),
+                                          ],
                                         ),
                                       ],
                                     ),
+
                                   ),
                                 ),
                               ),

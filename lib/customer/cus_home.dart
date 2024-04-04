@@ -97,7 +97,7 @@ class _CusHomeState extends State<CusHome> {
               ),
             ),
             child: Container(
-              margin: const EdgeInsets.only(top: 60.0, left: 10.0, right: 10.0),
+              margin: const EdgeInsets.only(top: 35.0, left: 10.0, right: 10.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -261,7 +261,7 @@ class _CusHomeState extends State<CusHome> {
                                             minHeight:
                                                 500), // Set a fixed height for the container
                                         child: Container(
-                                          padding: EdgeInsets.all(20),
+                                          padding: EdgeInsets.all(15),
                                           child: Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
@@ -302,7 +302,7 @@ class _CusHomeState extends State<CusHome> {
                                                   SizedBox(width: 8),
                                                   Container(
                                                     constraints: BoxConstraints(
-                                                        maxWidth: 220),
+                                                        maxWidth: 240),
                                                     child: Text(
                                                       address,
                                                       style: TextStyle(
@@ -359,7 +359,7 @@ class _CusHomeState extends State<CusHome> {
                                                   SizedBox(width: 10),
                                                   Container(
                                                     constraints: BoxConstraints(
-                                                        maxWidth: 230),
+                                                        maxWidth: 240),
                                                     child: Text(
                                                       time,
                                                       style: TextStyle(
@@ -368,10 +368,12 @@ class _CusHomeState extends State<CusHome> {
                                                   )
                                                 ],
                                               ),
-                                              SizedBox(height: 12.0),
-                                              Text(
-                                                '${distance >= 1 ? "${distance.toStringAsFixed(2)} km" : "${(distance * 1000).toStringAsFixed(0)} meters"} away from you',
-                                                style: TextStyle(fontSize: 16),
+                                              SizedBox(height: 15.0),
+                                              Center(
+                                                child: Text(
+                                                  '${distance >= 1 ? "${distance.toStringAsFixed(2)} km" : "${(distance * 1000).toStringAsFixed(0)} meters"} away from you',
+                                                  style: TextStyle(fontSize: 16),
+                                                ),
                                               ),
                                             ],
                                           ),

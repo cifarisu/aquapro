@@ -91,16 +91,6 @@ class _cusToPayState extends State<cusToPay> {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: Text(
-                            'Store Name: ${store['name']}',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                          ),
-                        ),
                         ListView.builder(
                           shrinkWrap: true,
                           physics: NeverScrollableScrollPhysics(),
@@ -112,7 +102,8 @@ class _cusToPayState extends State<cusToPay> {
                             return Container(
                               margin: EdgeInsets.symmetric(
                                   vertical: 10, horizontal: 20),
-                              padding: EdgeInsets.all(10),
+                              padding: EdgeInsets.only(
+                                  top: 20, bottom: 0, left: 20, right: 20),
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(10),
@@ -128,14 +119,44 @@ class _cusToPayState extends State<cusToPay> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  SizedBox(height: 10),
                                   Text(
-                                    'Order ID: ${order['orderId']}',
-                                    style: TextStyle(fontSize: 14),
+                                    '${store['name']}',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
                                   ),
-                                  Text(
-                                    'Status: ${order['status']}',
-                                    style: TextStyle(fontSize: 14),
+                                  SizedBox(height: 10),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        'Order ID: ',
+                                        style: TextStyle(fontSize: 14),
+                                      ),
+                                      Text(
+                                        '${order['orderId']}',
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        'Status: ',
+                                        style: TextStyle(fontSize: 14),
+                                      ),
+                                      Text(
+                                        '${order['status']}',
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 10,
                                   ),
                                   ListView.builder(
                                     shrinkWrap: true,
@@ -161,25 +182,73 @@ class _cusToPayState extends State<cusToPay> {
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
                                                   children: [
-                                                    Text(
-                                                      'Item: ${item['itemName']}',
-                                                      style: TextStyle(
-                                                          fontSize: 14),
+                                                    Row(
+                                                      children: [
+                                                        Text(
+                                                          'Item: ',
+                                                          style: TextStyle(
+                                                              fontSize: 14),
+                                                        ),
+                                                        Text(
+                                                          '${item['itemName']}',
+                                                          style: TextStyle(
+                                                              fontSize: 14,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                        ),
+                                                      ],
                                                     ),
-                                                    Text(
-                                                      'Quantity: ${item['quantity']}',
-                                                      style: TextStyle(
-                                                          fontSize: 14),
+                                                    Row(
+                                                      children: [
+                                                        Text(
+                                                          'Quantity: ',
+                                                          style: TextStyle(
+                                                              fontSize: 14),
+                                                        ),
+                                                        Text(
+                                                          '${item['quantity']}',
+                                                          style: TextStyle(
+                                                              fontSize: 14,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                        ),
+                                                      ],
                                                     ),
-                                                    Text(
-                                                      'Total: ${item['total']}',
-                                                      style: TextStyle(
-                                                          fontSize: 14),
+                                                    Row(
+                                                      children: [
+                                                        Text(
+                                                          'Total: ',
+                                                          style: TextStyle(
+                                                              fontSize: 14),
+                                                        ),
+                                                        Text(
+                                                          'Php ${item['total']}',
+                                                          style: TextStyle(
+                                                              fontSize: 14,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                        ),
+                                                      ],
                                                     ),
-                                                    Text(
-                                                      'Type: ${item['type']}',
-                                                      style: TextStyle(
-                                                          fontSize: 14),
+                                                    Row(
+                                                      children: [
+                                                        Text(
+                                                          'Type: ',
+                                                          style: TextStyle(
+                                                              fontSize: 14),
+                                                        ),
+                                                        Text(
+                                                          '${item['type']}',
+                                                          style: TextStyle(
+                                                              fontSize: 14,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                        ),
+                                                      ],
                                                     ),
                                                   ],
                                                 ),
@@ -191,11 +260,23 @@ class _cusToPayState extends State<cusToPay> {
                                       );
                                     },
                                   ),
-                                  Text(
-                                    'Total Amount: ${order['totalAmount']}',
-                                    style: TextStyle(fontSize: 14),
+                                  SizedBox(
+                                    height: 15,
                                   ),
-                                  SizedBox(height: 10),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        'Total Amount: ',
+                                        style: TextStyle(fontSize: 14),
+                                      ),
+                                      Text(
+                                        'Php ${order['totalAmount']}',
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
                                   TextButton(
                                     onPressed: () {
                                       showDialog<String>(
@@ -240,7 +321,9 @@ class _cusToPayState extends State<cusToPay> {
                                     },
                                     child: Text(
                                       'Cancel Order',
-                                      style: TextStyle(color: Colors.red),
+                                      style: TextStyle(
+                                          color: Colors.red,
+                                          fontWeight: FontWeight.bold),
                                     ),
                                   ),
                                 ],

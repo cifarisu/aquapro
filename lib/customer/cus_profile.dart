@@ -1,3 +1,5 @@
+import 'package:aquapro/customer/cus_navbar.dart';
+import 'package:aquapro/widget/widget_support.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -76,7 +78,16 @@ class _cusProfileState extends State<cusProfile> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Profile'),
+        title: Text('Profile', style: AppWidget.boldTextFieldStyle(),),
+        leading: GestureDetector(
+          onTap: () {
+           Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => CusNavbar()));
+          },
+          child: Icon(
+            Icons.arrow_back_ios_new_outlined,
+            color: Colors.black,
+          ),),
         actions: _isEditing
             ? [
                 IconButton(
@@ -99,7 +110,7 @@ class _cusProfileState extends State<cusProfile> {
               colors: [Color(0xff81e6eb), Color(0xffffffff)]),
         ),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Container(
               height: 60,
@@ -150,11 +161,13 @@ class _cusProfileState extends State<cusProfile> {
                 
               ],
             ),
+            SizedBox(height: 30,),
             Container(
               alignment: Alignment.topLeft,
               child: Text("Following 0", textAlign: TextAlign.left, style: TextStyle(fontFamily: 'Times New Roman',
               fontSize: 15, fontWeight: FontWeight.w500),),
             ),
+            SizedBox(height: 20,),
             Container(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -187,6 +200,7 @@ class _cusProfileState extends State<cusProfile> {
                 ],
               ),
             ),
+            SizedBox(height: 20,),
             Container(
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -223,6 +237,7 @@ class _cusProfileState extends State<cusProfile> {
                 ],
               ),
             ),
+            SizedBox(height: 20,),
             Container(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -249,6 +264,7 @@ class _cusProfileState extends State<cusProfile> {
                 ],
               ),
             ),
+            SizedBox(height: 20,),
             Container(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -281,17 +297,19 @@ class _cusProfileState extends State<cusProfile> {
                 ],
               ),
             ),
+            SizedBox(height: 30,),
             Row(children: [
-              Icon(Icons.settings, size: 50, color: Color(0xff0eb4f3)),
+              Icon(Icons.settings, size: 45, color: Color(0xff0eb4f3)),
               SizedBox(width: 12),
               Text('Settings', style: TextStyle(fontSize: 22.5)),
             ]),
+            SizedBox(height: 20,),
             Row(children: [
-              Icon(Icons.info, size: 50, color: Color(0xff0eb4f3)),
+              Icon(Icons.info, size: 45, color: Color(0xff0eb4f3)),
               SizedBox(width: 12),
               Text('About Us', style: TextStyle(fontSize: 22.5)),
             ]),
-            SizedBox(height: 50)
+           
           ],
         ),
       ),
