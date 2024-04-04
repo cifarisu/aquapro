@@ -139,87 +139,176 @@ class _RiderHomeState extends State<RiderHome> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                SizedBox(height: 10),
-                                Text(
-                                  'Order ID: ${order['orderId']}',
-                                  style: TextStyle(fontSize: 14),
-                                ),
-                                Text(
-                                  'Customer Name: ${order['customerName']}',
-                                  style: TextStyle(fontSize: 14),
-                                ),
-                                Text(
-                                  'Contact: ${order['contact']}',
-                                  style: TextStyle(fontSize: 14),
-                                ),
-                                Text(
-                                  'Address: ${order['address']}',
-                                  style: TextStyle(fontSize: 14),
-                                ),
-                                Text(
-                                  'Status: To Deliver',
-                                  style: TextStyle(fontSize: 14),
-                                ),
-                                ListView.builder(
-                                  shrinkWrap: true,
-                                  physics: NeverScrollableScrollPhysics(),
-                                  itemCount: items.length,
-                                  itemBuilder: (context, index) {
-                                    var item = items[index];
-                                    return Column(
+                                 Row(
+                        children: [
+                          Text(
+                            'Order ID: ',
+                            style: TextStyle(fontSize: 14),
+                          ),
+                          SizedBox(width: 70,),
+                           Text(
+                            '${order['orderId']}',
+                            style: TextStyle(fontSize: 14, fontFamily: 'Times New Roman', fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Text(
+                            'Customer Name: ',
+                            style: TextStyle(fontSize: 14),
+                          ),
+                          SizedBox(width: 5,),
+                          Text(
+                            '${order['customerName']}',
+                            style: TextStyle(fontSize: 14, fontFamily: 'Times New Roman', fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Text(
+                            'Contact: ',
+                            style: TextStyle(fontSize: 14),
+                          ),
+                          SizedBox(width: 72,),
+                          Text(
+                            '${order['contact']}',
+                            style: TextStyle(fontSize: 14, fontFamily: 'Times New Roman', fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Text(
+                            'Address: ',
+                            style: TextStyle(fontSize: 14),
+                          ),
+                          SizedBox(width: 72,),
+                          Text(
+                            '${order['address']}',
+                            style: TextStyle(fontSize: 14, fontFamily: 'Times New Roman', fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Text(
+                            'Status: ',
+                            style: TextStyle(fontSize: 14),
+                          ),
+                          SizedBox(width: 85,),
+                          Text(
+                            'To Deliver',
+                            style: TextStyle(fontSize: 14, fontFamily: 'Times New Roman', fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 15,),
+                      Text(
+                        'Orders',
+                        style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, fontFamily: 'Poppins'),
+                      ),
+                      SizedBox(height: 8,),
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: items.length,
+                        itemBuilder: (context, index) {
+                          var item = items[index];
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(15), 
+                                     border: Border.all(color: Color(0xff0eb4f3), width: 2)),
+                                    child: Image.network(
+                                      item['url'],
+                                      height: 100,
+                                      width: 100,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                  SizedBox(width: 10),
+                                  Flexible(
+                                    // Wrap the Text widget in Flexible
+                                    child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
                                         Row(
                                           children: [
-                                            Image.network(
-                                              item['url'],
-                                              height: 100,
-                                              width: 100,
-                                              fit: BoxFit.cover,
+                                            Text(
+                                              'Item: ',
+                                              style: TextStyle(fontSize: 14),
                                             ),
-                                            SizedBox(width: 10),
-                                            Flexible(
-                                              // Wrap the Text widget in Flexible
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    'Item: ${item['itemName']}',
-                                                    style:
-                                                        TextStyle(fontSize: 14),
-                                                  ),
-                                                  Text(
-                                                    'Quantity: ${item['quantity']}',
-                                                    style:
-                                                        TextStyle(fontSize: 14),
-                                                  ),
-                                                  Text(
-                                                    'Total: ${item['total']}',
-                                                    style:
-                                                        TextStyle(fontSize: 14),
-                                                  ),
-                                                  Text(
-                                                    'Type: ${item['type']}',
-                                                    style:
-                                                        TextStyle(fontSize: 14),
-                                                  ),
-                                                ],
-                                              ),
+                                            Text(
+                                              '${item['itemName']}',
+                                              style: TextStyle(fontSize: 13, fontFamily: 'Times New Roman', fontWeight: FontWeight.bold),
                                             ),
                                           ],
                                         ),
-                                        SizedBox(height: 10),
+                                        Row(
+                                          children: [
+                                            Text(
+                                              'Quantity: ',
+                                              style: TextStyle(fontSize: 14),
+                                            ),
+                                            Text(
+                                              '${item['quantity']}',
+                                              style: TextStyle(fontSize: 14, fontFamily: 'Times New Roman', fontWeight: FontWeight.bold),
+                                            ),
+                                          ],
+                                        ),
+                                        Row(
+                                          children: [
+                                            Text(
+                                              'Total: ',
+                                              style: TextStyle(fontSize: 14),
+                                            ),
+                                            Text(
+                                              '${item['total']}',
+                                              style: TextStyle(fontSize: 14, fontFamily: 'Times New Roman', fontWeight: FontWeight.bold),
+                                            ),
+                                          ],
+                                        ),
+                                        Row(
+                                          children: [
+                                            Text(
+                                              'Type: ',
+                                              style: TextStyle(fontSize: 14),
+                                            ),
+                                            Text(
+                                              '${item['type']}',
+                                              style: TextStyle(fontSize: 14, fontFamily: 'Times New Roman', fontWeight: FontWeight.bold),
+                                            ),
+                                          ],
+                                        ),
                                       ],
-                                    );
-                                  },
-                                ),
-                                Text(
-                                  'Total Amount: ${order['totalAmount']}',
-                                  style: TextStyle(fontSize: 14),
-                                ),
-                                SizedBox(height: 10),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 10),
+                            ],
+                          );
+                        },
+                      ),
+                      SizedBox(height: 10),
+                      Row(
+                        children: [
+                          Text(
+                            'Total Amount: ',
+                            style: TextStyle(fontSize: 14),
+                          ),
+                          Text(
+                            'Php ${order['totalAmount']}',
+                            style: TextStyle(fontSize: 14, fontFamily: 'Times New Roman', fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
                               ],
                             ),
                           );

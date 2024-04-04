@@ -99,19 +99,15 @@ class _StoreProfileState extends State<StoreProfile> {
               colors: [Color(0xff81e6eb), Color(0xffffffff)]),
         ),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Container(
-              height: 60,
+              height: 40,
               padding: EdgeInsets.only(bottom: 0),
               alignment: Alignment.bottomCenter,
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Text(
-                    "Profile",
-                    style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
-                  ),
                   GestureDetector(
                     onTap: () {
                       setState(() {
@@ -148,6 +144,7 @@ class _StoreProfileState extends State<StoreProfile> {
                 ),
               ],
             ),
+             SizedBox(height: 30,),
             Container(
               alignment: Alignment.topLeft,
               child: Text(
@@ -159,16 +156,18 @@ class _StoreProfileState extends State<StoreProfile> {
                     fontWeight: FontWeight.w500),
               ),
             ),
+            SizedBox(height: 20,),
             Container(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Name:',
+                    'Name: ',
                     style: TextStyle(
                       color: Color(0xff545454),
                       fontFamily: 'Times New Roman',
-                      fontSize: 20,
+                      fontSize: 18,
                     ),
                   ),
                   _isEditing
@@ -185,7 +184,7 @@ class _StoreProfileState extends State<StoreProfile> {
                             _name,
                             style: TextStyle(
                               fontFamily: 'Times New Roman',
-                              fontSize: 20,
+                              fontSize: 18,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -193,6 +192,7 @@ class _StoreProfileState extends State<StoreProfile> {
                 ],
               ),
             ),
+            SizedBox(height: 20,),
             Container(
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -229,6 +229,7 @@ class _StoreProfileState extends State<StoreProfile> {
                 ],
               ),
             ),
+            SizedBox(height: 20,),
             Container(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -255,6 +256,7 @@ class _StoreProfileState extends State<StoreProfile> {
                 ],
               ),
             ),
+            SizedBox(height: 20,),
             Container(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -287,15 +289,17 @@ class _StoreProfileState extends State<StoreProfile> {
                 ],
               ),
             ),
+            SizedBox(height: 30,),
             Row(children: [
-              Icon(Icons.settings, size: 50, color: Color(0xff0eb4f3)),
+              Icon(Icons.settings, size: 45, color: Color(0xff0eb4f3)),
               SizedBox(width: 12),
               Text('Settings', style: TextStyle(fontSize: 22.5)),
             ]),
+            SizedBox(height: 20,),
             Row(children: [
-              Icon(Icons.info, size: 50, color: Color(0xff0eb4f3)),
+              Icon(Icons.logout_outlined, size: 45, color: Color(0xff0eb4f3)),
               SizedBox(width: 12),
-              Text('About Us', style: TextStyle(fontSize: 22.5)),
+              Text('Logout', style: TextStyle(fontSize: 22.5)),
             ]),
             SizedBox(height: 50)
           ],

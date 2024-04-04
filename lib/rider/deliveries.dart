@@ -33,7 +33,7 @@ class _DeliveriesState extends State<Deliveries> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       SizedBox(
-                        width: 25,
+                        width: 55,
                       ),
                       Text(
                         "Deliveries",

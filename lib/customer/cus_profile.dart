@@ -119,11 +119,6 @@ class _cusProfileState extends State<cusProfile> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    "Profile",
-                    style:
-                        TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
-                  ),
                   GestureDetector(
                     onTap: () {
                       setState(() {
@@ -305,9 +300,9 @@ class _cusProfileState extends State<cusProfile> {
             ]),
             SizedBox(height: 20,),
             Row(children: [
-              Icon(Icons.info, size: 45, color: Color(0xff0eb4f3)),
+              Icon(Icons.logout_outlined, size: 45, color: Color(0xff0eb4f3)),
               SizedBox(width: 12),
-              Text('About Us', style: TextStyle(fontSize: 22.5)),
+              Text('Logout', style: TextStyle(fontSize: 22.5)),
             ]),
            
           ],
