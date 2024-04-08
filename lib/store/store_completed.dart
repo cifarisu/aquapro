@@ -86,7 +86,8 @@ class _StoreCompletedState extends State<StoreCompleted> {
 
                 return Container(
                   margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                  padding: EdgeInsets.only(top: 20, left: 10, right:10, bottom:10),
+                  padding:
+                      EdgeInsets.only(top: 20, left: 10, right: 10, bottom: 10),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(10),
@@ -108,10 +109,15 @@ class _StoreCompletedState extends State<StoreCompleted> {
                             'Order ID: ',
                             style: TextStyle(fontSize: 14),
                           ),
-                          SizedBox(width: 70,),
-                           Text(
+                          SizedBox(
+                            width: 70,
+                          ),
+                          Text(
                             '${order['orderId']}',
-                            style: TextStyle(fontSize: 14, fontFamily: 'Times New Roman', fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                fontSize: 14,
+                                fontFamily: 'Times New Roman',
+                                fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),
@@ -121,10 +127,15 @@ class _StoreCompletedState extends State<StoreCompleted> {
                             'Customer Name: ',
                             style: TextStyle(fontSize: 14),
                           ),
-                          SizedBox(width: 5,),
+                          SizedBox(
+                            width: 5,
+                          ),
                           Text(
                             '${order['customerName']}',
-                            style: TextStyle(fontSize: 14, fontFamily: 'Times New Roman', fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                fontSize: 14,
+                                fontFamily: 'Times New Roman',
+                                fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),
@@ -134,10 +145,15 @@ class _StoreCompletedState extends State<StoreCompleted> {
                             'Contact: ',
                             style: TextStyle(fontSize: 14),
                           ),
-                          SizedBox(width: 72,),
+                          SizedBox(
+                            width: 72,
+                          ),
                           Text(
                             '${order['contact']}',
-                            style: TextStyle(fontSize: 14, fontFamily: 'Times New Roman', fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                fontSize: 14,
+                                fontFamily: 'Times New Roman',
+                                fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),
@@ -147,10 +163,15 @@ class _StoreCompletedState extends State<StoreCompleted> {
                             'Address: ',
                             style: TextStyle(fontSize: 14),
                           ),
-                          SizedBox(width: 72,),
+                          SizedBox(
+                            width: 72,
+                          ),
                           Text(
                             '${order['address']}',
-                            style: TextStyle(fontSize: 14, fontFamily: 'Times New Roman', fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                fontSize: 14,
+                                fontFamily: 'Times New Roman',
+                                fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),
@@ -160,19 +181,31 @@ class _StoreCompletedState extends State<StoreCompleted> {
                             'Status: ',
                             style: TextStyle(fontSize: 14),
                           ),
-                          SizedBox(width: 85,),
+                          SizedBox(
+                            width: 85,
+                          ),
                           Text(
                             '$orderStatus',
-                            style: TextStyle(fontSize: 14, fontFamily: 'Times New Roman', fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                fontSize: 14,
+                                fontFamily: 'Times New Roman',
+                                fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),
-                      SizedBox(height: 15,),
+                      SizedBox(
+                        height: 15,
+                      ),
                       Text(
                         'Orders',
-                        style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, fontFamily: 'Poppins'),
+                        style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Poppins'),
                       ),
-                      SizedBox(height: 8,),
+                      SizedBox(
+                        height: 8,
+                      ),
                       ListView.builder(
                         shrinkWrap: true,
                         physics: NeverScrollableScrollPhysics(),
@@ -185,8 +218,11 @@ class _StoreCompletedState extends State<StoreCompleted> {
                               Row(
                                 children: [
                                   Container(
-                                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(15), 
-                                     border: Border.all(color: Color(0xff0eb4f3), width: 2)),
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(15),
+                                        border: Border.all(
+                                            color: Color(0xff0eb4f3),
+                                            width: 2)),
                                     child: Image.network(
                                       item['url'],
                                       height: 100,
@@ -201,17 +237,19 @@ class _StoreCompletedState extends State<StoreCompleted> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        Row(
-                                          children: [
-                                            Text(
-                                              'Item: ',
-                                              style: TextStyle(fontSize: 14),
-                                            ),
-                                            Text(
-                                              '${item['itemName']}',
-                                              style: TextStyle(fontSize: 13, fontFamily: 'Times New Roman', fontWeight: FontWeight.bold),
-                                            ),
-                                          ],
+                                        Text.rich(
+                                          TextSpan(
+                                            text: "Item: ",
+                                            children: <TextSpan>[
+                                              TextSpan(
+                                                text: '${item['itemName']}',
+                                                style: TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                         Row(
                                           children: [
@@ -221,7 +259,10 @@ class _StoreCompletedState extends State<StoreCompleted> {
                                             ),
                                             Text(
                                               '${item['quantity']}',
-                                              style: TextStyle(fontSize: 14, fontFamily: 'Times New Roman', fontWeight: FontWeight.bold),
+                                              style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontFamily: 'Times New Roman',
+                                                  fontWeight: FontWeight.bold),
                                             ),
                                           ],
                                         ),
@@ -233,7 +274,10 @@ class _StoreCompletedState extends State<StoreCompleted> {
                                             ),
                                             Text(
                                               '${item['total']}',
-                                              style: TextStyle(fontSize: 14, fontFamily: 'Times New Roman', fontWeight: FontWeight.bold),
+                                              style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontFamily: 'Times New Roman',
+                                                  fontWeight: FontWeight.bold),
                                             ),
                                           ],
                                         ),
@@ -245,7 +289,10 @@ class _StoreCompletedState extends State<StoreCompleted> {
                                             ),
                                             Text(
                                               '${item['type']}',
-                                              style: TextStyle(fontSize: 14, fontFamily: 'Times New Roman', fontWeight: FontWeight.bold),
+                                              style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontFamily: 'Times New Roman',
+                                                  fontWeight: FontWeight.bold),
                                             ),
                                           ],
                                         ),
@@ -268,7 +315,10 @@ class _StoreCompletedState extends State<StoreCompleted> {
                           ),
                           Text(
                             'Php ${order['totalAmount']}',
-                            style: TextStyle(fontSize: 14, fontFamily: 'Times New Roman', fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                fontSize: 14,
+                                fontFamily: 'Times New Roman',
+                                fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),

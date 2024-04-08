@@ -119,11 +119,14 @@ class _cusToPayState extends State<cusToPay> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    '${store['name']}',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
+                                  Container(
+                                    width: MediaQuery.of(context).size.width-80,
+                                    child: Text(
+                                      '${store['name']}',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                      ),
                                     ),
                                   ),
                                   SizedBox(height: 10),
@@ -182,23 +185,22 @@ class _cusToPayState extends State<cusToPay> {
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
                                                   children: [
-                                                    Row(
-                                                      children: [
-                                                        Text(
-                                                          'Item: ',
-                                                          style: TextStyle(
-                                                              fontSize: 14),
+                                                    Text.rich(
+                                                           TextSpan(
+                                                            text: "Item: ",
+                                                            children: <TextSpan>[
+                                                              TextSpan(
+                                                                text: '${item['itemName']}',
+                                                                style: TextStyle(
+                                                                  fontSize: 14,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
                                                         ),
-                                                        Text(
-                                                          '${item['itemName']}',
-                                                          style: TextStyle(
-                                                              fontSize: 14,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold),
-                                                        ),
-                                                      ],
-                                                    ),
                                                     Row(
                                                       children: [
                                                         Text(

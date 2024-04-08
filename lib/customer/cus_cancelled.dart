@@ -179,23 +179,22 @@ class _cusCancelledState extends State<cusCancelled> {
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
                                                   children: [
-                                                    Row(
-                                                      children: [
-                                                        Text(
-                                                          'Item: ',
-                                                          style: TextStyle(
-                                                              fontSize: 14),
+                                                   Text.rich(
+                                                           TextSpan(
+                                                            text: "Item: ",
+                                                            children: <TextSpan>[
+                                                              TextSpan(
+                                                                text: '${item['itemName']}',
+                                                                style: TextStyle(
+                                                                  fontSize: 14,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
                                                         ),
-                                                        Text(
-                                                          '${item['itemName']}',
-                                                          style: TextStyle(
-                                                              fontSize: 14,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold),
-                                                        ),
-                                                      ],
-                                                    ),
                                                     Row(
                                                       children: [
                                                         Text(

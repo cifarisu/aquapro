@@ -22,6 +22,7 @@ class LogIn extends StatefulWidget {
 
 class _LogInState extends State<LogIn> {
 
+   bool _isTapped = false;
   String email = "", password = "";
   final _formkey = GlobalKey<FormState>();
 
@@ -68,7 +69,17 @@ class _LogInState extends State<LogIn> {
     }
   }
 
+  void _handleTapDown(TapDownDetails details) {
+    setState(() {
+      _isTapped = true;
+    });
+  }
 
+  void _handleTapUp(TapUpDetails details) {
+    setState(() {
+      _isTapped = false;
+    });
+  }
 
 
   @override
@@ -155,13 +166,20 @@ class _LogInState extends State<LogIn> {
                             }
                             userLogin();
                           },
+                           onTapDown: _handleTapDown,
+                            onTapUp: _handleTapUp,
+                            onTapCancel: () {
+                              setState(() {
+                                _isTapped = false;
+                              });
+                            },
                           child: Material(
                             elevation: 5,
                             borderRadius: BorderRadius.circular(20),
                             child: Container(
                               padding: const EdgeInsets.symmetric(vertical: 8),
                               width: 200,
-                              decoration: BoxDecoration(color:const Color.fromARGB(255, 33, 214, 250), borderRadius: BorderRadius.circular(20)),
+                              decoration: BoxDecoration(color: _isTapped ? Color.fromARGB(255, 33, 214, 250).withOpacity(0.5) : Color.fromARGB(255, 33, 214, 250), borderRadius: BorderRadius.circular(20)),
                               child: const Center(child: Text("LOG IN", style: TextStyle(color: Colors.white, fontSize: 18.0, fontFamily: 'Poppins', fontWeight: FontWeight.bold))),
                             ),
                           ),
