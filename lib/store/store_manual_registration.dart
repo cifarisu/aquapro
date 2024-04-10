@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'dart:io';
 import 'package:aquapro/pages/login.dart';
 import 'package:flutter/material.dart';
@@ -206,68 +208,209 @@ class _StoreRegState extends State<StoreReg> {
       appBar: AppBar(
         title: Text('Firebase Storage Demo'),
       ),
-      body: ListView(
-        children: <Widget>[
-          TextField(
-            decoration: InputDecoration(
-              labelText: 'Time',
+      body: Container(
+        padding: EdgeInsets.only(
+          left: 20,
+          right: 20,
+        ),
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xff81e6eb), Color(0xffffffff)]),
+        ),
+        child: ListView(
+          children: <Widget>[
+            SizedBox(
+              height: 15,
             ),
-            onChanged: (value) {
-              time = value;
-            },
-          ),
-          TextField(
-            decoration: InputDecoration(
-              labelText: 'Coordinates (latitude, longitude)',
-            ),
-            onChanged: (value) {
-              // Parse the input string to extract latitude and longitude
-              List<String> coordinates = value.split(',');
-              if (coordinates.length == 2) {
-                latitude = double.tryParse(coordinates[0]) ?? 0.0;
-                longitude = double.tryParse(coordinates[1]) ?? 0.0;
-              }
-            },
-          ),
-          for (var product in products) ...[
-            ListTile(
-              title: Text(product.name),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  TextField(
-                    decoration: InputDecoration(
-                      labelText: 'Price',
-                    ),
-                    onChanged: (value) {
-                      product.price = double.tryParse(value) ?? 0.0;
-                    },
-                  ),
-                  Text(
-                    'Type: ${product.type}',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    'URL: ${product.url}',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 2,
+                    blurRadius: 5,
+                    offset: Offset(0, 3),
                   ),
                 ],
               ),
+              padding: EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      _image==null? FloatingActionButton.extended(
+                        onPressed: getImage,
+                        label: const Text('Pick Image'),
+                        tooltip: 'Pick Image',
+                        icon: Icon(Icons.add_a_photo),
+                      
+              ): Center(
+                child: Material(
+                  elevation: 4,
+                  borderRadius: BorderRadius.circular(20),
+                  child: Container(
+                    width: 200,
+                    height: 200,
+                    decoration: BoxDecoration(
+                        border: Border.all(color: Colors.black, width: 1.5),
+                        borderRadius: BorderRadiusDirectional.circular(20)),
+                    child: ClipRRect(
+                       borderRadius: BorderRadiusDirectional.circular(20),
+                      child: Image.file(
+                        _image!,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+                      
+                      FloatingActionButton.extended(
+                        onPressed: () => uploadImageToFirebase(context),
+                        label: const Text('Upload Image'),
+                        tooltip: 'Upload Image',
+                        icon: Icon(Icons.upload_file),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 25,
+                  ),
+                  Container(
+                    height: 60,
+                    child: TextField(
+                      decoration: InputDecoration(
+                        labelText: 'Store Operating Hours',
+                        hintText: '(hh:mm AM - hh:mm PM)',
+                        border: OutlineInputBorder(),
+                      ),
+                      onChanged: (value) {
+                        time = value;
+                      },
+                    ),
+                  ),
+                  SizedBox(
+                    height: 25,
+                  ),
+                  Container(
+                    height: 60,
+                    child: TextField(
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Store Location Coordinates',
+                        hintText: '(latitude, longitude)',
+                      ),
+                      onChanged: (value) {
+                        // Parse the input string to extract latitude and longitude
+                        List<String> coordinates = value.split(',');
+                        if (coordinates.length == 2) {
+                          latitude = double.tryParse(coordinates[0]) ?? 0.0;
+                          longitude = double.tryParse(coordinates[1]) ?? 0.0;
+                        }
+                      },
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                ],
+              ),
             ),
+            for (var product in products) ...[
+              Column(
+                children: [
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Container(
+                    padding: EdgeInsets.only(bottom: 10),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 2,
+                          blurRadius: 5,
+                          offset: Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: ListTile(
+                      // title: Center(child: Text(product.name)),
+                      subtitle: Row(
+                        children: [
+                          Container(
+                            child: Image.network(
+                              '${product.url}',
+                              height: MediaQuery.of(context).size.height / 8,
+                              width: MediaQuery.of(context).size.width - 400,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Container(
+                            // color: Colors.red,
+                            width: MediaQuery.of(context).size.width - 200,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  product.name,
+                                  style: TextStyle(
+                                      fontFamily: 'Poppins',
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16),
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Text(
+                                  'Type: ${product.type}',
+                                  // style: TextStyle(fontWeight: FontWeight.bold, color: Color.fromARGB(255, 120, 120, 120)),
+                                ),
+                                SizedBox(
+                                  height: 12,
+                                ),
+                                Container(
+                                  height: 50,
+                                  child: TextField(
+                                    decoration: InputDecoration(
+                                      labelText: 'Price',
+                                      border: OutlineInputBorder(),
+                                    ),
+                                    onChanged: (value) {
+                                      product.price =
+                                          double.tryParse(value) ?? 0.0;
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ],
-          FloatingActionButton(
-            onPressed: getImage,
-            tooltip: 'Pick Image',
-            child: Icon(Icons.add_a_photo),
-          ),
-          SizedBox(height: 10),
-          FloatingActionButton(
-            onPressed: () => uploadImageToFirebase(context),
-            tooltip: 'Upload Image',
-            child: Icon(Icons.upload_file),
-          ),
-        ],
+        ),
       ),
+      // floatingActionButton: FloatingActionButton(
+      //         onPressed: getImage,
+      //         tooltip: 'Pick Image',
+      //         child: Icon(Icons.add_a_photo),
+      //       ),
     );
   }
 }
