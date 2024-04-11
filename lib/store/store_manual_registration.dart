@@ -3,6 +3,7 @@
 import 'dart:io';
 import 'package:aquapro/pages/login.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -245,12 +246,19 @@ class _StoreRegState extends State<StoreReg> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      _image==null? FloatingActionButton.extended(
-                        onPressed: getImage,
-                        label: const Text('Pick Image'),
-                        tooltip: 'Pick Image',
-                        icon: Icon(Icons.add_a_photo),
-                      
+                      _image==null?  Center(
+                child: Material(
+                  elevation: 4,
+                  borderRadius: BorderRadius.circular(20),
+                  child: Container(
+                    width: 200,
+                    height: 200,
+                    decoration: BoxDecoration(
+                        border: Border.all(color: Colors.black, width: 1.5),
+                        borderRadius: BorderRadiusDirectional.circular(20)),
+                  
+                  ),
+                ),
               ): Center(
                 child: Material(
                   elevation: 4,
@@ -271,13 +279,14 @@ class _StoreRegState extends State<StoreReg> {
                   ),
                 ),
               ),
-                      
                       FloatingActionButton.extended(
-                        onPressed: () => uploadImageToFirebase(context),
-                        label: const Text('Upload Image'),
-                        tooltip: 'Upload Image',
-                        icon: Icon(Icons.upload_file),
-                      ),
+                        onPressed: getImage,
+                        label: const Text('Pick Image'),
+                        tooltip: 'Pick Image',
+                        icon: Icon(Icons.add_a_photo),
+                      
+              ),
+                      
                     ],
                   ),
                   SizedBox(
@@ -403,14 +412,25 @@ class _StoreRegState extends State<StoreReg> {
                 ],
               ),
             ],
+            SizedBox(height: 20,),
+            Container(
+              width: 300,
+              height: 70,
+              child: FittedBox(
+                child: FloatingActionButton.extended(
+                            onPressed: () => uploadImageToFirebase(context),
+                            label: const Text('Upload'),
+                            tooltip: 'Upload Image',
+                            icon: Icon(Icons.upload_file),
+                          ),
+              ),
+            ),
+            SizedBox(height: 20,),
           ],
+          
         ),
       ),
-      // floatingActionButton: FloatingActionButton(
-      //         onPressed: getImage,
-      //         tooltip: 'Pick Image',
-      //         child: Icon(Icons.add_a_photo),
-      //       ),
+      // floatingActionButton: 
     );
   }
 }
