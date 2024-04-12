@@ -5,6 +5,7 @@ import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class RiderTracking extends StatefulWidget {
   const RiderTracking({Key? key}) : super(key: key);
@@ -17,31 +18,43 @@ class RiderTrackingState extends State<RiderTracking> {
   final Completer<GoogleMapController> _controller = Completer();
 
   List<LatLng> locations = []; // Now this will be populated from Firebase
-
   List<List<LatLng>> polylineCoordinates = [];
   LocationData? currentLocation;
-
   BitmapDescriptor sourceIcon = BitmapDescriptor.defaultMarker;
   BitmapDescriptor destinationIcon = BitmapDescriptor.defaultMarker;
   BitmapDescriptor currentLocationIcon = BitmapDescriptor.defaultMarker;
 
   bool showMap = false; // Add this line
+  late String? currentUserId;
 
   @override
   void initState() {
-    getCurrentLocation();
-    setCustomMarker();
     super.initState();
+    getCurrentUserId();
+    getCurrentLocation(); // Start getting current location
+    setCustomMarker(); // Set custom marker for current location
+  }
+
+  void getCurrentUserId() {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      setState(() {
+        currentUserId = user.uid;
+      });
+    }
   }
 
   void getCurrentLocation() async {
     Location location = Location();
 
-    location.getLocation().then((locationData) {
+    try {
+      LocationData locationData = await location.getLocation();
       setState(() {
         currentLocation = locationData;
       });
-    });
+    } catch (e) {
+      print("Error getting current location: $e");
+    }
 
     location.onLocationChanged.listen((newLoc) async {
       setState(() {
@@ -52,7 +65,7 @@ class RiderTrackingState extends State<RiderTracking> {
 
       googleMapController.animateCamera(CameraUpdate.newCameraPosition(
         CameraPosition(
-          zoom: 18,
+          zoom: 16,
           target: LatLng(newLoc.latitude!, newLoc.longitude!),
         ),
       ));
@@ -87,20 +100,6 @@ class RiderTrackingState extends State<RiderTracking> {
 
   void setCustomMarker() {
     BitmapDescriptor.fromAssetImage(
-            ImageConfiguration.empty, "images/Pin_source.png")
-        .then(
-      (icon) {
-        sourceIcon = icon;
-      },
-    );
-    BitmapDescriptor.fromAssetImage(
-            ImageConfiguration.empty, "images/Pin_destination.png")
-        .then(
-      (icon) {
-        destinationIcon = icon;
-      },
-    );
-    BitmapDescriptor.fromAssetImage(
             ImageConfiguration.empty, "images/Badge.png")
         .then(
       (icon) {
@@ -112,45 +111,45 @@ class RiderTrackingState extends State<RiderTracking> {
   Future<void> getLocationsFromFirebase() async {
     print('Fetching data from Firebase...');
     try {
-      final doc = await FirebaseFirestore.instance
-          .collection('results')
-          .doc('Shop-1,Group1')
+      QuerySnapshot snapshot = await FirebaseFirestore.instance
+          .collection('Tracking')
+          .where('riderId', isEqualTo: currentUserId)
           .get();
-      var data = doc.data();
+
+      Map<String, dynamic>? data = snapshot.docs.isNotEmpty
+          ? snapshot.docs.first.data() as Map<String, dynamic>?
+          : null;
+
       if (data != null) {
-        var indexedNodes = data[
-            'indexedNodes']; // assuming 'indexedNodes' is the field name in Firestore
-        var result =
-            data['result']; // assuming 'result' is the field name in Firestore
+        var indexedNodes = data['indexedNodes'];
+        var result = data['result'];
 
-        print('indexedNodes: $indexedNodes');
-        print('result: $result');
+        if (indexedNodes != null && result != null) {
+          print('indexedNodes: $indexedNodes');
+          print('result: $result');
 
-        // assuming each node in 'indexedNodes' is a GeoPoint
-        List<LatLng> unorderedLocations = [];
-        for (var node in indexedNodes.values) {
-          unorderedLocations.add(LatLng(node.latitude, node.longitude));
+          List<LatLng> unorderedLocations = [];
+          for (var node in indexedNodes.values) {
+            unorderedLocations.add(LatLng(node.latitude, node.longitude));
+          }
+
+          var bestRoute = result['Best Route'];
+          print('Best Route: $bestRoute');
+
+          for (var index in bestRoute) {
+            locations.add(unorderedLocations[index]);
+          }
+
+          var runningTime = result['Running Time'];
+          print('Running Time: $runningTime');
+
+          var totalDistance = result['Total Distance'];
+          print('Total Distance: $totalDistance');
+
+          getPolyPoints();
+        } else {
+          print('Indexed nodes or result is null');
         }
-
-        // assuming 'Best Route' in 'result' is an array of numbers
-        var bestRoute = result['Best Route'];
-        print('Best Route: $bestRoute');
-
-        // Create a new list of locations in the sequence specified by 'Best Route'
-        for (var index in bestRoute) {
-          locations.add(unorderedLocations[index]);
-        }
-
-        // assuming 'Running Time' in 'result' is a number
-        var runningTime = result['Running Time'];
-        print('Running Time: $runningTime');
-
-        // assuming 'Total Distance' in 'result' is a number
-        var totalDistance = result['Total Distance'];
-        print('Total Distance: $totalDistance');
-
-        // Call getPolyPoints after fetching locations from Firebase
-        getPolyPoints();
       } else {
         print('No data found in document');
       }
@@ -174,14 +173,14 @@ class RiderTrackingState extends State<RiderTracking> {
           ? Stack(
               children: <Widget>[
                 Container(
-                  height: 500, // Set the height to your desired value
-                  width: 500, // Set the width to your desired value
+                  height: 500,
+                  width: 500,
                   child: GoogleMap(
                     mapType: MapType.normal,
                     initialCameraPosition: CameraPosition(
                         target: LatLng(currentLocation!.latitude!,
                             currentLocation!.longitude!),
-                        zoom: 18),
+                        zoom: 13),
                     polylines: {
                       for (List<LatLng> route in polylineCoordinates)
                         Polyline(
@@ -219,7 +218,7 @@ class RiderTrackingState extends State<RiderTracking> {
                   child: FloatingActionButton(
                     onPressed: () async {
                       await getLocationsFromFirebase();
-                      getPolyPoints(); // Update the polyline points
+                      getPolyPoints();
                     },
                     child: Icon(Icons.refresh),
                   ),
@@ -230,9 +229,9 @@ class RiderTrackingState extends State<RiderTracking> {
               child: ElevatedButton(
                 onPressed: () async {
                   await getLocationsFromFirebase();
-                  getPolyPoints(); // Update the polyline points
+                  getPolyPoints();
                   setState(() {
-                    showMap = true; // Show the map after the button is clicked
+                    showMap = true;
                   });
                 },
                 child: Text('View Results'),
