@@ -16,6 +16,7 @@ import 'package:aquapro/pages/order_traking_page.dart';
 import 'package:aquapro/pages/rider_info.dart';
 import 'package:aquapro/pages/signup.dart';
 import 'package:aquapro/rider/rider_choose_loc.dart';
+import 'package:aquapro/rider/rider_deliveries.dart';
 import 'package:aquapro/rider/rider_navbar.dart';
 import 'package:aquapro/rider/rider_storeselection.dart';
 import 'package:aquapro/store/store_manual_registration.dart';
@@ -63,7 +64,7 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent),
           useMaterial3: true,
         ),
-        home: SignUp());
+        home: LogIn());
   }
 }
 
