@@ -209,9 +209,9 @@ class _RiderACOState extends State<RiderACO> {
     Map<String, Map<String, dynamic>> customerDetails =
         {}; // Map to store customer details
 
-    // Add store coordinates as the starting point
-    nodes['Store'] = [storeCoordinates.latitude, storeCoordinates.longitude];
-    indexedNodes['Store'] = storeCoordinates;
+    // Add store coordinates as the starting point (indexed as 'Order_0')
+    nodes['Order_0'] = [storeCoordinates.latitude, storeCoordinates.longitude];
+    indexedNodes['Order_0'] = storeCoordinates;
 
     // Add customer coordinates and save customer names and IDs
     final querySnapshot = await FirebaseFirestore.instance
@@ -221,7 +221,7 @@ class _RiderACOState extends State<RiderACO> {
         .where('status', isEqualTo: 'Out for Delivery')
         .get();
 
-    int index = 0;
+    int index = 1; // Start index from 1 for customer orders
     querySnapshot.docs.forEach((doc) {
       Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
       GeoPoint coordinatesGeoPoint = data['coordinates'];
