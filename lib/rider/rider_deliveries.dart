@@ -203,9 +203,6 @@ class _RiderACOState extends State<RiderACO> {
         await FirebaseFirestore.instance.collection('Store').doc(storeId).get();
     GeoPoint storeCoordinates = storeDoc.data()!['coordinates'] as GeoPoint;
 
-    // Create a document ID for the tracking data
-    String docId = FirebaseFirestore.instance.collection('Tracking').doc().id;
-
     // Fetch current rider ID
     User? user = FirebaseAuth.instance.currentUser;
     String? riderId = user != null ? user.uid : null;
@@ -247,6 +244,9 @@ class _RiderACOState extends State<RiderACO> {
 
       index++;
     });
+
+    // Create a document ID for the tracking data using the rider's ID
+    String docId = riderId != null ? riderId : '';
 
     // Send coordinates to the server
     final response = await http.post(
