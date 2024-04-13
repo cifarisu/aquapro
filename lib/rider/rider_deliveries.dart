@@ -250,7 +250,8 @@ class _RiderACOState extends State<RiderACO> {
 
     // Send coordinates to the server
     final response = await http.post(
-      Uri.parse('http://10.0.2.2:5000/'), // replace with your Flask app's URL
+      Uri.parse(
+          'https://tweastzz.pythonanywhere.com/'), // replace with your Flask app's URL
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
