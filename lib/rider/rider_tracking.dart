@@ -29,6 +29,7 @@ class RiderTrackingState extends State<RiderTracking> {
   int currentRouteIndex = 0;
 
   late StreamSubscription<LocationData> _locationSubscription;
+  late Timer _timer;
 
   @override
   void initState() {
@@ -36,13 +37,22 @@ class RiderTrackingState extends State<RiderTracking> {
     getCurrentUserId();
     getCurrentLocation();
     setCustomMarker();
+    startLocationTimer();
   }
 
   @override
   void dispose() {
     super.dispose();
-    _locationSubscription
-        .cancel(); // Cancel the subscription when the widget is disposed
+    _locationSubscription.cancel();
+    _timer.cancel();
+  }
+
+  void startLocationTimer() {
+    _timer = Timer.periodic(Duration(seconds: 5), (timer) {
+      if (currentLocation != null && currentUserId != null) {
+        saveCurrentLocationToFirebase(currentLocation!, currentUserId!);
+      }
+    });
   }
 
   void getCurrentUserId() {
@@ -71,14 +81,52 @@ class RiderTrackingState extends State<RiderTracking> {
         currentLocation = newLoc;
       });
 
-      GoogleMapController googleMapController = await _controller.future;
+      if (_controller.isCompleted) {
+        GoogleMapController googleMapController = await _controller.future;
+        googleMapController.animateCamera(CameraUpdate.newCameraPosition(
+          CameraPosition(
+            zoom: 16,
+            target: LatLng(newLoc.latitude!, newLoc.longitude!),
+          ),
+        ));
+      }
+    });
+  }
 
-      googleMapController.animateCamera(CameraUpdate.newCameraPosition(
-        CameraPosition(
-          zoom: 16,
-          target: LatLng(newLoc.latitude!, newLoc.longitude!),
-        ),
-      ));
+  Future<void> saveCurrentLocationToFirebase(
+      LocationData locationData, String userId) async {
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('Tracking')
+          .where('riderId', isEqualTo: userId)
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        DocumentSnapshot documentSnapshot = querySnapshot.docs.first;
+        String documentId = documentSnapshot.id;
+
+        await FirebaseFirestore.instance
+            .collection('Tracking')
+            .doc(documentId)
+            .update({
+          'currentLocation':
+              GeoPoint(locationData.latitude!, locationData.longitude!)
+        });
+        print('Current location saved to Firebase: $locationData');
+      } else {
+        print('No document found for riderId: $userId');
+      }
+    } catch (e) {
+      print('Error saving current location to Firebase: $e');
+    }
+  }
+
+  void setCustomMarker() {
+    BitmapDescriptor.fromAssetImage(
+      ImageConfiguration.empty,
+      "images/Badge.png",
+    ).then((icon) {
+      currentLocationIcon = icon;
     });
   }
 
@@ -118,15 +166,6 @@ class RiderTrackingState extends State<RiderTracking> {
     }
 
     setState(() {});
-  }
-
-  void setCustomMarker() {
-    BitmapDescriptor.fromAssetImage(
-      ImageConfiguration.empty,
-      "images/Badge.png",
-    ).then((icon) {
-      currentLocationIcon = icon;
-    });
   }
 
   Future<void> getLocationsFromFirebase() async {
