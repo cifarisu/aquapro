@@ -54,7 +54,7 @@ class _RiderACOState extends State<RiderACO> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Input Coordinates'),
+        title: Text('Order Details'),
       ),
       body: isLoading
           ? Center(child: CircularProgressIndicator())
@@ -141,27 +141,33 @@ class _RiderACOState extends State<RiderACO> {
                     },
                     child: Text('Get Order Details'),
                   ),
+                  ElevatedButton(
+                    onPressed: () async {
+                      if (_formKey.currentState!.validate()) {
+                        await _sendCoordinates();
+                      }
+                    },
+                    child: Text('Run the Algorithm'), // Updated text
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => RiderTracking()),
+                      );
+                    },
+                    child: Text('Go to Tracking Page'),
+                  ),
                 ],
                 Text(resultText), // Move this line here
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => RiderTracking()),
-                    );
-                  },
-                  child: Text('Go to Tracking Page'),
-                ),
+                if (resultText.isNotEmpty) // Add this condition
+                  Text(
+                    'Algorithm ran successfully. You can now go to the tracking page.',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
               ],
             ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          if (_formKey.currentState!.validate()) {
-            await _sendCoordinates();
-          }
-        },
-        child: Icon(Icons.send),
-      ),
     );
   }
 

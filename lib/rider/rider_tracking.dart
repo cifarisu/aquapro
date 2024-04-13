@@ -1,11 +1,12 @@
+import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:aquapro/widget/constants.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'rider_navbar.dart'; // import RiderHome.dart file
 
 class RiderTracking extends StatefulWidget {
   const RiderTracking({Key? key}) : super(key: key);
@@ -30,6 +31,7 @@ class RiderTrackingState extends State<RiderTracking> {
 
   late StreamSubscription<LocationData> _locationSubscription;
   late Timer _timer;
+  late NavigatorState _navigator;
 
   @override
   void initState() {
@@ -45,6 +47,12 @@ class RiderTrackingState extends State<RiderTracking> {
     super.dispose();
     _locationSubscription.cancel();
     _timer.cancel();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _navigator = Navigator.of(context);
   }
 
   void startLocationTimer() {
@@ -218,6 +226,30 @@ class RiderTrackingState extends State<RiderTracking> {
     }
   }
 
+  Future<void> deleteDeliveryDocument() async {
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('Tracking')
+          .where('riderId', isEqualTo: currentUserId)
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        DocumentSnapshot documentSnapshot = querySnapshot.docs.first;
+        String documentId = documentSnapshot.id;
+
+        await FirebaseFirestore.instance
+            .collection('Tracking')
+            .doc(documentId)
+            .delete();
+        print('Delivery document deleted from Firestore');
+      } else {
+        print('No document found for riderId: $currentUserId');
+      }
+    } catch (e) {
+      print('Error deleting delivery document: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -230,83 +262,132 @@ class RiderTrackingState extends State<RiderTracking> {
       body: showMap
           ? Stack(
               children: <Widget>[
-                if (currentLocation != null) // Null check added here
-                  GoogleMap(
-                    mapType: MapType.normal,
-                    initialCameraPosition: CameraPosition(
-                      target: LatLng(
-                          currentLocation!.latitude!,
-                          currentLocation!
-                              .longitude!), // Accessing properties after null check
-                      zoom: 13,
+                GoogleMap(
+                  mapType: MapType.normal,
+                  initialCameraPosition: CameraPosition(
+                    target: LatLng(
+                      currentLocation?.latitude ?? 0.0,
+                      currentLocation?.longitude ?? 0.0,
                     ),
-                    polylines: {
-                      for (int i = 0; i <= currentRouteIndex; i++)
-                        if (polylineCoordinates.length > i &&
-                            polylineCoordinates[i].isNotEmpty)
-                          Polyline(
-                            polylineId: PolylineId("route$i"),
-                            points: polylineCoordinates[i],
-                            color: Colors.blue,
-                            width: 6,
-                          ),
-                    },
-                    markers: {
-                      if (currentLocation != null)
-                        Marker(
-                          markerId: MarkerId("currentLocation"),
-                          icon: currentLocationIcon,
-                          position: LatLng(currentLocation!.latitude!,
-                              currentLocation!.longitude!),
-                        ),
-                      for (LatLng location in locations)
-                        Marker(
-                          markerId: MarkerId(location.toString()),
-                          icon: destinationIcon,
-                          position: location,
-                        ),
-                    },
-                    onMapCreated: (mapController) {
-                      if (!_controller.isCompleted) {
-                        _controller.complete(mapController);
-                      }
-                    },
+                    zoom: 13,
                   ),
+                  polylines: {
+                    for (int i = 0; i <= currentRouteIndex; i++)
+                      if (polylineCoordinates.length > i &&
+                          polylineCoordinates[i].isNotEmpty)
+                        Polyline(
+                          polylineId: PolylineId("route$i"),
+                          points: polylineCoordinates[i],
+                          color: Colors.blue,
+                          width: 6,
+                        ),
+                  },
+                  markers: {
+                    if (currentLocation != null)
+                      Marker(
+                        markerId: MarkerId("currentLocation"),
+                        icon: currentLocationIcon,
+                        position: LatLng(
+                          currentLocation!.latitude!,
+                          currentLocation!.longitude!,
+                        ),
+                      ),
+                    for (LatLng location in locations)
+                      Marker(
+                        markerId: MarkerId(location.toString()),
+                        icon: destinationIcon,
+                        position: location,
+                      ),
+                  },
+                  onMapCreated: (mapController) {
+                    if (!_controller.isCompleted) {
+                      _controller.complete(mapController);
+                    }
+                  },
+                ),
                 Positioned(
                   bottom: 50,
-                  right: 10,
+                  left: 0,
+                  right: 0,
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      IconButton(
-                        onPressed: () {
-                          if (currentRouteIndex > 0) {
-                            setState(() {
-                              currentRouteIndex--;
-                            });
-                          } else {
-                            // Loop back to the end of the sequence
-                            setState(() {
-                              currentRouteIndex = locations.length - 1;
-                            });
-                          }
-                        },
-                        icon: Icon(Icons.arrow_back),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.blue.withOpacity(1),
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: IconButton(
+                          onPressed: () {
+                            if (currentRouteIndex > 0) {
+                              setState(() {
+                                currentRouteIndex--;
+                              });
+                            } else {
+                              // Loop back to the end of the sequence
+                              setState(() {
+                                currentRouteIndex = locations.length - 1;
+                              });
+                            }
+                          },
+                          icon: Icon(Icons.arrow_back),
+                        ),
                       ),
                       SizedBox(width: 10),
-                      IconButton(
+                      ElevatedButton(
                         onPressed: () {
-                          if (currentRouteIndex < locations.length - 1) {
-                            setState(() {
-                              currentRouteIndex++;
-                            });
-                          } else {
-                            // Loop back to the beginning of the sequence
-                            setState(() {
-                              currentRouteIndex = 0;
-                            });
-                          }
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: Text('Confirm End Delivery'),
+                              content: Text(
+                                  'Are you sure you want to end the delivery?'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text('Cancel'),
+                                ),
+                                TextButton(
+                                  onPressed: () async {
+                                    await deleteDeliveryDocument();
+                                    Navigator.of(context).pop();
+                                    // Navigate to RiderNavBar after confirming end of delivery
+                                    _navigator.pushReplacement(
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                RiderNavbar()));
+                                  },
+                                  child: Text('Confirm'),
+                                ),
+                              ],
+                            ),
+                          );
                         },
-                        icon: Icon(Icons.arrow_forward),
+                        child: Text('End Delivery'),
+                      ),
+                      SizedBox(width: 10),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.blue.withOpacity(1),
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: IconButton(
+                          onPressed: () {
+                            if (currentRouteIndex < locations.length - 1) {
+                              setState(() {
+                                currentRouteIndex++;
+                              });
+                            } else {
+                              // Loop back to the beginning of the sequence
+                              setState(() {
+                                currentRouteIndex = 0;
+                              });
+                            }
+                          },
+                          icon: Icon(Icons.arrow_forward),
+                        ),
                       ),
                     ],
                   ),
