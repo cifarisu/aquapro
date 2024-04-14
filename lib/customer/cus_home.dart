@@ -149,7 +149,8 @@ class _CusHomeState extends State<CusHome> {
                         Text(
                           "Nearest Water Refilling Stations",
                           style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
+                              fontSize:  MediaQuery.of(context).size.width > 490 ?20 : MediaQuery.of(context).size.width < 490 ?18:16, 
+                              fontWeight: FontWeight.bold),
                         ),
                         GestureDetector(
                           onTap: () {
@@ -161,7 +162,7 @@ class _CusHomeState extends State<CusHome> {
                           child: Text(
                             "View all>",
                             style: TextStyle(
-                                fontSize: 16,
+                                fontSize: MediaQuery.of(context).size.width > 490 ?16 : MediaQuery.of(context).size.width < 490 ?14:12,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.blue),
                           ),
