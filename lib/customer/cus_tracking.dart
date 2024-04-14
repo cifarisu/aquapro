@@ -38,7 +38,7 @@ class CusTrackingState extends State<CusTracking> {
     getCurrentLocation();
     // Start timer to periodically update rider's location
     _timer = Timer.periodic(Duration(seconds: 7), (timer) {
-      getRiderLocation();
+      getCustomerAndRiderLocations();
     });
   }
 
@@ -77,14 +77,10 @@ class CusTrackingState extends State<CusTracking> {
 
   Future<void> getCustomerAndRiderLocations() async {
     try {
+      // Fetch customer's coordinates
       DocumentSnapshot customerSnapshot = await FirebaseFirestore.instance
           .collection('Customer')
-          .doc(currentUserId) // Replace with actual customer ID
-          .get();
-
-      DocumentSnapshot riderSnapshot = await FirebaseFirestore.instance
-          .collection('Tracking')
-          .doc('mSOM7n2ZYSRUBegnn4KLP4LsH9m1') // Replace with actual rider ID
+          .doc(currentUserId)
           .get();
 
       if (customerSnapshot.exists) {
@@ -96,33 +92,41 @@ class CusTrackingState extends State<CusTracking> {
               customerGeoPoint.longitude,
             );
           });
+
+          // Fetch rider's ID
+          String riderId = await fetchRiderId();
+
+          // Fetch rider's location based on the retrieved ID
+          DocumentSnapshot riderSnapshot = await FirebaseFirestore.instance
+              .collection('Tracking')
+              .doc(riderId)
+              .get();
+
+          if (riderSnapshot.exists) {
+            var riderGeoPoint = riderSnapshot['currentLocation'];
+            if (riderGeoPoint != null) {
+              setState(() {
+                riderLocation = LatLng(
+                  riderGeoPoint.latitude,
+                  riderGeoPoint.longitude,
+                );
+              });
+            } else {
+              print('Rider coordinates not found');
+            }
+
+            if (customerLocation != null && riderLocation != null) {
+              await _getPolylines();
+              await _adjustCameraPosition();
+            }
+          } else {
+            print('Rider data not found');
+          }
         } else {
           print('Coordinates not found for customer');
         }
       } else {
         print('Customer data not found');
-      }
-
-      if (riderSnapshot.exists) {
-        var riderGeoPoint = riderSnapshot['currentLocation'];
-        if (riderGeoPoint != null) {
-          setState(() {
-            riderLocation = LatLng(
-              riderGeoPoint.latitude,
-              riderGeoPoint.longitude,
-            );
-          });
-        } else {
-          print('Rider coordinates not found');
-        }
-      } else {
-        print('Rider data not found');
-      }
-
-      if (customerLocation != null && riderLocation != null) {
-        await _getPolylines();
-        // Adjust map camera position to show both customer and rider markers
-        await _adjustCameraPosition();
       }
     } catch (e, stackTrace) {
       print('Failed to fetch data: $e');
@@ -130,36 +134,32 @@ class CusTrackingState extends State<CusTracking> {
     }
   }
 
-  Future<void> getRiderLocation() async {
+  Future<String> fetchRiderId() async {
     try {
-      DocumentSnapshot riderSnapshot = await FirebaseFirestore.instance
-          .collection('Tracking')
-          .doc('mSOM7n2ZYSRUBegnn4KLP4LsH9m1') // Replace with actual rider ID
-          .get();
+      // Fetch the rider's ID from the Tracking collection using the customer's ID
+      QuerySnapshot riderSnapshot =
+          await FirebaseFirestore.instance.collection('Tracking').get();
 
-      if (riderSnapshot.exists) {
-        var riderGeoPoint = riderSnapshot['currentLocation'];
-        if (riderGeoPoint != null) {
-          setState(() {
-            riderLocation = LatLng(
-              riderGeoPoint.latitude,
-              riderGeoPoint.longitude,
-            );
-          });
-        } else {
-          print('Rider coordinates not found');
+      for (QueryDocumentSnapshot riderDoc in riderSnapshot.docs) {
+        // Iterate over each rider's document
+        Map<String, dynamic> customerDetails = riderDoc['customerDetails'];
+        if (customerDetails != null) {
+          // If customerDetails exists
+          for (String orderId in customerDetails.keys) {
+            // Iterate over each subcollection under customerDetails
+            Map<String, dynamic> orderData = customerDetails[orderId];
+            if (orderData['id'] == currentUserId) {
+              // If the customer's ID is found in this subcollection
+              return riderDoc.id; // Return the rider's ID
+            }
+          }
         }
-      } else {
-        print('Rider data not found');
       }
-
-      if (customerLocation != null && riderLocation != null) {
-        await _getPolylines();
-        // Adjust map camera position to show both customer and rider markers
-        await _adjustCameraPosition();
-      }
+      print('Tracking data not found for the customer');
+      return '';
     } catch (e) {
-      print('Failed to fetch rider location: $e');
+      print('Failed to fetch rider ID: $e');
+      return '';
     }
   }
 
