@@ -8,6 +8,7 @@ import 'package:aquapro/pages/details.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 void main() {
   runApp(MyApp());
@@ -99,8 +100,8 @@ class _CusHomeState extends State<CusHome> {
               ),
               child: Container(
                 margin: const EdgeInsets.only(top: 35.0, left: 10.0, right: 10.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: ListView(
+                  // crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -149,7 +150,8 @@ class _CusHomeState extends State<CusHome> {
                         Text(
                           "Nearest Water Refilling Stations",
                           style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
+                              fontSize:  MediaQuery.of(context).size.width > 490 ?20 : MediaQuery.of(context).size.width < 490 ?18:16, 
+                              fontWeight: FontWeight.bold),
                         ),
                         GestureDetector(
                           onTap: () {
@@ -161,7 +163,7 @@ class _CusHomeState extends State<CusHome> {
                           child: Text(
                             "View all>",
                             style: TextStyle(
-                                fontSize: 16,
+                                fontSize: MediaQuery.of(context).size.width > 490 ?16 : MediaQuery.of(context).size.width < 490 ?14:12,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.blue),
                           ),
@@ -257,10 +259,10 @@ class _CusHomeState extends State<CusHome> {
                                       child: Material(
                                         elevation: 5.0,
                                         borderRadius: BorderRadius.circular(20),
-                                        child: ConstrainedBox(
-                                          constraints: BoxConstraints(
-                                              minHeight:
-                                                  500), // Set a fixed height for the container
+                                        // child: ConstrainedBox(
+                                          // constraints: BoxConstraints(
+                                          //     minHeight:
+                                          //         500), // Set a fixed height for the container
                                           child: Container(
                                             padding: EdgeInsets.all(15),
                                             child: Column(
@@ -379,7 +381,7 @@ class _CusHomeState extends State<CusHome> {
                                               ],
                                             ),
                                           ),
-                                        ),
+                                        // ),
                                       ),
                                     ),
                                   ),
@@ -396,120 +398,123 @@ class _CusHomeState extends State<CusHome> {
                       style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                     SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => Details()));
-                          },
-                          child: Container(
-                            margin: EdgeInsets.all(5),
-                            decoration: BoxDecoration(
-                              border:
-                                  Border.all(color: Color(0xff0EB4F3), width: 3),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Material(
-                              elevation: 5.0,
-                              borderRadius: BorderRadius.circular(20),
-                              child: Container(
-                                constraints:
-                                    BoxConstraints(minWidth: 120, maxWidth: 120),
-                                padding: EdgeInsets.all(5),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                      alignment: Alignment.topCenter,
-                                      width: MediaQuery.of(context).size.height,
-                                      child: Image.asset("images/flat.png",
-                                          fit: BoxFit.fill),
-                                    ),
-                                  ],
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => Details()));
+                            },
+                            child: Container(
+                              margin: EdgeInsets.all(5),
+                              decoration: BoxDecoration(
+                                border:
+                                    Border.all(color: Color(0xff0EB4F3), width: 3),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Material(
+                                elevation: 5.0,
+                                borderRadius: BorderRadius.circular(20),
+                                child: Container(
+                                  constraints:
+                                      BoxConstraints(minWidth: 120, maxWidth: 120),
+                                  padding: EdgeInsets.all(5),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        alignment: Alignment.topCenter,
+                                        width: MediaQuery.of(context).size.height,
+                                        child: Image.asset("images/flat.png",
+                                            fit: BoxFit.fill),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                        SizedBox(width: 15.0),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => Details()));
-                          },
-                          child: Container(
-                            margin: EdgeInsets.all(5),
-                            decoration: BoxDecoration(
-                              border:
-                                  Border.all(color: Color(0xff0EB4F3), width: 3),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Material(
-                              elevation: 5.0,
-                              borderRadius: BorderRadius.circular(20),
-                              child: Container(
-                                constraints:
-                                    BoxConstraints(minWidth: 120, maxWidth: 120),
-                                padding: EdgeInsets.all(5),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                      alignment: Alignment.topCenter,
-                                      width: MediaQuery.of(context).size.height,
-                                      child: Image.asset("images/round.png",
-                                          fit: BoxFit.fill),
-                                    ),
-                                  ],
+                          SizedBox(width: 15.0),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => Details()));
+                            },
+                            child: Container(
+                              margin: EdgeInsets.all(5),
+                              decoration: BoxDecoration(
+                                border:
+                                    Border.all(color: Color(0xff0EB4F3), width: 3),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Material(
+                                elevation: 5.0,
+                                borderRadius: BorderRadius.circular(20),
+                                child: Container(
+                                  constraints:
+                                      BoxConstraints(minWidth: 120, maxWidth: 120),
+                                  padding: EdgeInsets.all(5),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        alignment: Alignment.topCenter,
+                                        width: MediaQuery.of(context).size.height,
+                                        child: Image.asset("images/round.png",
+                                            fit: BoxFit.fill),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                        SizedBox(width: 15.0),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => Details()));
-                          },
-                          child: Container(
-                            margin: EdgeInsets.all(5),
-                            decoration: BoxDecoration(
-                              border:
-                                  Border.all(color: Color(0xff0EB4F3), width: 3),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Material(
-                              elevation: 5.0,
-                              borderRadius: BorderRadius.circular(20),
-                              child: Container(
-                                constraints:
-                                    BoxConstraints(minWidth: 120, maxWidth: 120),
-                                padding: EdgeInsets.all(5),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                      alignment: Alignment.topCenter,
-                                      width: MediaQuery.of(context).size.height,
-                                      child: Image.asset("images/small.png",
-                                          fit: BoxFit.fill),
-                                    ),
-                                  ],
+                          SizedBox(width: 15.0),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => Details()));
+                            },
+                            child: Container(
+                              margin: EdgeInsets.all(5),
+                              decoration: BoxDecoration(
+                                border:
+                                    Border.all(color: Color(0xff0EB4F3), width: 3),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Material(
+                                elevation: 5.0,
+                                borderRadius: BorderRadius.circular(20),
+                                child: Container(
+                                  constraints:
+                                      BoxConstraints(minWidth: 120, maxWidth: 120),
+                                  padding: EdgeInsets.all(5),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        alignment: Alignment.topCenter,
+                                        width: MediaQuery.of(context).size.height,
+                                        child: Image.asset("images/small.png",
+                                            fit: BoxFit.fill),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ],
                 ),

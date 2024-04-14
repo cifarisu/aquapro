@@ -109,15 +109,15 @@ class _cusProfileState extends State<cusProfile> {
               end: Alignment.bottomRight,
               colors: [Color(0xff81e6eb), Color(0xffffffff)]),
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
+        child: ListView(
+          // mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Container(
               height: 60,
               padding: EdgeInsets.only(bottom: 0),
               alignment: Alignment.bottomCenter,
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   GestureDetector(
                     onTap: () {
@@ -134,6 +134,7 @@ class _cusProfileState extends State<cusProfile> {
                           fontFamily: 'Times New Roman',
                           color: Color(0xff0eb4f3),
                           fontWeight: FontWeight.w600),
+                          textAlign: TextAlign.right,
                     ),
                   )
                 ],
@@ -142,17 +143,18 @@ class _cusProfileState extends State<cusProfile> {
             Stack(
               children: [
                 Container(
+                  alignment: Alignment.center,
                   child: Image.asset(
                     'images/profile.png',
                     height: 200,
                   ),
                 ),
-                Positioned(
-                  bottom: -4,
-                  right: 5,
-                  child: Icon(Icons.photo_camera,
-                      size: 50, color: Color(0xff0eb4f3)),
-                ),
+                // Positioned(
+                //   bottom: -10,
+                //   right: 5,
+                //   child: Icon(Icons.photo_camera,
+                //       size: 50, color: Color(0xff0eb4f3)),
+                // ),
                 
               ],
             ),
