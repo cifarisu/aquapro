@@ -99,8 +99,8 @@ class _CusHomeState extends State<CusHome> {
               ),
               child: Container(
                 margin: const EdgeInsets.only(top: 35.0, left: 10.0, right: 10.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: ListView(
+                  // crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -257,10 +257,10 @@ class _CusHomeState extends State<CusHome> {
                                       child: Material(
                                         elevation: 5.0,
                                         borderRadius: BorderRadius.circular(20),
-                                        child: ConstrainedBox(
-                                          constraints: BoxConstraints(
-                                              minHeight:
-                                                  500), // Set a fixed height for the container
+                                        // child: ConstrainedBox(
+                                          // constraints: BoxConstraints(
+                                          //     minHeight:
+                                          //         500), // Set a fixed height for the container
                                           child: Container(
                                             padding: EdgeInsets.all(15),
                                             child: Column(
@@ -379,7 +379,7 @@ class _CusHomeState extends State<CusHome> {
                                               ],
                                             ),
                                           ),
-                                        ),
+                                        // ),
                                       ),
                                     ),
                                   ),

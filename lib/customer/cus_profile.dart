@@ -109,8 +109,8 @@ class _cusProfileState extends State<cusProfile> {
               end: Alignment.bottomRight,
               colors: [Color(0xff81e6eb), Color(0xffffffff)]),
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
+        child: ListView(
+          // mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Container(
               height: 60,
