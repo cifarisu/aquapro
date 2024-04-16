@@ -295,7 +295,7 @@ class _StoresNearYouState extends State<StoresNearYou> {
                                                 address,
                                                 style: TextStyle(
                                                     fontFamily: 'Callibri',
-                                                    fontSize: 13,
+                                                    fontSize: MediaQuery.of(context).size.width*0.027,
                                                     fontWeight:
                                                         FontWeight.w500),
                                               ),
