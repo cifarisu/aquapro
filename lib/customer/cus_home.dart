@@ -5,6 +5,7 @@ import 'package:aquapro/customer/cus_maps.dart';
 import 'package:aquapro/customer/cus_stores.dart';
 import 'package:aquapro/customer/stores_near_you.dart';
 import 'package:aquapro/pages/details.dart';
+import 'package:aquapro/pages/signup%20copy.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -90,6 +91,15 @@ class _CusHomeState extends State<CusHome> {
           return SingleChildScrollView(
             child: PopScope(
               canPop: false,
+              onPopInvoked: (bool didPop) {
+                if (!didPop) {
+                  Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const SignUp()));
+                }
+              },
               child: Container(
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height-80,
