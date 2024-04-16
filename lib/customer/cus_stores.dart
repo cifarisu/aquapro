@@ -122,11 +122,12 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
             children: [
               Container(
                 padding: EdgeInsets.only(left: 10),
-                height: 100,
+                // height: 100,
                 width: MediaQuery.of(context).size.width,
                 child: Row(
                   children: [
                     Container(
+                       width:  MediaQuery.of(context).size.width/6,
                       padding: EdgeInsets.all(5),
                       child: Image.network(
                         widget.imageUrl,
@@ -141,13 +142,13 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Container(
-                          width: 365,
+                          width: MediaQuery.of(context).size.width*.70,
                           child: Text(
                             widget.name,
                             style: TextStyle(
                               fontFamily: 'Times New Roman',
                               fontWeight: FontWeight.bold,
-                              fontSize: 15,
+                              fontSize: MediaQuery.of(context).size.width*0.033,
                             ),
                           ),
                         ),
@@ -155,7 +156,7 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                           "Active 9 minutes ago",
                           style: TextStyle(
                             fontFamily: 'Calibri',
-                            fontSize: 13,
+                            fontSize: MediaQuery.of(context).size.width*0.025,
                           ),
                         ),
                         Row(
@@ -169,7 +170,7 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                               "4.7/5.0     |     46 Followers",
                               style: TextStyle(
                                 fontFamily: 'Calibri',
-                                fontSize: 13,
+                                fontSize: MediaQuery.of(context).size.width*0.025,
                               ),
                             ),
                           ],
@@ -180,13 +181,13 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                 ),
               ),
               SizedBox(
-                height: 25,
+                height: MediaQuery.of(context).size.width*0.035,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Container(
-                    width: 170,
+                    width: MediaQuery.of(context).size.width*0.35,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(30),
                       border: Border.all(
@@ -201,7 +202,7 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                       children: [
                         Icon(
                           Icons.sms_outlined,
-                          size: 33,
+                          size: MediaQuery.of(context).size.width*0.07,
                         ),
                         SizedBox(
                           width: 12,
@@ -210,14 +211,14 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                           "Chat",
                           style: TextStyle(
                             fontFamily: 'Calibri',
-                            fontSize: 20,
+                            fontSize: MediaQuery.of(context).size.width*0.04,
                           ),
                         )
                       ],
                     ),
                   ),
                   Container(
-                    width: 170,
+                    width: MediaQuery.of(context).size.width*0.35,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(30),
                       border: Border.all(
@@ -232,7 +233,7 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                       children: [
                         Icon(
                           Icons.add_outlined,
-                          size: 30,
+                          size: MediaQuery.of(context).size.width*0.07,
                         ),
                         SizedBox(
                           width: 9,
@@ -241,7 +242,7 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                           "Follow",
                           style: TextStyle(
                             fontFamily: 'Calibri',
-                            fontSize: 20,
+                            fontSize: MediaQuery.of(context).size.width*0.04,
                           ),
                         )
                       ],
@@ -265,7 +266,7 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                   labelColor: Color(0xff0eb4f3),
                   labelStyle: TextStyle(
                     fontFamily: 'Calibri',
-                    fontSize: 20,
+                    fontSize: MediaQuery.of(context).size.width*0.045,
                     fontWeight: FontWeight.w500,
                   ),
                   controller: _tabController,
@@ -296,15 +297,13 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                           String productImageUrl = product['url'];
                           int quantity = deliverQuantities[productName] ?? 0;
                           return Container(
-                            padding: EdgeInsets.all(8),
+                            padding: EdgeInsets.only(top: 8, bottom: 8, left:MediaQuery.of(context).size.width/25, right: MediaQuery.of(context).size.width/25 ),
                             child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                SizedBox(
-                                  width: 14.0,
-                                ),
+                                
                                 Container(
-                                  height: 120,
+                                  height: MediaQuery.of(context).size.width/4,
                                   padding: EdgeInsets.all(5),
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(20),
@@ -322,11 +321,11 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                                   ),
                                 ),
                                 SizedBox(
-                                  width: 15.0,
+                                  width: MediaQuery.of(context).size.width/20,
                                 ),
                                 Expanded(
                                   child: Container(
-                                    height: 120,
+                                    
                                     child: Column(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
@@ -338,7 +337,7 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                                             productName,
                                             style: TextStyle(
                                               fontFamily: "Times New Roman",
-                                              fontSize: 13,
+                                              fontSize: MediaQuery.of(context).size.width*0.027,
                                               fontWeight: FontWeight.w800,
                                             ),
                                           ),
@@ -349,7 +348,7 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                                             "Php $productPrice",
                                             style: TextStyle(
                                               fontFamily: "Calibri",
-                                              fontSize: 14,
+                                              fontSize: MediaQuery.of(context).size.width*0.027,
                                               fontWeight: FontWeight.w400,
                                             ),
                                           ),
@@ -370,8 +369,8 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                                                 );
                                               },
                                               child: Container(
-                                                width: 95,
-                                                height: 28,
+                                                width: MediaQuery.of(context).size.width*.22,
+                                               
                                                 alignment: Alignment.center,
                                                 decoration: BoxDecoration(
                                                   borderRadius:
@@ -384,7 +383,7 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                                                 child: Text(
                                                   "Add to Cart",
                                                   style: TextStyle(
-                                                    fontSize: 12,
+                                                    fontSize: MediaQuery.of(context).size.width*0.028,
                                                     fontWeight: FontWeight.bold,
                                                     color: Color(0xff0eb4f3),
                                                   ),
@@ -405,19 +404,19 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                                               child: Container(
                                                 child: Icon(
                                                   Icons.remove,
-                                                  size: 20,
+                                                  size: MediaQuery.of(context).size.width*0.05,
                                                 ),
                                               ),
                                             ),
                                             Container(
                                               alignment: Alignment.center,
-                                              width: 45,
+                                              width: MediaQuery.of(context).size.width*0.09,
                                               child: Text(quantity.toString(),
                                                   style: TextStyle(
                                                       fontFamily: 'Poppins',
                                                       fontWeight:
                                                           FontWeight.w500,
-                                                      fontSize: 15)),
+                                                      fontSize: MediaQuery.of(context).size.width*0.035)),
                                             ),
                                             GestureDetector(
                                               onTap: () {
@@ -430,7 +429,7 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                                               child: Container(
                                                   child: Icon(
                                                 Icons.add,
-                                                size: 25,
+                                                size: MediaQuery.of(context).size.width*0.05,
                                               )),
                                             )
                                           ],

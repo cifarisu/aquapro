@@ -113,7 +113,8 @@ class _StoresNearYouState extends State<StoresNearYou> {
                 SizedBox(height: 20),
                 Text(
                   "Max Distance: ${maxDistance.toStringAsFixed(1)} km",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                  style: TextStyle(fontSize: MediaQuery.of(context).size.width*0.033, //16
+                   fontWeight: FontWeight.w500),
                 ),
                 Slider(
                   value: maxDistance,

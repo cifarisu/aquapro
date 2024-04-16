@@ -19,6 +19,7 @@ class CusChooseLocation extends StatefulWidget {
 
 class _CusChooseLocationState extends State<CusChooseLocation> {
   String locationMessage = "No location selected";
+  bool _isTapped = false;
 
   void _getCurrentLocation() async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
@@ -58,140 +59,164 @@ class _CusChooseLocationState extends State<CusChooseLocation> {
     );
   }
 
+void _handleTapDown(TapDownDetails details) {
+    setState(() {
+      _isTapped = true;
+    });
+  }
+
+  void _handleTapUp(TapUpDetails details) {
+    setState(() {
+      _isTapped = false;
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xff81e6eb), Color(0xffffffff)],
+      body: SingleChildScrollView(
+        child: Container(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xff81e6eb), Color(0xffffffff)],
+            ),
           ),
-        ),
-        child: Column(
-          children: [
-            SizedBox(
-              height: 110,
-            ),
-            Center(
-              child: Image.asset(
-                "images/maps_icon.png",
-                width: MediaQuery.of(context).size.width / 1.4,
-                fit: BoxFit.cover,
+          child: Column(
+            children: [
+              SizedBox(
+                height: 110,
               ),
-            ),
-            SizedBox(
-              height: 30,
-            ),
-            Text(
-              "Hi, nice to meet you!",
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 25.0,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'Poppins',
-              ),
-            ),
-            SizedBox(
-              height: 30,
-            ),
-            Text(
-              "Choose your location to find water \nrefilling stations around you.",
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 17.0,
-                fontWeight: FontWeight.w500,
-                fontFamily: 'Times New Roman',
-              ),
-              textAlign: TextAlign.center,
-              maxLines: 5,
-            ),
-            SizedBox(
-              height: 40,
-            ),
-            GestureDetector(
-              onTap: _getCurrentLocation,
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                width: 370,
-                height: 70,
-                decoration: BoxDecoration(
-                  color: Color.fromARGB(0, 0, 0, 0),
-                  border: Border.all(
-                    width: 5,
-                    color: Color(0xff0EB4F3),
-                  ),
-                ),
-                child: Center(
-                  child: Row(
-                    children: [
-                      SizedBox(
-                        width: 15,
-                      ),
-                      Container(
-                        child: Image.asset(
-                          "images/location_icon.png",
-                          fit: BoxFit.fitHeight,
-                        ),
-                      ),
-                      SizedBox(
-                        width: 15,
-                      ),
-                      Text(
-                        'Get Current Location',
-                        style: TextStyle(
-                          color: Color(0xff0EB4F3),
-                          fontSize: 20.0,
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
+              Center(
+                child: Image.asset(
+                  "images/maps_icon.png",
+                  width: MediaQuery.of(context).size.width / 1.4,
+                  fit: BoxFit.cover,
                 ),
               ),
-            ),
-            SizedBox(
-              height: 30,
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => CusManualLocation()),
-                );
-              },
-              child: Text(
-                'Select Manually',
+              SizedBox(
+                height: 30,
+              ),
+              Text(
+                "Hi, nice to meet you!",
                 style: TextStyle(
-                  fontSize: 15.0,
-                  color: Colors.blue,
+                  color: Colors.black,
+                  fontSize: MediaQuery.of(context).size.width*0.053,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Poppins',
                 ),
               ),
-            ),
-                    SizedBox(
-          height: 30,
-        ),
-        TextButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => CusNavbar()),
-            );
-          },
-          child: Text(
-            'Proceed without updating location',
-            style: TextStyle(
-              fontSize: 15.0,
-              color: Colors.blue,
+              SizedBox(
+                height: 30,
+              ),
+              Text(
+                "Choose your location to find water \nrefilling stations around you.",
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: MediaQuery.of(context).size.width*0.035,
+                  fontWeight: FontWeight.w500,
+                  fontFamily: 'Times New Roman',
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 5,
+              ),
+              SizedBox(
+                height: 40,
+              ),
+              GestureDetector(
+                onTap: _getCurrentLocation,
+                 onTapDown: _handleTapDown,
+                                onTapUp: _handleTapUp,
+                                onTapCancel: () {
+                                  setState(() {
+                                    _isTapped = false;
+                                  });
+                                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  width: MediaQuery.of(context).size.width*0.80,
+                  height: MediaQuery.of(context).size.width*0.13,
+                  decoration: BoxDecoration(
+                    color: _isTapped
+                                            ? Color.fromARGB(255, 33, 214, 250)
+                                                .withOpacity(0.3)
+                                            : Color.fromARGB(0, 0, 0, 0),
+                    // color: Color.fromARGB(0, 0, 0, 0),
+                    border: Border.all(
+                      width: 5,
+                      color: Color(0xff0EB4F3),
+                    ),
+                  ),
+                  child: Center(
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: 15,
+                        ),
+                        Container(
+                          child: Image.asset(
+                            "images/location_icon.png",
+                            fit: BoxFit.fitHeight,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 15,
+                        ),
+                        Text(
+                          'Get Current Location',
+                          style: TextStyle(
+                            color: Color(0xff0EB4F3),
+                            fontSize: MediaQuery.of(context).size.width*0.045,
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 30,
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => CusManualLocation()),
+                  );
+                },
+                child: Text(
+                  'Select Manually',
+                  style: TextStyle(
+                    fontSize: MediaQuery.of(context).size.width*0.033,
+                    color: Colors.blue,
+                  ),
+                ),
+              ),
+                      SizedBox(
+            height: 30,
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => CusNavbar()),
+              );
+            },
+            child: Text(
+              'Proceed without updating location',
+              style: TextStyle(
+                fontSize: MediaQuery.of(context).size.width*0.033,
+                color: Colors.blue,
+              ),
             ),
           ),
-        ),
-
-          ],
+        
+            ],
+          ),
         ),
       ),
     );
