@@ -102,9 +102,8 @@ class _cusProfileState extends State<cusProfile> {
             : [],
       ),
       body: PopScope(
-        child: PopScope(
-              canPop: false,
-              onPopInvoked: (bool didPop) {
+         canPop: false,
+        onPopInvoked: (bool didPop) {
                 if (!didPop) {
                   Navigator.push(
                                           context,
@@ -330,7 +329,7 @@ class _cusProfileState extends State<cusProfile> {
             ],
           ),
         ),
-      ),)
+      ),
     );
   }
 }

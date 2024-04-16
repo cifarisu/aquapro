@@ -1,3 +1,4 @@
+import "package:aquapro/customer/cus_navbar.dart";
 import "package:aquapro/customer/cus_orders.dart";
 import "package:aquapro/customer/cus_profile.dart";
 import "package:aquapro/pages/home.dart";
@@ -40,7 +41,18 @@ class _RiderNavbarState extends State<RiderNavbar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: pages[_selectedIndex],
+      body: PopScope(
+         canPop: false,
+        onPopInvoked: (bool didPop) {
+                if (!didPop) {
+                  Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const RiderNavbar()));
+                }
+              },
+        child: pages[_selectedIndex]),
       bottomNavigationBar: BottomNavigationBar(
         iconSize: 45,
         items: const <BottomNavigationBarItem>[

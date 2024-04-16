@@ -3,7 +3,7 @@
     <application
         android:label="aquapro"
         android:name="${applicationName}"
-        android:icon="@mipmap/logo">
+        android:icon="@mipmap/aquapro">
         <activity
             android:name=".MainActivity"
             android:exported="true"

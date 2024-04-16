@@ -43,7 +43,18 @@ class _StoreNavbarState extends State<StoreNavbar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: pages[_selectedIndex],
+      body: PopScope(
+         canPop: false,
+        onPopInvoked: (bool didPop) {
+                if (!didPop) {
+                  Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const StoreNavbar()));
+                }
+              },
+        child: pages[_selectedIndex]),
       bottomNavigationBar: BottomNavigationBar(
         iconSize: 45,
         items: const <BottomNavigationBarItem>[
