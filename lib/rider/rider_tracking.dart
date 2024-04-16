@@ -76,6 +76,22 @@ class RiderTrackingState extends State<RiderTracking> {
     Location location = Location();
 
     try {
+      bool serviceEnabled = await location.serviceEnabled();
+      if (!serviceEnabled) {
+        serviceEnabled = await location.requestService();
+        if (!serviceEnabled) {
+          return;
+        }
+      }
+
+      PermissionStatus permissionGranted = await location.hasPermission();
+      if (permissionGranted == PermissionStatus.denied) {
+        permissionGranted = await location.requestPermission();
+        if (permissionGranted != PermissionStatus.granted) {
+          return;
+        }
+      }
+
       LocationData locationData = await location.getLocation();
       setState(() {
         currentLocation = locationData;
