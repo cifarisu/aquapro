@@ -147,9 +147,7 @@ class _RiderHomeState extends State<RiderHome> {
                                         'Order ID: ',
                                         style: TextStyle(fontSize: 14),
                                       ),
-                                      SizedBox(
-                                        width: 70,
-                                      ),
+                                     
                                       Text(
                                         '${order['orderId']}',
                                         style: TextStyle(
@@ -165,9 +163,7 @@ class _RiderHomeState extends State<RiderHome> {
                                         'Customer Name: ',
                                         style: TextStyle(fontSize: 14),
                                       ),
-                                      SizedBox(
-                                        width: 5,
-                                      ),
+                                     
                                       Text(
                                         '${order['customerName']}',
                                         style: TextStyle(
@@ -183,9 +179,7 @@ class _RiderHomeState extends State<RiderHome> {
                                         'Contact: ',
                                         style: TextStyle(fontSize: 14),
                                       ),
-                                      SizedBox(
-                                        width: 72,
-                                      ),
+                                     
                                       Text(
                                         '${order['contact']}',
                                         style: TextStyle(
@@ -201,9 +195,7 @@ class _RiderHomeState extends State<RiderHome> {
                                         'Address: ',
                                         style: TextStyle(fontSize: 14),
                                       ),
-                                      SizedBox(
-                                        width: 72,
-                                      ),
+                                      
                                       Text(
                                         '${order['address']}',
                                         style: TextStyle(
@@ -219,9 +211,7 @@ class _RiderHomeState extends State<RiderHome> {
                                         'Status: ',
                                         style: TextStyle(fontSize: 14),
                                       ),
-                                      SizedBox(
-                                        width: 85,
-                                      ),
+                                      
                                       Text(
                                         'To Deliver',
                                         style: TextStyle(
