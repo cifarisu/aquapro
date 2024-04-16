@@ -91,15 +91,7 @@ class _CusHomeState extends State<CusHome> {
           return SingleChildScrollView(
             child: PopScope(
               canPop: false,
-              onPopInvoked: (bool didPop) {
-                if (!didPop) {
-                  Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  const SignUp()));
-                }
-              },
+              
               child: Container(
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height-80,
