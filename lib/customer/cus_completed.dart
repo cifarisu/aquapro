@@ -114,7 +114,8 @@ class _cusCompletedState extends State<cusCompleted> {
                               ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [Text(
+                                children: [
+                                  Text(
                                     '${store['name']}',
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
@@ -177,22 +178,22 @@ class _cusCompletedState extends State<cusCompleted> {
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
                                                   children: [
-                                                     Text.rich(
-                                                           TextSpan(
-                                                            text: "Item: ",
-                                                            children: <TextSpan>[
-                                                              TextSpan(
-                                                                text: '${item['itemName']}',
-                                                                style: TextStyle(
-                                                                  fontSize: 14,
+                                                    Text.rich(
+                                                      TextSpan(
+                                                        text: "Item: ",
+                                                        children: <TextSpan>[
+                                                          TextSpan(
+                                                            text:
+                                                                '${item['itemName']}',
+                                                            style: TextStyle(
+                                                                fontSize: 14,
                                                                 fontWeight:
                                                                     FontWeight
-                                                                        .bold
-                                                                ),
-                                                              ),
-                                                            ],
+                                                                        .bold),
                                                           ),
-                                                        ),
+                                                        ],
+                                                      ),
+                                                    ),
                                                     Row(
                                                       children: [
                                                         Text(

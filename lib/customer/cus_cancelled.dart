@@ -116,7 +116,8 @@ class _cusCancelledState extends State<cusCancelled> {
                               ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [Text(
+                                children: [
+                                  Text(
                                     '${store['name']}',
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
@@ -179,22 +180,22 @@ class _cusCancelledState extends State<cusCancelled> {
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
                                                   children: [
-                                                   Text.rich(
-                                                           TextSpan(
-                                                            text: "Item: ",
-                                                            children: <TextSpan>[
-                                                              TextSpan(
-                                                                text: '${item['itemName']}',
-                                                                style: TextStyle(
-                                                                  fontSize: 14,
+                                                    Text.rich(
+                                                      TextSpan(
+                                                        text: "Item: ",
+                                                        children: <TextSpan>[
+                                                          TextSpan(
+                                                            text:
+                                                                '${item['itemName']}',
+                                                            style: TextStyle(
+                                                                fontSize: 14,
                                                                 fontWeight:
                                                                     FontWeight
-                                                                        .bold
-                                                                ),
-                                                              ),
-                                                            ],
+                                                                        .bold),
                                                           ),
-                                                        ),
+                                                        ],
+                                                      ),
+                                                    ),
                                                     Row(
                                                       children: [
                                                         Text(
