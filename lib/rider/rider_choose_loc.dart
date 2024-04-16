@@ -17,107 +17,109 @@ class _RiderChooseLocationState extends State<RiderChooseLocation> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Color(0xff81e6eb), Color(0xffffffff)]),
-        ),
-        child: Column(
-          children: [
-            SizedBox(
-              height: 110,
-            ),
-            Center(
-                child: Image.asset(
-              "images/maps_icon.png",
-              width: MediaQuery.of(context).size.width / 1.4,
-              fit: BoxFit.cover,
-            )),
-            SizedBox(
-              height: 30,
-            ),
-            Text("Hi, nice to meet you!",
-                style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 25.0,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Poppins')),
-            SizedBox(
-              height: 30,
-            ),
-            Text(
-              "Choose your location",
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 17.0,
-                fontWeight: FontWeight.w500,
-                fontFamily: 'Times New Roman',
+      body: SingleChildScrollView(
+        child: Container(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [Color(0xff81e6eb), Color(0xffffffff)]),
+          ),
+          child: Column(
+            children: [
+              SizedBox(
+                height: 110,
               ),
-              textAlign: TextAlign.center,
-              maxLines: 5,
-            ),
-            SizedBox(
-              height: 40,
-            ),
-            GestureDetector(
-              onTap: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => const Home()));
-              },
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                width: 370,
-                height: 70,
-                decoration: BoxDecoration(
-                   color: Color.fromARGB(0, 0, 0, 0),
-                    border: Border.all(
-                      width: 5,
-                      color: Color(0xff0EB4F3),
-                    )),
-                child: Center(
-                  child: Row(
-                    children: [
-                      SizedBox(
-                        width: 15,
-                      ),
-                      Container(
-                          child: Image.asset(
-                        "images/location_icon.png",
-                        fit: BoxFit.fitHeight,
+              Center(
+                  child: Image.asset(
+                "images/maps_icon.png",
+                width: MediaQuery.of(context).size.width / 1.4,
+                fit: BoxFit.cover,
+              )),
+              SizedBox(
+                height: 30,
+              ),
+              Text("Hi, nice to meet you!",
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: MediaQuery.of(context).size.width*0.053,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Poppins')),
+              SizedBox(
+                height: 30,
+              ),
+              Text(
+                "Choose your location",
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: MediaQuery.of(context).size.width*0.035,
+                  fontWeight: FontWeight.w500,
+                  fontFamily: 'Times New Roman',
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 5,
+              ),
+              SizedBox(
+                height: 40,
+              ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => const Home()));
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  width: MediaQuery.of(context).size.width*0.80,
+                  height: MediaQuery.of(context).size.width*0.13,
+                  decoration: BoxDecoration(
+                     color: Color.fromARGB(0, 0, 0, 0),
+                      border: Border.all(
+                        width: 5,
+                        color: Color(0xff0EB4F3),
                       )),
-                      SizedBox(
-                        width: 15,
-                      ),
-                      Text("Use current location",
-                          style: TextStyle(
-                              color: Color(0xff0EB4F3),
-                              fontSize: 20.0,
-                              fontFamily: 'Poppins',
-                              fontWeight: FontWeight.bold)),
-                    ],
+                  child: Center(
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: 15,
+                        ),
+                        Container(
+                            child: Image.asset(
+                          "images/location_icon.png",
+                          fit: BoxFit.fitHeight,
+                        )),
+                        SizedBox(
+                          width: 15,
+                        ),
+                        Text("Use current location",
+                            style: TextStyle(
+                                color: Color(0xff0EB4F3),
+                                fontSize: MediaQuery.of(context).size.width*0.045,
+                                fontFamily: 'Poppins',
+                                fontWeight: FontWeight.bold)),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-            SizedBox(
-              height: 30,
-            ),
-            GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                      context, MaterialPageRoute(builder: (context) => Home()));
-                },
-                child: Text("Select Manually",
-                    style: TextStyle(
-                        fontSize: 18,
-                        decoration: TextDecoration.underline,
-                        fontWeight: FontWeight.w800,
-                        fontFamily: "Times New Roman"))),
-          ],
+              SizedBox(
+                height: 30,
+              ),
+              GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context, MaterialPageRoute(builder: (context) => Home()));
+                  },
+                  child: Text("Select Manually",
+                      style: TextStyle(
+                          fontSize: MediaQuery.of(context).size.width*0.033,
+                          decoration: TextDecoration.underline,
+                          fontWeight: FontWeight.w800,
+                          fontFamily: "Times New Roman"))),
+            ],
+          ),
         ),
       ),
     );

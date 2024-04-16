@@ -1,8 +1,10 @@
 import 'package:aquapro/customer/cus_navbar.dart';
+import 'package:aquapro/pages/login.dart';
 import 'package:aquapro/widget/widget_support.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class cusProfile extends StatefulWidget {
   const cusProfile({Key? key}) : super(key: key);
@@ -301,11 +303,16 @@ class _cusProfileState extends State<cusProfile> {
               Text('Settings', style: TextStyle(fontSize: 22.5)),
             ]),
             SizedBox(height: 20,),
-            Row(children: [
-              Icon(Icons.logout_outlined, size: 45, color: Color(0xff0eb4f3)),
-              SizedBox(width: 12),
-              Text('Logout', style: TextStyle(fontSize: 22.5)),
-            ]),
+            GestureDetector(
+              onTap:() {
+                Navigator.push(context, MaterialPageRoute(builder: (context)=> const LogIn()));            
+              },
+              child: Row(children: [
+                Icon(Icons.logout_outlined, size: 45, color: Color(0xff0eb4f3)),
+                SizedBox(width: 12),
+                Text('Logout', style: TextStyle(fontSize: 22.5)),
+              ]),
+            ),
            
           ],
         ),

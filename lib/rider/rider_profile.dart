@@ -1,3 +1,4 @@
+import 'package:aquapro/pages/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -98,9 +99,9 @@ class _RiderProfileState extends State<RiderProfile> {
               end: Alignment.bottomRight,
               colors: [Color(0xff81e6eb), Color(0xffffffff)]),
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
+        child: ListView(
+          // mainAxisAlignment: MainAxisAlignment.start,
+          children: [ 
             Container(
               height: 40,
               padding: EdgeInsets.only(bottom: 0),
@@ -130,18 +131,20 @@ class _RiderProfileState extends State<RiderProfile> {
             ),
             Stack(
               children: [
-                Container(
-                  child: Image.asset(
-                    'images/profile.png',
-                    height: 200,
+                Center(
+                  child: Container(
+                    child: Image.asset(
+                      'images/profile.png',
+                      height: 200,
+                    ),
                   ),
                 ),
-                Positioned(
-                  bottom: -4,
-                  right: 5,
-                  child: Icon(Icons.photo_camera,
-                      size: 50, color: Color(0xff0eb4f3)),
-                ),
+                // Positioned(
+                //   bottom: -4,
+                //   right: 5,
+                //   child: Icon(Icons.photo_camera,
+                //       size: 50, color: Color(0xff0eb4f3)),
+                // ),
               ],
             ),
             SizedBox(height: 30,),
@@ -296,11 +299,16 @@ class _RiderProfileState extends State<RiderProfile> {
               Text('Settings', style: TextStyle(fontSize: 22.5)),
             ]),
             SizedBox(height: 20,),
-            Row(children: [
-              Icon(Icons.logout_outlined, size: 45, color: Color(0xff0eb4f3)),
-              SizedBox(width: 12),
-              Text('Logout', style: TextStyle(fontSize: 22.5)),
-            ]),
+            GestureDetector(
+              onTap:() {
+                Navigator.push(context, MaterialPageRoute(builder: (context)=> const LogIn()));            
+              },
+              child: Row(children: [
+                Icon(Icons.logout_outlined, size: 45, color: Color(0xff0eb4f3)),
+                SizedBox(width: 12),
+                Text('Logout', style: TextStyle(fontSize: 22.5)),
+              ]),
+            ),
             SizedBox(height: 50)
           ],
         ),

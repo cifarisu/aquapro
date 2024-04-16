@@ -99,243 +99,246 @@ class _SignUpState extends State<SignUp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-          expandedHeight: MediaQuery.of(context).size.height/3,
-          flexibleSpace: FlexibleSpaceBar(
-            background: Container(
-              decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Color.fromARGB(255, 2, 206, 247),
-                      Color.fromARGB(255, 255, 255, 255)
-                    ],
+      body: PopScope(
+        canPop: false,
+        child: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+            expandedHeight: MediaQuery.of(context).size.height/3,
+            flexibleSpace: FlexibleSpaceBar(
+              background: Container(
+                decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Color.fromARGB(255, 2, 206, 247),
+                        Color.fromARGB(255, 255, 255, 255)
+                      ],
+                    ),
                   ),
-                ),
-              height: MediaQuery.of(context).size.height,
-              child: Image.asset(
-                        "images/logo.png",
-                        width: MediaQuery.of(context).size.width / 1.9,
-                      ),
+                height: MediaQuery.of(context).size.height,
+                child: Image.asset(
+                          "images/logo.png",
+                          width: MediaQuery.of(context).size.width / 1.9,
+                        ),
+              ),
             ),
+            pinned: false,
           ),
-          pinned: false,
+          SliverToBoxAdapter(
+            child:  Container(
+            padding: EdgeInsets.only(top: 3),
+            decoration: BoxDecoration(
+               borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(40),
+                        topRight: Radius.circular(40),
+                      ),
+            boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.2),
+          spreadRadius: 1,
+          blurRadius: 5,
+          offset: Offset(0, 2), // changes position of shadow
         ),
-        SliverToBoxAdapter(
-          child:  Container(
-          padding: EdgeInsets.only(top: 3),
-          decoration: BoxDecoration(
-             borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(40),
-                      topRight: Radius.circular(40),
+            ],
+          ),
+            child: ClipRRect(
+              
+               borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height-85,
+                decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(40),
+                        topRight: Radius.circular(40),
+                      ),
                     ),
-    boxShadow: [
-      BoxShadow(
-        color: Colors.black.withOpacity(0.2),
-        spreadRadius: 1,
-        blurRadius: 5,
-        offset: Offset(0, 2), // changes position of shadow
-      ),
-    ],
-  ),
-          child: ClipRRect(
-            
-             borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-            child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height-85,
-              decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(40),
-                      topRight: Radius.circular(40),
-                    ),
-                  ),
-              padding: EdgeInsets.only(left: 20, right: 20),
-              child:   Form(
-                                    key: _formkey,
-                                    child: Column(
-                                      children: [
-                                        const SizedBox(
-                                          height: 30,
-                                        ),
-                                        Text(
-                                          "Sign Up",
-                                          style: AppWidget.boldTextFieldStyle(),
-                                        ),
-                                        const SizedBox(
-                                          height: 30,
-                                        ),
-                                        TextFormField(
-                                          controller: namecontroller,
-                                          validator: (value) {
-                                            if (value == null || value.isEmpty) {
-                                              return 'Please Enter Name';
-                                            }
-                                            return null;
-                                          },
-                                          decoration: InputDecoration(
-                                              hintText: 'Name',
+                padding: EdgeInsets.only(left: 20, right: 20),
+                child:   Form(
+                                      key: _formkey,
+                                      child: Column(
+                                        children: [
+                                          const SizedBox(
+                                            height: 30,
+                                          ),
+                                          Text(
+                                            "Sign Up",
+                                            style: AppWidget.boldTextFieldStyle(),
+                                          ),
+                                          const SizedBox(
+                                            height: 30,
+                                          ),
+                                          TextFormField(
+                                            controller: namecontroller,
+                                            validator: (value) {
+                                              if (value == null || value.isEmpty) {
+                                                return 'Please Enter Name';
+                                              }
+                                              return null;
+                                            },
+                                            decoration: InputDecoration(
+                                                hintText: 'Name',
+                                                hintStyle: AppWidget.boldTextFieldStyle(),
+                                                prefixIcon:
+                                                    const Icon(Icons.person_outlined)),
+                                          ),
+                                          const SizedBox(
+                                            height: 30,
+                                          ),
+                                          TextFormField(
+                                            controller: mailcontroller,
+                                            validator: (value) {
+                                              if (value == null || value.isEmpty) {
+                                                return 'Please Enter E-Email';
+                                              }
+                                              return null;
+                                            },
+                                            decoration: InputDecoration(
+                                                hintText: 'Email',
+                                                hintStyle: AppWidget.boldTextFieldStyle(),
+                                                prefixIcon:
+                                                    const Icon(Icons.email_outlined)),
+                                          ),
+                                          const SizedBox(
+                                            height: 30,
+                                          ),
+                                          TextFormField(
+                                            controller: passwordcontroller,
+                                            validator: (value) {
+                                              if (value == null || value.isEmpty) {
+                                                return 'Please enter password';
+                                              }
+                                              return null;
+                                            },
+                                            obscureText: true,
+                                            decoration: InputDecoration(
+                                              hintText: 'Password',
                                               hintStyle: AppWidget.boldTextFieldStyle(),
-                                              prefixIcon:
-                                                  const Icon(Icons.person_outlined)),
-                                        ),
-                                        const SizedBox(
-                                          height: 30,
-                                        ),
-                                        TextFormField(
-                                          controller: mailcontroller,
-                                          validator: (value) {
-                                            if (value == null || value.isEmpty) {
-                                              return 'Please Enter E-Email';
-                                            }
-                                            return null;
-                                          },
-                                          decoration: InputDecoration(
-                                              hintText: 'Email',
-                                              hintStyle: AppWidget.boldTextFieldStyle(),
-                                              prefixIcon:
-                                                  const Icon(Icons.email_outlined)),
-                                        ),
-                                        const SizedBox(
-                                          height: 30,
-                                        ),
-                                        TextFormField(
-                                          controller: passwordcontroller,
-                                          validator: (value) {
-                                            if (value == null || value.isEmpty) {
-                                              return 'Please enter password';
-                                            }
-                                            return null;
-                                          },
-                                          obscureText: true,
-                                          decoration: InputDecoration(
-                                            hintText: 'Password',
-                                            hintStyle: AppWidget.boldTextFieldStyle(),
-                                            prefixIcon: Icon(Icons.lock_outline),
-                                          ),
-                                        ),
-                                        const SizedBox(
-                                          height: 30,
-                                        ),
-                                        DropdownButtonFormField(
-                                          value: selectedType,
-                                          items: userTypes.map((String value) {
-                                            return DropdownMenuItem<String>(
-                                              value: value,
-                                              child: Text(value),
-                                            );
-                                          }).toList(),
-                                          onChanged: (String? newValue) {
-                                            setState(() {
-                                              selectedType = newValue;
-                                            });
-                                          },
-                                          validator: (value) {
-                                            if (value == null || value.isEmpty) {
-                                              return 'Please choose user type';
-                                            }
-                                            return null;
-                                          },
-                                          decoration: InputDecoration(
-                                            hintText: 'Type',
-                                            hintStyle: AppWidget.boldTextFieldStyle(),
-                                            prefixIcon:
-                                                const Icon(Icons.person_outline),
-                                          ),
-                                        ),
-                                        const SizedBox(
-                                          height: 30,
-                                        ),
-                                        TextFormField(
-                                          controller: contactController,
-                                          validator: (value) {
-                                            if (value == null || value.isEmpty) {
-                                              return 'Please enter contact number';
-                                            }
-                                            return null;
-                                          },
-                                          decoration: InputDecoration(
-                                            hintText: 'Contact',
-                                            hintStyle: AppWidget.boldTextFieldStyle(),
-                                            prefixIcon: Icon(Icons.phone),
-                                          ),
-                                        ),
-                                        const SizedBox(
-                                          height: 30,
-                                        ),
-                                        TextFormField(
-                                          controller: addressController,
-                                          validator: (value) {
-                                            if (value == null || value.isEmpty) {
-                                              return 'Please enter address';
-                                            }
-                                            return null;
-                                          },
-                                          decoration: InputDecoration(
-                                            hintText: 'Address',
-                                            hintStyle: AppWidget.boldTextFieldStyle(),
-                                            prefixIcon: Icon(Icons.location_on),
-                                          ),
-                                        ),
-                                        const SizedBox(
-                                          height: 60,
-                                        ),
-                                        GestureDetector(
-                                          onTap: () async {
-                                            if (_formkey.currentState!.validate()) {
-                                              setState(() {
-                                                email = mailcontroller.text;
-                                                name = namecontroller.text;
-                                                password = passwordcontroller.text;
-                                                contactController.text =
-                                                    contactController.text;
-                                                addressController.text =
-                                                    addressController.text;
-                                              });
-                                              registration();
-                                            }
-                                          },
-                                          child: Material(
-                                            elevation: 5,
-                                            borderRadius: BorderRadius.circular(20),
-                                            child: Container(
-                                              padding: const EdgeInsets.symmetric(
-                                                  vertical: 8),
-                                              width: 200,
-                                              decoration: BoxDecoration(
-                                                  color: const Color.fromARGB(
-                                                      255, 33, 214, 250),
-                                                  borderRadius:
-                                                      BorderRadius.circular(20)),
-                                              child: const Center(
-                                                  child: Text("SIGN UP",
-                                                      style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 18.0,
-                                                          fontFamily: 'Poppins',
-                                                          fontWeight:
-                                                              FontWeight.bold))),
+                                              prefixIcon: Icon(Icons.lock_outline),
                                             ),
                                           ),
-                                        ),
-                                         const SizedBox(
-                                          height: 20,
-                                        ),
-                                      ],
+                                          const SizedBox(
+                                            height: 30,
+                                          ),
+                                          DropdownButtonFormField(
+                                            value: selectedType,
+                                            items: userTypes.map((String value) {
+                                              return DropdownMenuItem<String>(
+                                                value: value,
+                                                child: Text(value),
+                                              );
+                                            }).toList(),
+                                            onChanged: (String? newValue) {
+                                              setState(() {
+                                                selectedType = newValue;
+                                              });
+                                            },
+                                            validator: (value) {
+                                              if (value == null || value.isEmpty) {
+                                                return 'Please choose user type';
+                                              }
+                                              return null;
+                                            },
+                                            decoration: InputDecoration(
+                                              hintText: 'Type',
+                                              hintStyle: AppWidget.boldTextFieldStyle(),
+                                              prefixIcon:
+                                                  const Icon(Icons.person_outline),
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            height: 30,
+                                          ),
+                                          TextFormField(
+                                            controller: contactController,
+                                            validator: (value) {
+                                              if (value == null || value.isEmpty) {
+                                                return 'Please enter contact number';
+                                              }
+                                              return null;
+                                            },
+                                            decoration: InputDecoration(
+                                              hintText: 'Contact',
+                                              hintStyle: AppWidget.boldTextFieldStyle(),
+                                              prefixIcon: Icon(Icons.phone),
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            height: 30,
+                                          ),
+                                          TextFormField(
+                                            controller: addressController,
+                                            validator: (value) {
+                                              if (value == null || value.isEmpty) {
+                                                return 'Please enter address';
+                                              }
+                                              return null;
+                                            },
+                                            decoration: InputDecoration(
+                                              hintText: 'Address',
+                                              hintStyle: AppWidget.boldTextFieldStyle(),
+                                              prefixIcon: Icon(Icons.location_on),
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            height: 60,
+                                          ),
+                                          GestureDetector(
+                                            onTap: () async {
+                                              if (_formkey.currentState!.validate()) {
+                                                setState(() {
+                                                  email = mailcontroller.text;
+                                                  name = namecontroller.text;
+                                                  password = passwordcontroller.text;
+                                                  contactController.text =
+                                                      contactController.text;
+                                                  addressController.text =
+                                                      addressController.text;
+                                                });
+                                                registration();
+                                              }
+                                            },
+                                            child: Material(
+                                              elevation: 5,
+                                              borderRadius: BorderRadius.circular(20),
+                                              child: Container(
+                                                padding: const EdgeInsets.symmetric(
+                                                    vertical: 8),
+                                                width: 200,
+                                                decoration: BoxDecoration(
+                                                    color: const Color.fromARGB(
+                                                        255, 33, 214, 250),
+                                                    borderRadius:
+                                                        BorderRadius.circular(20)),
+                                                child: const Center(
+                                                    child: Text("SIGN UP",
+                                                        style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontSize: 18.0,
+                                                            fontFamily: 'Poppins',
+                                                            fontWeight:
+                                                                FontWeight.bold))),
+                                              ),
+                                            ),
+                                          ),
+                                           const SizedBox(
+                                            height: 20,
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                  ),
-              
+                
+              ),
             ),
-          ),
-        )
-           
-       )
-        ],
-        
+          )
+             
+         )
+          ],
+          
+        ),
       ),
       bottomNavigationBar: BottomAppBar(
         color: Colors.white,
