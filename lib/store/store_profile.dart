@@ -300,7 +300,8 @@ class _StoreProfileState extends State<StoreProfile> {
             ]),
             SizedBox(height: 20,),
             GestureDetector(
-              onTap:() {
+              onTap:() async{
+                await FirebaseAuth.instance.signOut();
                 Navigator.push(context, MaterialPageRoute(builder: (context)=> const LogIn()));            
               },
               child: Row(children: [

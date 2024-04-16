@@ -374,11 +374,22 @@ class _CusHomeState extends State<CusHome> {
                                                     ],
                                                   ),
                                                   SizedBox(height: 15.0),
-                                                  Center(
-                                                    child: Text(
-                                                      '${distance >= 1 ? "${distance.toStringAsFixed(2)} km" : "${(distance * 1000).toStringAsFixed(0)} meters"} away from you',
-                                                      style: TextStyle(fontSize: 16),
-                                                    ),
+                                                  Row(
+                                                    children: [
+                                                      Container(
+                                                        child: Icon(
+                                                            Icons.social_distance,
+                                                            color:
+                                                                Color(0xff0EB4F3),
+                                                            size: 30),
+                                                      ),
+                                                       SizedBox(width: 10),
+                                                       Text(
+                                                          '${distance >= 1 ? "${distance.toStringAsFixed(2)} km" : "${(distance * 1000).toStringAsFixed(0)} meters"} away from you',
+                                                          style: TextStyle(fontSize: 16),
+                                                        ),
+                                                      
+                                                    ],
                                                   ),
                                                 ],
                                               ),

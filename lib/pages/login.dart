@@ -61,6 +61,7 @@ class _LogInState extends State<LogIn> {
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
+         print('No user found for that email.');
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(
           "No User Found for this Email",
@@ -71,6 +72,14 @@ class _LogInState extends State<LogIn> {
             content: Text(
           "Wrong password",
           style: TextStyle(fontSize: 18.0, color: Colors.black),
+        )));
+      }
+      else {
+         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          backgroundColor: Colors.redAccent,
+            content: Text(
+          "Wrong email or password",
+          style: TextStyle(fontSize: 18.0, color: Colors.white),
         )));
       }
     }

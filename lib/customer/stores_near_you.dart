@@ -362,10 +362,15 @@ class _StoresNearYouState extends State<StoresNearYou> {
                                             )
                                           ],
                                         ),
-                                        SizedBox(height: 12.0),
+                                        SizedBox(height: 10.0),
                                         Row(
                                           children: [
-                                            SizedBox(width: 40,),
+                                            Container(
+                                              child: Icon(Icons.social_distance,
+                                                  color: Color(0xff0EB4F3),
+                                                  size: 30),
+                                            ),
+                                            SizedBox(width: 10,),
                                             Text(
                                               "Distance: ${distanceToStore.toStringAsFixed(2)} km",
                                               style: TextStyle(
