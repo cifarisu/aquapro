@@ -115,7 +115,7 @@ class _CusMapsState extends State<CusMaps> {
         });
       }
 
-      // Now fetch store coordinates
+      // Now fetch store coordinates including the current user's coordinate
       QuerySnapshot<Map<String, dynamic>> snapshot =
           await FirebaseFirestore.instance.collection('Store').get();
 
@@ -132,6 +132,11 @@ class _CusMapsState extends State<CusMaps> {
             .toList();
         // Initially set filtered list to original list
         filteredCoordinatesList = List.from(originalCoordinatesList);
+
+        // Add current user's location to the original list
+        if (currentUserLocation != null) {
+          originalCoordinatesList.add(currentUserLocation!);
+        }
       });
 
       if (currentUserLocation != null) {
@@ -187,14 +192,19 @@ class _CusMapsState extends State<CusMaps> {
   // Update markers on the map based on the filtered coordinatesList
   void _updateMarkers() {
     setState(() {
-      // Clear existing markers
       markers.clear();
-      // Add new markers based on the filtered coordinatesList
+
       for (var latLng in filteredCoordinatesList) {
         markers.add(
           Marker(
             markerId: MarkerId(latLng.toString()),
             position: latLng,
+            icon: BitmapDescriptor.defaultMarkerWithHue(
+              // Set marker color to green if it represents current user's location
+              currentUserLocation != null && latLng == currentUserLocation
+                  ? BitmapDescriptor.hueGreen
+                  : BitmapDescriptor.hueRed,
+            ),
             onTap: () {
               _navigateToStoreDetails(latLng);
             },

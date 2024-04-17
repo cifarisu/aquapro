@@ -113,8 +113,9 @@ class _StoresNearYouState extends State<StoresNearYou> {
                 SizedBox(height: 20),
                 Text(
                   "Max Distance: ${maxDistance.toStringAsFixed(1)} km",
-                  style: TextStyle(fontSize: MediaQuery.of(context).size.width*0.033, //16
-                   fontWeight: FontWeight.w500),
+                  style: TextStyle(
+                      fontSize: MediaQuery.of(context).size.width * 0.033, //16
+                      fontWeight: FontWeight.w500),
                 ),
                 Slider(
                   value: maxDistance,
@@ -289,13 +290,21 @@ class _StoresNearYouState extends State<StoresNearYou> {
                                                 size: 30),
                                             SizedBox(width: 8),
                                             Container(
-                                              constraints:
-                                                  BoxConstraints(maxWidth: MediaQuery.of(context).size.width*0.6),
+                                              constraints: BoxConstraints(
+                                                  maxWidth:
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width *
+                                                          0.6),
                                               child: Text(
                                                 address,
                                                 style: TextStyle(
                                                     fontFamily: 'Callibri',
-                                                    fontSize: MediaQuery.of(context).size.width*0.027,
+                                                    fontSize:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.027,
                                                     fontWeight:
                                                         FontWeight.w500),
                                               ),
@@ -370,7 +379,9 @@ class _StoresNearYouState extends State<StoresNearYou> {
                                                   color: Color(0xff0EB4F3),
                                                   size: 30),
                                             ),
-                                            SizedBox(width: 10,),
+                                            SizedBox(
+                                              width: 10,
+                                            ),
                                             Text(
                                               "Distance: ${distanceToStore.toStringAsFixed(2)} km",
                                               style: TextStyle(
@@ -382,7 +393,6 @@ class _StoresNearYouState extends State<StoresNearYou> {
                                         ),
                                       ],
                                     ),
-
                                   ),
                                 ),
                               ),
