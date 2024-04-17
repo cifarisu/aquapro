@@ -94,11 +94,12 @@ class _CusHomeState extends State<CusHome> {
               canPop: false,
               onPopInvoked: (bool didPop) {
                 if (!didPop) {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => const CusNavbar()));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const CusNavbar()));
                 }
               },
-
               child: Container(
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height - 80,
@@ -229,7 +230,7 @@ class _CusHomeState extends State<CusHome> {
                             return SingleChildScrollView(
                               scrollDirection: Axis.horizontal,
                               child: Row(
-                                children: stores.map((store) {
+                                children: stores.sublist(0, 5).map((store) {
                                   final storeId = store['id'];
                                   final name = store['name'];
                                   final address = store['address'];

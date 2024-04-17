@@ -207,7 +207,7 @@ class _StoreRegState extends State<StoreReg> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Firebase Storage Demo'),
+        title: Text('Store Registration'),
       ),
       body: Container(
         padding: EdgeInsets.only(
@@ -246,47 +246,51 @@ class _StoreRegState extends State<StoreReg> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      _image==null?  Center(
-                child: Material(
-                  elevation: 4,
-                  borderRadius: BorderRadius.circular(20),
-                  child: Container(
-                    width: 200,
-                    height: 200,
-                    decoration: BoxDecoration(
-                        border: Border.all(color: Colors.black, width: 1.5),
-                        borderRadius: BorderRadiusDirectional.circular(20)),
-                  
-                  ),
-                ),
-              ): Center(
-                child: Material(
-                  elevation: 4,
-                  borderRadius: BorderRadius.circular(20),
-                  child: Container(
-                    width: 200,
-                    height: 200,
-                    decoration: BoxDecoration(
-                        border: Border.all(color: Colors.black, width: 1.5),
-                        borderRadius: BorderRadiusDirectional.circular(20)),
-                    child: ClipRRect(
-                       borderRadius: BorderRadiusDirectional.circular(20),
-                      child: Image.file(
-                        _image!,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+                      _image == null
+                          ? Center(
+                              child: Material(
+                                elevation: 4,
+                                borderRadius: BorderRadius.circular(20),
+                                child: Container(
+                                  width: 200,
+                                  height: 200,
+                                  decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color: Colors.black, width: 1.5),
+                                      borderRadius:
+                                          BorderRadiusDirectional.circular(20)),
+                                ),
+                              ),
+                            )
+                          : Center(
+                              child: Material(
+                                elevation: 4,
+                                borderRadius: BorderRadius.circular(20),
+                                child: Container(
+                                  width: 200,
+                                  height: 200,
+                                  decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color: Colors.black, width: 1.5),
+                                      borderRadius:
+                                          BorderRadiusDirectional.circular(20)),
+                                  child: ClipRRect(
+                                    borderRadius:
+                                        BorderRadiusDirectional.circular(20),
+                                    child: Image.file(
+                                      _image!,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
                       FloatingActionButton.extended(
                         onPressed: getImage,
                         label: const Text('Pick Image'),
                         tooltip: 'Pick Image',
                         icon: Icon(Icons.add_a_photo),
-                      
-              ),
-                      
+                      ),
                     ],
                   ),
                   SizedBox(
@@ -412,25 +416,28 @@ class _StoreRegState extends State<StoreReg> {
                 ],
               ),
             ],
-            SizedBox(height: 20,),
+            SizedBox(
+              height: 20,
+            ),
             Container(
               width: 300,
               height: 70,
               child: FittedBox(
                 child: FloatingActionButton.extended(
-                            onPressed: () => uploadImageToFirebase(context),
-                            label: const Text('Upload'),
-                            tooltip: 'Upload Image',
-                            icon: Icon(Icons.upload_file),
-                          ),
+                  onPressed: () => uploadImageToFirebase(context),
+                  label: const Text('Upload'),
+                  tooltip: 'Upload Image',
+                  icon: Icon(Icons.upload_file),
+                ),
               ),
             ),
-            SizedBox(height: 20,),
+            SizedBox(
+              height: 20,
+            ),
           ],
-          
         ),
       ),
-      // floatingActionButton: 
+      // floatingActionButton:
     );
   }
 }
