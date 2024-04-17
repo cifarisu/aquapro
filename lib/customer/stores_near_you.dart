@@ -290,7 +290,7 @@ class _StoresNearYouState extends State<StoresNearYou> {
                                             SizedBox(width: 8),
                                             Container(
                                               constraints:
-                                                  BoxConstraints(maxWidth: 240),
+                                                  BoxConstraints(maxWidth: MediaQuery.of(context).size.width*0.6),
                                               child: Text(
                                                 address,
                                                 style: TextStyle(

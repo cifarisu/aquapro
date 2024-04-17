@@ -43,10 +43,10 @@ class _frontPageState extends State<frontPage> {
                 borderRadius: BorderRadius.circular(30),
                 child: Container(
                   padding: const EdgeInsets.symmetric(vertical: 8),
-                  width: 300,
-                  height: 80,
+                  width: MediaQuery.of(context).size.width*0.6,
+                  height: MediaQuery.of(context).size.height*0.075,
                   decoration: BoxDecoration(color:const Color.fromARGB(255, 33, 214, 250), borderRadius: BorderRadius.circular(30)),
-                  child: const Center(child: Text("Login", style: TextStyle(color: Colors.white, fontSize: 30.0, fontFamily: 'Poppins', fontWeight: FontWeight.bold))),
+                  child:  Center(child: Text("Login", style: TextStyle(color: Colors.white, fontSize: MediaQuery.of(context).size.width*0.065, fontFamily: 'Poppins', fontWeight: FontWeight.bold))),
                 ),
               ),
             ),

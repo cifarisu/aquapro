@@ -205,12 +205,15 @@ class _StoreHomeState extends State<StoreHome> {
                                 style: TextStyle(fontSize: 14),
                               ),
                               SizedBox(width: 72),
-                              Text(
-                                '${order['address']}',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontFamily: 'Times New Roman',
-                                  fontWeight: FontWeight.bold,
+                              Container(
+                                width: MediaQuery.of(context).size.width*0.55,
+                                child: Text(
+                                  '${order['address']}',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontFamily: 'Times New Roman',
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
                             ],
@@ -238,7 +241,7 @@ class _StoreHomeState extends State<StoreHome> {
                                 'Distance:',
                                 style: TextStyle(fontSize: 14),
                               ),
-                              SizedBox(width: 85),
+                              SizedBox(width: 72),
                               Text(
                                 '${distance.toStringAsFixed(2)} km away from you',
                                 style: TextStyle(

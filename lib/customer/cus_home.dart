@@ -286,10 +286,10 @@ class _CusHomeState extends State<CusHome> {
                                           elevation: 5.0,
                                           borderRadius:
                                               BorderRadius.circular(20),
-                                          // child: ConstrainedBox(
-                                          // constraints: BoxConstraints(
-                                          //     minHeight:
-                                          //         500), // Set a fixed height for the container
+                                          child: ConstrainedBox(
+                                          constraints: BoxConstraints(
+                                              minHeight: MediaQuery.of(context).size.width
+                                                  ), // Set a fixed height for the container
                                           child: Container(
                                             padding: EdgeInsets.all(15),
                                             child: Column(
@@ -431,7 +431,7 @@ class _CusHomeState extends State<CusHome> {
                                           // ),
                                         ),
                                       ),
-                                    ),
+                                    ),)
                                   );
                                 }).toList(),
                               ),

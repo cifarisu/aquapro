@@ -165,13 +165,17 @@ class _StoreCancelledState extends State<StoreCancelled> {
                           SizedBox(
                             width: 72,
                           ),
-                          Text(
-                            '${order['address']}',
-                            style: TextStyle(
-                                fontSize: 14,
-                                fontFamily: 'Times New Roman',
-                                fontWeight: FontWeight.bold),
-                          ),
+                           Container(
+                                width: MediaQuery.of(context).size.width*0.55,
+                                child: Text(
+                                  '${order['address']}',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontFamily: 'Times New Roman',
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
                         ],
                       ),
                       Row(
