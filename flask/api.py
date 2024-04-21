@@ -145,10 +145,21 @@ def index():
 
         result = {
             "Best Route": best_route.tolist(),
+            "Distances": [],
             "Total Distance": calculate_total_distance(best_route, distances),
             "Running Time": end_time - start_time,
         }
+
+        # Calculate distances between nodes in the best route
+        for i in range(len(best_route) - 1):
+            from_node = best_route[i]
+            to_node = best_route[i + 1]
+            distance_between_nodes = distances[from_node][to_node]
+            result["Distances"].append(distance_between_nodes)
+
         return jsonify(result)
+
+
         
     else:
         return "Send a POST request with your coordinates."

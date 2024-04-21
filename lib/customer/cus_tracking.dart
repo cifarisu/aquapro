@@ -31,11 +31,14 @@ class CusTrackingState extends State<CusTracking> {
 
   late Timer _timer;
 
+  BitmapDescriptor riderMarkerImage = BitmapDescriptor.defaultMarker;
+
   @override
   void initState() {
     super.initState();
     getCurrentUserId();
     getCurrentLocation();
+    _loadRiderMarkerImage(); // Load rider marker image
     // Start timer to periodically update rider's location
     _timer = Timer.periodic(Duration(seconds: 7), (timer) {
       getCustomerAndRiderLocations();
@@ -203,6 +206,15 @@ class CusTrackingState extends State<CusTracking> {
     controller.animateCamera(CameraUpdate.newLatLngBounds(bounds, 100));
   }
 
+  // Load rider marker image
+  void _loadRiderMarkerImage() async {
+    // Load the image for rider marker
+    riderMarkerImage = await BitmapDescriptor.fromAssetImage(
+      ImageConfiguration(devicePixelRatio: 2.5),
+      'images/Badge.png',
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -231,12 +243,13 @@ class CusTrackingState extends State<CusTracking> {
                   icon: BitmapDescriptor.defaultMarkerWithHue(
                       BitmapDescriptor.hueGreen),
                 ),
-                Marker(
-                  markerId: MarkerId('rider'),
-                  position: riderLocation!,
-                  icon: BitmapDescriptor.defaultMarkerWithHue(
-                      BitmapDescriptor.hueRed),
-                ),
+                if (riderLocation !=
+                    null) // Add rider marker only if riderLocation is not null
+                  Marker(
+                    markerId: MarkerId('rider'),
+                    position: riderLocation!,
+                    icon: riderMarkerImage, // Use custom rider marker image
+                  ),
               },
               polylines: _polylines,
               onMapCreated: (mapController) {
