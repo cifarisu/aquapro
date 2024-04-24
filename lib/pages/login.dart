@@ -1,3 +1,6 @@
+import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:aquapro/customer/cus_choose_loc.dart';
 import 'package:aquapro/customer/cus_navbar.dart';
 import 'package:aquapro/customer/try.dart';
@@ -8,13 +11,9 @@ import 'package:aquapro/rider/rider_navbar.dart';
 import 'package:aquapro/store/store_choose_loc.dart';
 import 'package:aquapro/store/store_navbar.dart';
 import 'package:aquapro/widget/widget_support.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class LogIn extends StatefulWidget {
-  const LogIn({super.key});
+  const LogIn({Key? key}) : super(key: key);
 
   @override
   State<LogIn> createState() => _LogInState();
@@ -22,6 +21,7 @@ class LogIn extends StatefulWidget {
 
 class _LogInState extends State<LogIn> {
   bool _isTapped = false;
+  bool _isLoading = false; // Added isLoading state
   String email = "", password = "";
   final _formkey = GlobalKey<FormState>();
 
@@ -29,6 +29,10 @@ class _LogInState extends State<LogIn> {
   TextEditingController userpasswordcontroller = new TextEditingController();
 
   userLogin() async {
+    setState(() {
+      _isLoading = true; // Set isLoading to true when login process starts
+    });
+
     try {
       UserCredential userCredential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
@@ -61,7 +65,7 @@ class _LogInState extends State<LogIn> {
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
-         print('No user found for that email.');
+        print('No user found for that email.');
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(
           "No User Found for this Email",
@@ -73,15 +77,19 @@ class _LogInState extends State<LogIn> {
           "Wrong password",
           style: TextStyle(fontSize: 18.0, color: Colors.black),
         )));
-      }
-      else {
-         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          backgroundColor: Colors.redAccent,
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Colors.redAccent,
             content: Text(
-          "Wrong email or password",
-          style: TextStyle(fontSize: 18.0, color: Colors.white),
-        )));
+              "Wrong email or password",
+              style: TextStyle(fontSize: 18.0, color: Colors.white),
+            )));
       }
+    } finally {
+      setState(() {
+        _isLoading =
+            false; // Set isLoading to false after login process completes
+      });
     }
   }
 
@@ -100,8 +108,8 @@ class _LogInState extends State<LogIn> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: PopScope(
-        canPop: false,
+      body: WillPopScope(
+        onWillPop: () async => false,
         child: Container(
           child: Stack(
             children: [
@@ -119,8 +127,8 @@ class _LogInState extends State<LogIn> {
                 ),
               ),
               Container(
-                margin:
-                    EdgeInsets.only(top: MediaQuery.of(context).size.height / 3),
+                margin: EdgeInsets.only(
+                    top: MediaQuery.of(context).size.height / 3),
                 height: MediaQuery.of(context).size.height / 2,
                 width: MediaQuery.of(context).size.width,
                 decoration: const BoxDecoration(
@@ -232,29 +240,35 @@ class _LogInState extends State<LogIn> {
                                       _isTapped = false;
                                     });
                                   },
-                                  child: Material(
-                                    elevation: 5,
-                                    borderRadius: BorderRadius.circular(20),
-                                    child: Container(
-                                      padding:
-                                          const EdgeInsets.symmetric(vertical: 8),
-                                      width: 200,
-                                      decoration: BoxDecoration(
-                                          color: _isTapped
-                                              ? Color.fromARGB(255, 33, 214, 250)
-                                                  .withOpacity(0.5)
-                                              : Color.fromARGB(255, 33, 214, 250),
+                                  child: _isLoading
+                                      ? CircularProgressIndicator() // Show CircularProgressIndicator when isLoading is true
+                                      : Material(
+                                          elevation: 5,
                                           borderRadius:
-                                              BorderRadius.circular(20)),
-                                      child: const Center(
-                                          child: Text("LOG IN",
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 18.0,
-                                                  fontFamily: 'Poppins',
-                                                  fontWeight: FontWeight.bold))),
-                                    ),
-                                  ),
+                                              BorderRadius.circular(20),
+                                          child: Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 8),
+                                            width: 200,
+                                            decoration: BoxDecoration(
+                                                color: _isTapped
+                                                    ? Color.fromARGB(
+                                                            255, 33, 214, 250)
+                                                        .withOpacity(0.5)
+                                                    : Color.fromARGB(
+                                                        255, 33, 214, 250),
+                                                borderRadius:
+                                                    BorderRadius.circular(20)),
+                                            child: const Center(
+                                                child: Text("LOG IN",
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 18.0,
+                                                        fontFamily: 'Poppins',
+                                                        fontWeight:
+                                                            FontWeight.bold))),
+                                          ),
+                                        ),
                                 ),
                                 const SizedBox(
                                   height: 50,

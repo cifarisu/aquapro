@@ -6,6 +6,9 @@ import 'package:location/location.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class CusTracking extends StatefulWidget {
   const CusTracking({Key? key}) : super(key: key);
@@ -33,13 +36,15 @@ class CusTrackingState extends State<CusTracking> {
 
   BitmapDescriptor riderMarkerImage = BitmapDescriptor.defaultMarker;
 
+  late String googleApiKey = google_api_key; // Your Google API Key
+
   @override
   void initState() {
     super.initState();
     getCurrentUserId();
     getCurrentLocation();
     _loadRiderMarkerImage(); // Load rider marker image
-    // Start timer to periodically update rider's location
+    // Start timer to periodically update rider's location and ETA
     _timer = Timer.periodic(Duration(seconds: 7), (timer) {
       getCustomerAndRiderLocations();
     });
@@ -114,13 +119,58 @@ class CusTrackingState extends State<CusTracking> {
                   riderGeoPoint.longitude,
                 );
               });
+
+              // Fetch ETA using Directions API
+              String eta = await fetchETA();
+
+              // Calculate distance between customer and rider
+              double distanceInMeters = await Geolocator.distanceBetween(
+                customerLocation!.latitude,
+                customerLocation!.longitude,
+                riderLocation!.latitude,
+                riderLocation!.longitude,
+              );
+
+              // Convert distance to kilometers
+              double distanceInKm = distanceInMeters / 1000;
+
+              // Show distance and ETA in a snackbar
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  backgroundColor:
+                      Colors.lightBlue, // Set background color to light blue
+                  elevation:
+                      8, // Add elevation for a more pronounced appearance
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8), // Rounded corners
+                  ),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Rider is ${distanceInKm < 1 ? distanceInMeters.toInt().toString() + ' meters' : distanceInKm.toStringAsFixed(2) + ' km'} away from you\nETA: $eta',
+                        style:
+                            TextStyle(color: Colors.white), // White text color
+                      ),
+                      SizedBox(height: 5),
+                      Text(
+                        'Note: Time may vary as the rider has multiple deliveries.',
+                        style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.white70), // Light gray text color
+                      ),
+                    ],
+                  ),
+                ),
+              );
+
+              if (customerLocation != null && riderLocation != null) {
+                await _getPolylines();
+                await _adjustCameraPosition();
+              }
             } else {
               print('Rider coordinates not found');
-            }
-
-            if (customerLocation != null && riderLocation != null) {
-              await _getPolylines();
-              await _adjustCameraPosition();
             }
           } else {
             print('Rider data not found');
@@ -166,10 +216,64 @@ class CusTrackingState extends State<CusTracking> {
     }
   }
 
+  Future<String> fetchETA() async {
+    try {
+      // Fetch directions from Google Maps Directions API
+      final response = await http.get(Uri.parse(
+          'https://maps.googleapis.com/maps/api/directions/json?origin=${customerLocation!.latitude},${customerLocation!.longitude}&destination=${riderLocation!.latitude},${riderLocation!.longitude}&key=$googleApiKey'));
+
+      if (response.statusCode == 200) {
+        // Parse the JSON response
+        Map<String, dynamic> data = json.decode(response.body);
+        // Extract duration from the response
+        int durationInSeconds =
+            data['routes'][0]['legs'][0]['duration']['value'];
+        // Convert duration to minutes
+        int minutes = (durationInSeconds / 60).ceil();
+
+        // Calculate distance between customer and rider
+        double distanceInMeters = await Geolocator.distanceBetween(
+          customerLocation!.latitude,
+          customerLocation!.longitude,
+          riderLocation!.latitude,
+          riderLocation!.longitude,
+        );
+        // Convert distance to kilometers
+        double distanceInKm = distanceInMeters / 1000;
+
+        // Calculate ETA Interval
+        String etaInterval;
+        if (distanceInKm < 0.2) {
+          // If distance is less than 0.2km, show a custom message
+          etaInterval =
+              "💧 Stay hydrated, your delivery is just around the corner!";
+        } else if (minutes < 5) {
+          // If ETA is less than 5 minutes, show as "Less than 5 minutes"
+          etaInterval = "Less than 5 minutes";
+        } else {
+          // Otherwise, show the interval in 5-minute increments
+          int lowerBound = ((minutes ~/ 5) * 5); // Lower bound of the interval
+          int upperBound = lowerBound + 5; // Upper bound of the interval
+          etaInterval = "$lowerBound-$upperBound minutes";
+        }
+
+        return etaInterval;
+      } else {
+        // Error handling
+        print('Failed to fetch ETA: ${response.statusCode}');
+        return 'N/A';
+      }
+    } catch (e) {
+      // Error handling
+      print('Failed to fetch ETA: $e');
+      return 'N/A';
+    }
+  }
+
   Future<void> _getPolylines() async {
     try {
       PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-        google_api_key,
+        googleApiKey,
         PointLatLng(customerLocation!.latitude, customerLocation!.longitude),
         PointLatLng(riderLocation!.latitude, riderLocation!.longitude),
       );
@@ -192,18 +296,38 @@ class CusTrackingState extends State<CusTracking> {
   }
 
   Future<void> _adjustCameraPosition() async {
-    final LatLngBounds bounds = LatLngBounds(
-      southwest: LatLng(
-        customerLocation!.latitude,
-        customerLocation!.longitude,
-      ),
-      northeast: LatLng(
-        riderLocation!.latitude,
-        riderLocation!.longitude,
-      ),
+    double distanceInMeters = await Geolocator.distanceBetween(
+      customerLocation!.latitude,
+      customerLocation!.longitude,
+      riderLocation!.latitude,
+      riderLocation!.longitude,
     );
-    final GoogleMapController controller = await _controller.future;
-    controller.animateCamera(CameraUpdate.newLatLngBounds(bounds, 100));
+
+    if (distanceInMeters > 1000) {
+      // If distance is greater than 1km, adjust camera to show both customer and rider
+      final LatLngBounds bounds = LatLngBounds(
+        southwest: LatLng(
+          customerLocation!.latitude,
+          customerLocation!.longitude,
+        ),
+        northeast: LatLng(
+          riderLocation!.latitude,
+          riderLocation!.longitude,
+        ),
+      );
+      final GoogleMapController controller = await _controller.future;
+      controller.animateCamera(CameraUpdate.newLatLngBounds(bounds, 100));
+    } else {
+      // If distance is less than or equal to 1km, focus only on customer and rider without zooming out too far
+      final GoogleMapController controller = await _controller.future;
+      controller.animateCamera(CameraUpdate.newLatLngZoom(
+        LatLng(
+          (customerLocation!.latitude + riderLocation!.latitude) / 2,
+          (customerLocation!.longitude + riderLocation!.longitude) / 2,
+        ),
+        17, // Zoom level 17
+      ));
+    }
   }
 
   // Load rider marker image
