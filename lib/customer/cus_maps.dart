@@ -19,7 +19,7 @@ class _CusMapsState extends State<CusMaps> {
   List<LatLng> filteredCoordinatesList = [];
   Completer<GoogleMapController> _controller = Completer();
   LatLng? currentUserLocation; // Current user's location
-  double filterRadius = 3.0; // Initial filter radius in kilometers
+  double filterRadius = 1.5; // Initial filter radius in kilometers
   Set<Marker> markers = {}; // Set to hold markers
 
   @override
@@ -67,8 +67,8 @@ class _CusMapsState extends State<CusMaps> {
                     Expanded(
                       child: Slider(
                         value: filterRadius,
-                        min: 0.5,
-                        max: 10.0,
+                        min: 0.2,
+                        max: 3.0,
                         divisions: 19,
                         label: filterRadius.toString(),
                         onChanged: (value) {
@@ -94,7 +94,7 @@ class _CusMapsState extends State<CusMaps> {
   Future<void> _fetchCoordinatesFromFirestore() async {
     try {
       // Set the initial filter radius to 3.0 km
-      filterRadius = 3.0;
+      filterRadius = 1.5;
 
       // Get current user's UID
       String uid = FirebaseAuth.instance.currentUser!.uid;

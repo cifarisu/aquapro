@@ -14,7 +14,7 @@ class StoresNearYou extends StatefulWidget {
 
 class _StoresNearYouState extends State<StoresNearYou> {
   final FirebaseAuth _auth = FirebaseAuth.instance; // Initialize FirebaseAuth
-  double maxDistance = 3.0; // Maximum distance in kilometers
+  double maxDistance = 1.0; // Maximum distance in kilometers
   bool sortByDistance = true; // Initially sort by shortest distance
 
   // Function to calculate distance between two coordinates using Haversine formula
@@ -119,8 +119,8 @@ class _StoresNearYouState extends State<StoresNearYou> {
                 ),
                 Slider(
                   value: maxDistance,
-                  min: 0.5,
-                  max: 10.0,
+                  min: 0.2,
+                  max: 3.0,
                   divisions: 19,
                   label: maxDistance.toStringAsFixed(2),
                   onChanged: (value) {
