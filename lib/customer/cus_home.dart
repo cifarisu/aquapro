@@ -57,6 +57,30 @@ class _CusHomeState extends State<CusHome> {
       if (userCoordinates != null) {
         coordinates['latitude'] = userCoordinates.latitude;
         coordinates['longitude'] = userCoordinates.longitude;
+
+        // Check if the user's coordinates are outside the specified radius
+        final distance = calculateDistance(userCoordinates.latitude,
+            userCoordinates.longitude, 13.158766356221083, 123.735861896286);
+        if (distance > 3.0) {
+          // Show a message if the user's location is out of coverage area
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text('Location Out of Coverage Area'),
+              content: Text(
+                  'Your location is more than 3 km away from the coverage area.'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('OK'),
+                ),
+              ],
+            ),
+          );
+        }
       }
     }
     return coordinates;
@@ -287,151 +311,158 @@ class _CusHomeState extends State<CusHome> {
                                           borderRadius:
                                               BorderRadius.circular(20),
                                           child: ConstrainedBox(
-                                          constraints: BoxConstraints(
-                                              minHeight: MediaQuery.of(context).size.width
-                                                  ), // Set a fixed height for the container
-                                          child: Container(
-                                            padding: EdgeInsets.all(15),
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Container(
-                                                  alignment:
-                                                      Alignment.topCenter,
-                                                  width:
-                                                      300, // Set a fixed width for the image container
-                                                  height:
-                                                      150, // Set a fixed height for the image container
-                                                  child: imageUrl == null
-                                                      ? Placeholder()
-                                                      : Image.network(
-                                                          imageUrl,
-                                                          fit: BoxFit
-                                                              .cover, // Adjust the fit to cover the container
-                                                          width:
-                                                              double.infinity,
-                                                          height:
-                                                              double.infinity,
+                                            constraints: BoxConstraints(
+                                              minHeight: MediaQuery.of(context)
+                                                  .size
+                                                  .width,
+                                              // Set a fixed height for the container
+                                            ),
+                                            child: Container(
+                                              padding: EdgeInsets.all(15),
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Container(
+                                                    alignment:
+                                                        Alignment.topCenter,
+                                                    width:
+                                                        300, // Set a fixed width for the image container
+                                                    height:
+                                                        150, // Set a fixed height for the image container
+                                                    child: imageUrl == null
+                                                        ? Placeholder()
+                                                        : Image.network(
+                                                            imageUrl,
+                                                            fit: BoxFit.cover,
+                                                            // Adjust the fit to cover the container
+                                                            width:
+                                                                double.infinity,
+                                                            height:
+                                                                double.infinity,
+                                                          ),
+                                                  ),
+                                                  SizedBox(height: 5.0),
+                                                  Text(
+                                                    name,
+                                                    textAlign: TextAlign.center,
+                                                    style: TextStyle(
+                                                        fontSize: 18,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                  SizedBox(height: 5.0),
+                                                  Row(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Icon(Icons.location_on,
+                                                          color:
+                                                              Color(0xff0EB4F3),
+                                                          size: 30),
+                                                      SizedBox(width: 8),
+                                                      Container(
+                                                        constraints:
+                                                            BoxConstraints(
+                                                                maxWidth: 240),
+                                                        child: Text(
+                                                          address,
+                                                          style: TextStyle(
+                                                              fontSize: 16),
                                                         ),
-                                                ),
-                                                SizedBox(height: 5.0),
-                                                Text(
-                                                  name,
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(
-                                                      fontSize: 18,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                ),
-                                                SizedBox(height: 5.0),
-                                                Row(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Icon(Icons.location_on,
-                                                        color:
-                                                            Color(0xff0EB4F3),
-                                                        size: 30),
-                                                    SizedBox(width: 8),
-                                                    Container(
-                                                      constraints:
-                                                          BoxConstraints(
-                                                              maxWidth: 240),
-                                                      child: Text(
-                                                        address,
+                                                      )
+                                                    ],
+                                                  ),
+                                                  SizedBox(height: 12.0),
+                                                  Row(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      SizedBox(width: 2),
+                                                      Container(
+                                                        constraints:
+                                                            BoxConstraints(
+                                                                maxWidth: 25,
+                                                                minWidth: 25,
+                                                                minHeight: 25),
+                                                        decoration: BoxDecoration(
+                                                            color: Color(
+                                                                0xff0EB4F3),
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        20)),
+                                                        child: Icon(Icons.phone,
+                                                            color: Colors.white,
+                                                            size: 20),
+                                                      ),
+                                                      SizedBox(width: 13),
+                                                      Container(
+                                                        constraints:
+                                                            BoxConstraints(
+                                                                maxWidth: 240),
+                                                        child: Text(
+                                                          contact,
+                                                          style: TextStyle(
+                                                              fontSize: 16),
+                                                        ),
+                                                      )
+                                                    ],
+                                                  ),
+                                                  SizedBox(height: 12.0),
+                                                  Row(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Container(
+                                                        child: Icon(
+                                                            Icons.access_time,
+                                                            color: Color(
+                                                                0xff0EB4F3),
+                                                            size: 30),
+                                                      ),
+                                                      SizedBox(width: 10),
+                                                      Container(
+                                                        constraints:
+                                                            BoxConstraints(
+                                                                maxWidth: 240),
+                                                        child: Text(
+                                                          time,
+                                                          style: TextStyle(
+                                                              fontSize: 16),
+                                                        ),
+                                                      )
+                                                    ],
+                                                  ),
+                                                  SizedBox(height: 15.0),
+                                                  Row(
+                                                    children: [
+                                                      Container(
+                                                        child: Icon(
+                                                            Icons
+                                                                .social_distance,
+                                                            color: Color(
+                                                                0xff0EB4F3),
+                                                            size: 30),
+                                                      ),
+                                                      SizedBox(width: 10),
+                                                      Text(
+                                                        '${distance >= 1 ? "${distance.toStringAsFixed(2)} km" : "${(distance * 1000).toStringAsFixed(0)} meters"} away from you',
                                                         style: TextStyle(
                                                             fontSize: 16),
                                                       ),
-                                                    )
-                                                  ],
-                                                ),
-                                                SizedBox(height: 12.0),
-                                                Row(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    SizedBox(width: 2),
-                                                    Container(
-                                                      constraints:
-                                                          BoxConstraints(
-                                                              maxWidth: 25,
-                                                              minWidth: 25,
-                                                              minHeight: 25),
-                                                      decoration: BoxDecoration(
-                                                          color:
-                                                              Color(0xff0EB4F3),
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      20)),
-                                                      child: Icon(Icons.phone,
-                                                          color: Colors.white,
-                                                          size: 20),
-                                                    ),
-                                                    SizedBox(width: 13),
-                                                    Container(
-                                                      constraints:
-                                                          BoxConstraints(
-                                                              maxWidth: 240),
-                                                      child: Text(
-                                                        contact,
-                                                        style: TextStyle(
-                                                            fontSize: 16),
-                                                      ),
-                                                    )
-                                                  ],
-                                                ),
-                                                SizedBox(height: 12.0),
-                                                Row(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Container(
-                                                      child: Icon(
-                                                          Icons.access_time,
-                                                          color:
-                                                              Color(0xff0EB4F3),
-                                                          size: 30),
-                                                    ),
-                                                    SizedBox(width: 10),
-                                                    Container(
-                                                      constraints:
-                                                          BoxConstraints(
-                                                              maxWidth: 240),
-                                                      child: Text(
-                                                        time,
-                                                        style: TextStyle(
-                                                            fontSize: 16),
-                                                      ),
-                                                    )
-                                                  ],
-                                                ),
-                                                SizedBox(height: 15.0),
-                                                Row(
-                                                  children: [
-                                                    Container(
-                                                      child: Icon(
-                                                          Icons.social_distance,
-                                                          color:
-                                                              Color(0xff0EB4F3),
-                                                          size: 30),
-                                                    ),
-                                                    SizedBox(width: 10),
-                                                    Text(
-                                                      '${distance >= 1 ? "${distance.toStringAsFixed(2)} km" : "${(distance * 1000).toStringAsFixed(0)} meters"} away from you',
-                                                      style: TextStyle(
-                                                          fontSize: 16),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
                                             ),
                                           ),
-                                          // ),
                                         ),
                                       ),
-                                    ),)
+                                    ),
                                   );
                                 }).toList(),
                               ),

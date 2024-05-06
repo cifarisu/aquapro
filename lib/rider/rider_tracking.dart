@@ -24,6 +24,8 @@ class RiderTrackingState extends State<RiderTracking> {
   BitmapDescriptor sourceIcon = BitmapDescriptor.defaultMarker;
   BitmapDescriptor destinationIcon = BitmapDescriptor.defaultMarker;
   BitmapDescriptor currentLocationIcon = BitmapDescriptor.defaultMarker;
+  BitmapDescriptor storeIcon = BitmapDescriptor.defaultMarker;
+  Map<String, BitmapDescriptor> destinationIcons = {};
 
   bool showMap = false;
   late String? currentUserId;
@@ -152,6 +154,23 @@ class RiderTrackingState extends State<RiderTracking> {
     ).then((icon) {
       currentLocationIcon = icon;
     });
+
+    BitmapDescriptor.fromAssetImage(
+      ImageConfiguration.empty,
+      "images/Storelogo.png",
+    ).then((icon) {
+      storeIcon = icon;
+    });
+
+    // Load destination icons
+    for (int i = 0; i < 10; i++) {
+      BitmapDescriptor.fromAssetImage(
+        ImageConfiguration.empty,
+        "images/Destination${String.fromCharCode(65 + i)}.png",
+      ).then((icon) {
+        destinationIcons['Destination${String.fromCharCode(65 + i)}'] = icon;
+      });
+    }
   }
 
   void getPolyPoints() async {
@@ -308,12 +327,26 @@ class RiderTrackingState extends State<RiderTracking> {
                           currentLocation!.longitude!,
                         ),
                       ),
-                    for (LatLng location in locations)
+                    if (locations.isNotEmpty) ...{
                       Marker(
-                        markerId: MarkerId(location.toString()),
-                        icon: destinationIcon,
-                        position: location,
+                        markerId: MarkerId("storeMarkerStart"),
+                        icon: storeIcon,
+                        position: locations[0],
                       ),
+                      Marker(
+                        markerId: MarkerId("storeMarkerEnd"),
+                        icon: storeIcon,
+                        position: locations[locations.length - 1],
+                      ),
+                      for (int i = 1; i < locations.length - 1; i++)
+                        Marker(
+                          markerId: MarkerId(locations[i].toString()),
+                          icon: destinationIcons[
+                                  'Destination${String.fromCharCode(64 + i)}'] ??
+                              destinationIcon,
+                          position: locations[i],
+                        ),
+                    }
                   },
                   onMapCreated: (mapController) {
                     if (!_controller.isCompleted) {
