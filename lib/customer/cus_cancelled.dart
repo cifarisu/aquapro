@@ -68,7 +68,10 @@ class _cusCancelledState extends State<cusCancelled> {
                       .where('customerId', isEqualTo: currentUserId)
                       .where('status', whereIn: [
                     'Cancelled',
-                    'Declined'
+                    'Declined',
+                    'Declined: Out of Stock',
+                    'Declined: Location is too far',
+                    'Declined: Unavailable'
                   ]) // Filter by status
                       .snapshots(),
                   builder: (BuildContext context,

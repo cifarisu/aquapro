@@ -19,6 +19,7 @@ class _CartState extends State<Cart> with TickerProviderStateMixin {
   double totalPrice = 0.0;
   double totalAmount = 0.0;
   String? cartType; // To store the type of the first item in the cart
+  int totalQuantity = 0; // To store the total quantity of all items in the cart
 
   @override
   void initState() {
@@ -171,6 +172,7 @@ class _CartState extends State<Cart> with TickerProviderStateMixin {
       double price, String type) {
     double itemTotal = quantity * price; // Total for this item
     totalAmount += itemTotal; // Update total amount
+    totalQuantity += quantity; // Update total quantity
 
     return Container(
       padding: EdgeInsets.only(bottom: 10, left: 15, top: 10),
@@ -250,13 +252,18 @@ class _CartState extends State<Cart> with TickerProviderStateMixin {
                     IconButton(
                       onPressed: () async {
                         setState(() {
-                          quantity++;
-                          updateQuantity(docId, quantity).then((_) {
-                            setState(() {});
-                          });
+                          if (quantity < 20) {
+                            // Limit to 20
+                            quantity++;
+                            updateQuantity(docId, quantity).then((_) {
+                              setState(() {});
+                            });
+                          }
                         });
                       },
                       icon: Icon(Icons.add),
+                      // Disable button if quantity reaches 20
+                      color: quantity < 20 ? Colors.black : Colors.grey,
                     ),
                   ],
                 ),
@@ -335,6 +342,7 @@ class _CartState extends State<Cart> with TickerProviderStateMixin {
             }
             totalPrice = 0.0;
             totalAmount = 0.0; // Reset total amount
+            totalQuantity = 0; // Reset total quantity
             return ListView.builder(
               itemCount: snapshot.data!.docs.length,
               itemBuilder: (context, index) {
@@ -383,73 +391,83 @@ class _CartState extends State<Cart> with TickerProviderStateMixin {
               ],
             ),
             GestureDetector(
-              onTap: () => showDialog<String>(
-                context: context,
-                builder: (BuildContext context) => AlertDialog(
-                  actionsPadding: EdgeInsets.only(bottom: 10),
-                  contentPadding: EdgeInsets.only(top: 30),
-                  backgroundColor: Colors.white,
-                  content: SingleChildScrollView(
-                    child: ListBody(
-                      children: <Widget>[
-                        Text(
-                          'Are you sure you want to reserve the selected items?',
-                          style: TextStyle(fontSize: 17),
-                          textAlign: TextAlign.center,
+              onTap: () {
+                if (totalQuantity <= 20) {
+                  showDialog<String>(
+                    context: context,
+                    builder: (BuildContext context) => AlertDialog(
+                      actionsPadding: EdgeInsets.only(bottom: 10),
+                      contentPadding: EdgeInsets.only(top: 30),
+                      backgroundColor: Colors.white,
+                      content: SingleChildScrollView(
+                        child: ListBody(
+                          children: <Widget>[
+                            Text(
+                              'Are you sure you want to reserve the selected items?',
+                              style: TextStyle(fontSize: 17),
+                              textAlign: TextAlign.center,
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Container(
+                              width: MediaQuery.of(context).size.width,
+                              height: 2,
+                              color: Color(0xffbfbdbc),
+                            )
+                          ],
                         ),
-                        SizedBox(
-                          height: 10,
+                      ),
+                      actions: <Widget>[
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            TextButton(
+                              onPressed: () {
+                                try {
+                                  checkOut();
+                                  Navigator.pop(context, 'Continue');
+                                } catch (error) {
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(SnackBar(
+                                    content: Text(error.toString()),
+                                    duration: Duration(seconds: 3),
+                                  ));
+                                }
+                              },
+                              child: Text(
+                                'Continue',
+                                style: TextStyle(
+                                  color: Color(0xff0eb4f3),
+                                  fontSize: 20,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            TextButton(
+                              onPressed: () => Navigator.pop(context, 'Cancel'),
+                              child: Text(
+                                'Cancel',
+                                style: TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 20,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ],
                         ),
-                        Container(
-                          width: MediaQuery.of(context).size.width,
-                          height: 2,
-                          color: Color(0xffbfbdbc),
-                        )
                       ],
                     ),
-                  ),
-                  actions: <Widget>[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        TextButton(
-                          onPressed: () {
-                            try {
-                              checkOut();
-                              Navigator.pop(context, 'Continue');
-                            } catch (error) {
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(SnackBar(
-                                content: Text(error.toString()),
-                                duration: Duration(seconds: 3),
-                              ));
-                            }
-                          },
-                          child: Text(
-                            'Continue',
-                            style: TextStyle(
-                              color: Color(0xff0eb4f3),
-                              fontSize: 20,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: () => Navigator.pop(context, 'Cancel'),
-                          child: Text(
-                            'Cancel',
-                            style: TextStyle(
-                              color: Colors.red,
-                              fontSize: 20,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text(
+                        'Cannot checkout. Total quantity cannot exceed 20.'),
+                    duration: Duration(seconds: 3),
+                  ));
+                }
+              },
               child: Container(
                 alignment: Alignment.center,
                 padding: EdgeInsets.all(5),

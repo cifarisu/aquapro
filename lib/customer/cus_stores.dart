@@ -127,7 +127,7 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                 child: Row(
                   children: [
                     Container(
-                       width:  MediaQuery.of(context).size.width/6,
+                      width: MediaQuery.of(context).size.width / 6,
                       padding: EdgeInsets.all(5),
                       child: Image.network(
                         widget.imageUrl,
@@ -142,13 +142,14 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Container(
-                          width: MediaQuery.of(context).size.width*.70,
+                          width: MediaQuery.of(context).size.width * .70,
                           child: Text(
                             widget.name,
                             style: TextStyle(
                               fontFamily: 'Times New Roman',
                               fontWeight: FontWeight.bold,
-                              fontSize: MediaQuery.of(context).size.width*0.033,
+                              fontSize:
+                                  MediaQuery.of(context).size.width * 0.033,
                             ),
                           ),
                         ),
@@ -156,7 +157,7 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                           "Active 9 minutes ago",
                           style: TextStyle(
                             fontFamily: 'Calibri',
-                            fontSize: MediaQuery.of(context).size.width*0.025,
+                            fontSize: MediaQuery.of(context).size.width * 0.025,
                           ),
                         ),
                         Row(
@@ -170,7 +171,8 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                               "4.7/5.0     |     46 Followers",
                               style: TextStyle(
                                 fontFamily: 'Calibri',
-                                fontSize: MediaQuery.of(context).size.width*0.025,
+                                fontSize:
+                                    MediaQuery.of(context).size.width * 0.025,
                               ),
                             ),
                           ],
@@ -181,13 +183,13 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                 ),
               ),
               SizedBox(
-                height: MediaQuery.of(context).size.width*0.035,
+                height: MediaQuery.of(context).size.width * 0.035,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Container(
-                    width: MediaQuery.of(context).size.width*0.35,
+                    width: MediaQuery.of(context).size.width * 0.35,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(30),
                       border: Border.all(
@@ -202,7 +204,7 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                       children: [
                         Icon(
                           Icons.sms_outlined,
-                          size: MediaQuery.of(context).size.width*0.07,
+                          size: MediaQuery.of(context).size.width * 0.07,
                         ),
                         SizedBox(
                           width: 12,
@@ -211,14 +213,14 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                           "Chat",
                           style: TextStyle(
                             fontFamily: 'Calibri',
-                            fontSize: MediaQuery.of(context).size.width*0.04,
+                            fontSize: MediaQuery.of(context).size.width * 0.04,
                           ),
                         )
                       ],
                     ),
                   ),
                   Container(
-                    width: MediaQuery.of(context).size.width*0.35,
+                    width: MediaQuery.of(context).size.width * 0.35,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(30),
                       border: Border.all(
@@ -233,7 +235,7 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                       children: [
                         Icon(
                           Icons.add_outlined,
-                          size: MediaQuery.of(context).size.width*0.07,
+                          size: MediaQuery.of(context).size.width * 0.07,
                         ),
                         SizedBox(
                           width: 9,
@@ -242,7 +244,7 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                           "Follow",
                           style: TextStyle(
                             fontFamily: 'Calibri',
-                            fontSize: MediaQuery.of(context).size.width*0.04,
+                            fontSize: MediaQuery.of(context).size.width * 0.04,
                           ),
                         )
                       ],
@@ -266,7 +268,7 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                   labelColor: Color(0xff0eb4f3),
                   labelStyle: TextStyle(
                     fontFamily: 'Calibri',
-                    fontSize: MediaQuery.of(context).size.width*0.045,
+                    fontSize: MediaQuery.of(context).size.width * 0.045,
                     fontWeight: FontWeight.w500,
                   ),
                   controller: _tabController,
@@ -288,322 +290,428 @@ class _StoresState extends State<Stores> with TickerProviderStateMixin {
                     controller: _tabController,
                     children: [
                       // Placeholder for "Deliver" tab
-                      ListView(
+                      ListView.builder(
                         padding: EdgeInsets.all(6),
-                        children: _filterProductsByType('Delivery')
-                            .map<Widget>((product) {
+                        itemCount: _filterProductsByType('Delivery').length,
+                        itemBuilder: (BuildContext context, int index) {
+                          var product =
+                              _filterProductsByType('Delivery')[index];
                           String productName = product['name'];
                           double productPrice = product['price'];
                           String productImageUrl = product['url'];
                           int quantity = deliverQuantities[productName] ?? 0;
-                          return Container(
-                            padding: EdgeInsets.only(top: 8, bottom: 8, left:MediaQuery.of(context).size.width/25, right: MediaQuery.of(context).size.width/25 ),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                
-                                Container(
-                                  height: MediaQuery.of(context).size.width/4,
-                                  padding: EdgeInsets.all(5),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20),
-                                    color: Color.fromARGB(0, 0, 0, 0),
-                                    border: Border.all(
-                                      width: 3,
-                                      color: Color(0xff0EB4F3),
-                                    ),
-                                  ),
-                                  child: ClipRRect(
-                                    child: Image.network(
-                                      productImageUrl, // Changed image path
-                                      fit: BoxFit.fitHeight,
-                                    ),
-                                  ),
+                          return Column(
+                            children: [
+                              Container(
+                                padding: EdgeInsets.only(
+                                  top: 8,
+                                  bottom: 8,
+                                  left: MediaQuery.of(context).size.width / 25,
+                                  right: MediaQuery.of(context).size.width / 25,
                                 ),
-                                SizedBox(
-                                  width: MediaQuery.of(context).size.width/20,
-                                ),
-                                Expanded(
-                                  child: Container(
-                                    
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                          child: Text(
-                                            productName,
-                                            style: TextStyle(
-                                              fontFamily: "Times New Roman",
-                                              fontSize: MediaQuery.of(context).size.width*0.027,
-                                              fontWeight: FontWeight.w800,
-                                            ),
-                                          ),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      height:
+                                          MediaQuery.of(context).size.width / 4,
+                                      padding: EdgeInsets.all(5),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(20),
+                                        color: Color.fromARGB(0, 0, 0, 0),
+                                        border: Border.all(
+                                          width: 3,
+                                          color: Color(0xff0EB4F3),
                                         ),
-                                        SizedBox(height: 3.0),
-                                        Container(
-                                          child: Text(
-                                            "Php $productPrice",
-                                            style: TextStyle(
-                                              fontFamily: "Calibri",
-                                              fontSize: MediaQuery.of(context).size.width*0.027,
-                                              fontWeight: FontWeight.w400,
-                                            ),
-                                          ),
+                                      ),
+                                      child: ClipRRect(
+                                        child: Image.network(
+                                          productImageUrl, // Changed image path
+                                          fit: BoxFit.fitHeight,
                                         ),
-                                        SizedBox(height: 10.0),
-                                        Row(
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width /
+                                          20,
+                                    ),
+                                    Expanded(
+                                      child: Container(
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
-                                            GestureDetector(
-                                              onTap: () {
-                                                _addToCart(
-                                                  widget.name,
-                                                  productName,
-                                                  quantity,
-                                                  productPrice,
-                                                  'Delivery',
-                                                  productImageUrl,
-                                                  widget.storeId,
-                                                );
-                                              },
-                                              child: Container(
-                                                width: MediaQuery.of(context).size.width*.22,
-                                               
-                                                alignment: Alignment.center,
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(15),
-                                                  border: Border.all(
-                                                    color: Color(0xff0eb4f3),
-                                                    width: 2,
-                                                  ),
-                                                ),
-                                                child: Text(
-                                                  "Add to Cart",
-                                                  style: TextStyle(
-                                                    fontSize: MediaQuery.of(context).size.width*0.028,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Color(0xff0eb4f3),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            SizedBox(width: 10),
-                                            GestureDetector(
-                                              onTap: () {
-                                                if (quantity > 0) {
-                                                  setState(() {
-                                                    deliverQuantities[
-                                                            productName] =
-                                                        quantity - 1;
-                                                  });
-                                                }
-                                              },
-                                              child: Container(
-                                                child: Icon(
-                                                  Icons.remove,
-                                                  size: MediaQuery.of(context).size.width*0.05,
-                                                ),
-                                              ),
-                                            ),
                                             Container(
-                                              alignment: Alignment.center,
-                                              width: MediaQuery.of(context).size.width*0.09,
-                                              child: Text(quantity.toString(),
-                                                  style: TextStyle(
-                                                      fontFamily: 'Poppins',
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                      fontSize: MediaQuery.of(context).size.width*0.035)),
+                                              child: Text(
+                                                productName,
+                                                style: TextStyle(
+                                                  fontFamily: "Times New Roman",
+                                                  fontSize:
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width *
+                                                          0.027,
+                                                  fontWeight: FontWeight.w800,
+                                                ),
+                                              ),
                                             ),
-                                            GestureDetector(
-                                              onTap: () {
-                                                setState(() {
-                                                  deliverQuantities[
-                                                          productName] =
-                                                      quantity + 1;
-                                                });
-                                              },
-                                              child: Container(
-                                                  child: Icon(
-                                                Icons.add,
-                                                size: MediaQuery.of(context).size.width*0.05,
-                                              )),
+                                            SizedBox(height: 3.0),
+                                            Container(
+                                              child: Text(
+                                                "Php $productPrice",
+                                                style: TextStyle(
+                                                  fontFamily: "Calibri",
+                                                  fontSize:
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width *
+                                                          0.027,
+                                                  fontWeight: FontWeight.w400,
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(height: 10.0),
+                                            Row(
+                                              children: [
+                                                GestureDetector(
+                                                  onTap: () {
+                                                    _addToCart(
+                                                      widget.name,
+                                                      productName,
+                                                      quantity,
+                                                      productPrice,
+                                                      'Delivery',
+                                                      productImageUrl,
+                                                      widget.storeId,
+                                                    );
+                                                  },
+                                                  child: Container(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            .22,
+                                                    alignment: Alignment.center,
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              15),
+                                                      border: Border.all(
+                                                        color:
+                                                            Color(0xff0eb4f3),
+                                                        width: 2,
+                                                      ),
+                                                    ),
+                                                    child: Text(
+                                                      "Add to Cart",
+                                                      style: TextStyle(
+                                                        fontSize: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            0.028,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color:
+                                                            Color(0xff0eb4f3),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(width: 10),
+                                                GestureDetector(
+                                                  onTap: () {
+                                                    if (quantity > 0) {
+                                                      setState(() {
+                                                        deliverQuantities[
+                                                                productName] =
+                                                            quantity - 1;
+                                                      });
+                                                    }
+                                                  },
+                                                  child: Container(
+                                                    child: Icon(
+                                                      Icons.remove,
+                                                      size:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              0.05,
+                                                    ),
+                                                  ),
+                                                ),
+                                                Container(
+                                                  alignment: Alignment.center,
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.09,
+                                                  child: Text(
+                                                      quantity.toString(),
+                                                      style: TextStyle(
+                                                          fontFamily: 'Poppins',
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          fontSize: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              0.035)),
+                                                ),
+                                                GestureDetector(
+                                                  onTap: () {
+                                                    setState(() {
+                                                      if (quantity < 20) {
+                                                        // Limit to 20
+                                                        deliverQuantities[
+                                                                productName] =
+                                                            quantity + 1;
+                                                      }
+                                                    });
+                                                  },
+                                                  child: Container(
+                                                      child: Icon(
+                                                    Icons.add,
+                                                    size: MediaQuery.of(context)
+                                                            .size
+                                                            .width *
+                                                        0.05,
+                                                    color: quantity < 20
+                                                        ? Colors.black
+                                                        : Colors
+                                                            .grey, // Disable button if quantity reaches 20
+                                                  )),
+                                                )
+                                              ],
                                             )
                                           ],
-                                        )
-                                      ],
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                              if (index == 1)
+                                Column(
+                                  children: [
+                                    Text(
+                                      "Refill", // Text to be displayed
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                      ),
                                     ),
-                                  ),
-                                )
-                              ],
-                            ),
+                                    SizedBox(
+                                        height: 5), // Adjust spacing as needed
+                                    Container(
+                                      height: 2,
+                                      color: Colors.black,
+                                    ),
+                                  ],
+                                ),
+                            ],
                           );
-                        }).toList(),
+                        },
                       ),
                       // Placeholder for "Pick-up" tab
-                      ListView(
+                      ListView.builder(
                         padding: EdgeInsets.all(8),
-                        children: _filterProductsByType('Pick-up')
-                            .map<Widget>((product) {
+                        itemCount: _filterProductsByType('Pick-up').length,
+                        itemBuilder: (BuildContext context, int index) {
+                          var product = _filterProductsByType('Pick-up')[index];
                           String productName = product['name'];
                           double productPrice = product['price'];
                           String productImageUrl = product['url'];
                           int quantity = pickupQuantities[productName] ?? 0;
-                          return Container(
-                            padding: EdgeInsets.only(top: 8, bottom: 8),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                SizedBox(
-                                  width: 14.0,
-                                ),
-                                Container(
-                                  height: 120,
-                                  padding: EdgeInsets.all(5),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20),
-                                    color: Color.fromARGB(0, 0, 0, 0),
-                                    border: Border.all(
-                                      width: 3,
-                                      color: Color(0xff0EB4F3),
+                          return Column(
+                            children: [
+                              Container(
+                                padding: EdgeInsets.only(top: 8, bottom: 8),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SizedBox(
+                                      width: 14.0,
                                     ),
-                                  ),
-                                  child: ClipRRect(
-                                    child: Image.network(
-                                      productImageUrl, // Changed image path
-                                      fit: BoxFit.fitHeight,
+                                    Container(
+                                      height: 120,
+                                      padding: EdgeInsets.all(5),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(20),
+                                        color: Color.fromARGB(0, 0, 0, 0),
+                                        border: Border.all(
+                                          width: 3,
+                                          color: Color(0xff0EB4F3),
+                                        ),
+                                      ),
+                                      child: ClipRRect(
+                                        child: Image.network(
+                                          productImageUrl, // Changed image path
+                                          fit: BoxFit.fitHeight,
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 15.0,
-                                ),
-                                Expanded(
-                                  child: Container(
-                                    height: 120,
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                          child: Text(
-                                            productName,
-                                            style: TextStyle(
-                                              fontFamily: "Times New Roman",
-                                              fontSize: 13,
-                                              fontWeight: FontWeight.w800,
-                                            ),
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          height: 3.0,
-                                        ),
-                                        Container(
-                                          child: Text(
-                                            "Php $productPrice",
-                                            style: TextStyle(
-                                              fontFamily: "Calibri",
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w400,
-                                            ),
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          height: 10.0,
-                                        ),
-                                        Row(
+                                    SizedBox(
+                                      width: 15.0,
+                                    ),
+                                    Expanded(
+                                      child: Container(
+                                        height: 120,
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
-                                            GestureDetector(
-                                              onTap: () {
-                                                _addToCart(
-                                                  widget.name,
-                                                  productName,
-                                                  quantity,
-                                                  productPrice,
-                                                  'Pick-up',
-                                                  productImageUrl,
-                                                  widget.storeId,
-                                                );
-                                              },
-                                              child: Container(
-                                                width: 95,
-                                                height: 28,
-                                                alignment: Alignment.center,
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(15),
-                                                  border: Border.all(
-                                                    color: Color(0xff0eb4f3),
-                                                    width: 2,
-                                                  ),
-                                                ),
-                                                child: Text(
-                                                  "Add to Cart",
-                                                  style: TextStyle(
-                                                    fontSize: 12,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Color(0xff0eb4f3),
-                                                  ),
+                                            Container(
+                                              child: Text(
+                                                productName,
+                                                style: TextStyle(
+                                                  fontFamily: "Times New Roman",
+                                                  fontSize: 13,
+                                                  fontWeight: FontWeight.w800,
                                                 ),
                                               ),
                                             ),
-                                            SizedBox(width: 10),
-                                            GestureDetector(
-                                              onTap: () {
-                                                if (quantity > 0) {
-                                                  setState(() {
-                                                    pickupQuantities[
-                                                            productName] =
-                                                        quantity - 1;
-                                                  });
-                                                }
-                                              },
-                                              child: Container(
-                                                child: Icon(
-                                                  Icons.remove,
-                                                  size: 18,
-                                                ),
-                                              ),
+                                            SizedBox(
+                                              height: 3.0,
                                             ),
                                             Container(
-                                                alignment: Alignment.center,
-                                                width: 40,
-                                                child: Text(quantity.toString(),
-                                                    style: TextStyle(
-                                                        fontFamily: 'Poppins',
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                        fontSize: 14))),
-                                            GestureDetector(
-                                              onTap: () {
-                                                setState(() {
-                                                  pickupQuantities[
-                                                          productName] =
-                                                      quantity + 1;
-                                                });
-                                              },
-                                              child: Container(
-                                                child: Icon(
-                                                  Icons.add,
-                                                  size: 22,
+                                              child: Text(
+                                                "Php $productPrice",
+                                                style: TextStyle(
+                                                  fontFamily: "Calibri",
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w400,
                                                 ),
                                               ),
+                                            ),
+                                            SizedBox(
+                                              height: 10.0,
+                                            ),
+                                            Row(
+                                              children: [
+                                                GestureDetector(
+                                                  onTap: () {
+                                                    _addToCart(
+                                                      widget.name,
+                                                      productName,
+                                                      quantity,
+                                                      productPrice,
+                                                      'Pick-up',
+                                                      productImageUrl,
+                                                      widget.storeId,
+                                                    );
+                                                  },
+                                                  child: Container(
+                                                    width: 95,
+                                                    height: 28,
+                                                    alignment: Alignment.center,
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              15),
+                                                      border: Border.all(
+                                                        color:
+                                                            Color(0xff0eb4f3),
+                                                        width: 2,
+                                                      ),
+                                                    ),
+                                                    child: Text(
+                                                      "Add to Cart",
+                                                      style: TextStyle(
+                                                        fontSize: 12,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color:
+                                                            Color(0xff0eb4f3),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(width: 10),
+                                                GestureDetector(
+                                                  onTap: () {
+                                                    if (quantity > 0) {
+                                                      setState(() {
+                                                        pickupQuantities[
+                                                                productName] =
+                                                            quantity - 1;
+                                                      });
+                                                    }
+                                                  },
+                                                  child: Container(
+                                                    child: Icon(
+                                                      Icons.remove,
+                                                      size: 18,
+                                                    ),
+                                                  ),
+                                                ),
+                                                Container(
+                                                    alignment: Alignment.center,
+                                                    width: 40,
+                                                    child: Text(
+                                                        quantity.toString(),
+                                                        style: TextStyle(
+                                                            fontFamily:
+                                                                'Poppins',
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                            fontSize: 14))),
+                                                GestureDetector(
+                                                  onTap: () {
+                                                    setState(() {
+                                                      if (quantity < 20) {
+                                                        // Limit to 20
+                                                        pickupQuantities[
+                                                                productName] =
+                                                            quantity + 1;
+                                                      }
+                                                    });
+                                                  },
+                                                  child: Container(
+                                                    child: Icon(
+                                                      Icons.add,
+                                                      size: 22,
+                                                      color: quantity < 20
+                                                          ? Colors.black
+                                                          : Colors
+                                                              .grey, // Disable button if quantity reaches 20
+                                                    ),
+                                                  ),
+                                                )
+                                              ],
                                             )
                                           ],
-                                        )
-                                      ],
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                              if (index == 1)
+                                Column(
+                                  children: [
+                                    Text(
+                                      "Refill", // Text to be displayed
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                      ),
                                     ),
-                                  ),
-                                )
-                              ],
-                            ),
+                                    SizedBox(
+                                        height: 5), // Adjust spacing as needed
+                                    Container(
+                                      height: 2,
+                                      color: Colors.black,
+                                    ),
+                                  ],
+                                ),
+                            ],
                           );
-                        }).toList(),
+                        },
                       ),
                     ],
                   ),

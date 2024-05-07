@@ -177,6 +177,7 @@ class _RiderACOState extends State<RiderACO> {
         .doc(storeId)
         .collection('Orders')
         .where('status', isEqualTo: 'Out for Delivery')
+        .limit(10) // Limit the query to retrieve only the first 10 documents
         .get();
 
     return querySnapshot.docs.map((doc) {
@@ -222,6 +223,7 @@ class _RiderACOState extends State<RiderACO> {
         .doc(storeId)
         .collection('Orders')
         .where('status', isEqualTo: 'Out for Delivery')
+        .limit(10) // Limit the query to retrieve only the first 10 documents
         .get();
 
     int index = 1; // Start index from 1 for customer orders

@@ -67,18 +67,18 @@ class _RiderHomeState extends State<RiderHome> {
                 .collection('Rider') // Accessing Rider collection
                 .doc(currentUserId) // Document ID is the current user ID
                 .snapshots(),
-            builder:
-                (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+            builder: (BuildContext context,
+                AsyncSnapshot<DocumentSnapshot> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(child: CircularProgressIndicator());
               }
               if (!snapshot.hasData) {
                 return Center(child: Text('No data available for this rider'));
               }
-        
+
               // Extracting store ID from Rider document
               storeId = snapshot.data!['storeId']; // Assign storeId here
-        
+
               // Display orders for the current rider's stores
               return StreamBuilder(
                 stream: FirebaseFirestore.instance
@@ -86,6 +86,7 @@ class _RiderHomeState extends State<RiderHome> {
                     .doc(storeId) // Document ID is the store ID
                     .collection('Orders') // Accessing Orders subcollection
                     .where('status', isEqualTo: 'To Deliver')
+                    .limit(10)
                     .snapshots(),
                 builder: (BuildContext context,
                     AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -99,7 +100,7 @@ class _RiderHomeState extends State<RiderHome> {
                     return Center(
                         child: Text('No orders available for this store'));
                   }
-        
+
                   // Display orders for the current store
                   return Column(
                     children: [
@@ -115,13 +116,17 @@ class _RiderHomeState extends State<RiderHome> {
                         },
                         child: Text('Start Delivery'),
                       ),
+                      Text(
+                        'Note: Maximum of 10 customers per delivery.',
+                        style: TextStyle(fontSize: 12, color: Colors.black),
+                      ),
                       Expanded(
                         child: ListView.builder(
                           itemCount: snapshot.data!.docs.length,
                           itemBuilder: (context, index) {
                             var order = snapshot.data!.docs[index];
                             var items = order['items'] as List<dynamic>;
-        
+
                             return Container(
                               margin: EdgeInsets.symmetric(
                                   vertical: 10, horizontal: 20),
@@ -147,7 +152,6 @@ class _RiderHomeState extends State<RiderHome> {
                                         'Order ID: ',
                                         style: TextStyle(fontSize: 14),
                                       ),
-                                     
                                       Text(
                                         '${order['orderId']}',
                                         style: TextStyle(
@@ -163,7 +167,6 @@ class _RiderHomeState extends State<RiderHome> {
                                         'Customer Name: ',
                                         style: TextStyle(fontSize: 14),
                                       ),
-                                     
                                       Text(
                                         '${order['customerName']}',
                                         style: TextStyle(
@@ -179,7 +182,6 @@ class _RiderHomeState extends State<RiderHome> {
                                         'Contact: ',
                                         style: TextStyle(fontSize: 14),
                                       ),
-                                     
                                       Text(
                                         '${order['contact']}',
                                         style: TextStyle(
@@ -195,7 +197,6 @@ class _RiderHomeState extends State<RiderHome> {
                                         'Address: ',
                                         style: TextStyle(fontSize: 14),
                                       ),
-                                      
                                       Text(
                                         '${order['address']}',
                                         style: TextStyle(
@@ -211,7 +212,6 @@ class _RiderHomeState extends State<RiderHome> {
                                         'Status: ',
                                         style: TextStyle(fontSize: 14),
                                       ),
-                                      
                                       Text(
                                         'To Deliver',
                                         style: TextStyle(
@@ -249,9 +249,11 @@ class _RiderHomeState extends State<RiderHome> {
                                               Container(
                                                 decoration: BoxDecoration(
                                                     borderRadius:
-                                                        BorderRadius.circular(15),
+                                                        BorderRadius.circular(
+                                                            15),
                                                     border: Border.all(
-                                                        color: Color(0xff0eb4f3),
+                                                        color:
+                                                            Color(0xff0eb4f3),
                                                         width: 2)),
                                                 child: Image.network(
                                                   item['url'],

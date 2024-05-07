@@ -206,7 +206,7 @@ class _StoreHomeState extends State<StoreHome> {
                               ),
                               SizedBox(width: 72),
                               Container(
-                                width: MediaQuery.of(context).size.width*0.55,
+                                width: MediaQuery.of(context).size.width * 0.55,
                                 child: Text(
                                   '${order['address']}',
                                   style: TextStyle(
@@ -444,20 +444,7 @@ class _StoreHomeState extends State<StoreHome> {
                                   ),
                                   TextButton(
                                     onPressed: () {
-                                      // Update order status to "Declined"
-                                      FirebaseFirestore.instance
-                                          .collection('Store')
-                                          .doc(currentUserId)
-                                          .collection('Orders')
-                                          .doc(order.id)
-                                          .update({'status': 'Declined'}).then(
-                                              (_) {
-                                        // Handle the action here
-                                      }).catchError((error) {
-                                        print(
-                                            "Failed to update order status: $error");
-                                        // Handle error accordingly
-                                      });
+                                      _showDeclineDialog(order.id);
                                     },
                                     child: Text(
                                       'Decline Order',
@@ -479,5 +466,58 @@ class _StoreHomeState extends State<StoreHome> {
         ),
       ),
     );
+  }
+
+  // Function to show dialog for selecting decline reasons
+  void _showDeclineDialog(String orderId) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Select Decline Reason"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  _updateOrderStatus(orderId, 'Declined: Out of Stock');
+                  Navigator.of(context).pop();
+                },
+                child: Text('Out of Stock'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  _updateOrderStatus(orderId, 'Declined: Location is too far');
+                  Navigator.of(context).pop();
+                },
+                child: Text('Location is too far'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  _updateOrderStatus(orderId, 'Declined: Unavailable');
+                  Navigator.of(context).pop();
+                },
+                child: Text('Unavailable'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  // Function to update order status
+  void _updateOrderStatus(String orderId, String status) {
+    FirebaseFirestore.instance
+        .collection('Store')
+        .doc(currentUserId)
+        .collection('Orders')
+        .doc(orderId)
+        .update({'status': status}).then((_) {
+      // Handle the action here
+    }).catchError((error) {
+      print("Failed to update order status: $error");
+      // Handle error accordingly
+    });
   }
 }
