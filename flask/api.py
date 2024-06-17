@@ -61,7 +61,7 @@ def index():
     if request.method == 'POST':
         nodes = request.get_json()  # Get the coordinates from the POST request
 
-        gmaps_client = googlemaps.Client(key='AIzaSyByRoj7S_CfYzWQjHgty1uSYSkCt7sG9FQ')
+        gmaps_client = googlemaps.Client(key='123')
         now = datetime.now()
 
         source = "13.14312265082151, 123.72490529804402"
