@@ -8,6 +8,7 @@ This project, **Aqua Pro**, aims to optimize water access efficiency using Ant C
 - [Methodology](#methodology)
 - [Results](#results)
 - [Visualizations](#visualizations)
+- [Conclusion](#conclusion)
 
 ## Introduction
 
@@ -46,12 +47,7 @@ The analysis conducted in this project used the Google Maps API to calculate and
 | kroA100  | 21846.21               | 22267.24[235.61]                     | 22060.63                   | -0.97%              | 913.76                  |
 | kroA200  | 32617.88            | 33309.90[374.57]                     | 33054.82                | -1.32%                 | 1106.78                   |
 
-Based on the results above, conclusions can be drawn: 
-1) Concerning the results with respect to the best, average, and optimal value in the ten independent trials, the ACO with 2-opt achieved the best performance on eil51, kroA100, and kroA200, while the standard ACO does not obtain any best result.
-2) ACO with 2-opt has been observed to have a negative error percentage on eil51 and kroA100, which suggests that the algorithm has found a solution that is better than the previously best-known result, while on kroA200, both of the algorithms have a negative error percentage.
-3) In terms of the running time, standard ACO has the fastest execution and produces the result on eil51, kroA100, and kroA200, while the ACO with 2-opt has the longest running time.
-
-### Visualizations
+## Visualizations
 
 The node distribution position maps for ACO with 2-opt and standard ACO on eil51, kroA100, and kroA200 are shown in Figures 3, 4, and 5. The starting node of the pentagram is indicated by a round green dot and is labeled as node 0, while the end node is represented by a round red dot. The best route produced in 10 independent executions is shown by the red path, and the blue path represents the best-known route of the algorithm. By comparing the red paths (best results) with the blue paths (best-known solutions), we can evaluate the performance of the algorithms. The closer the red paths are to the blue paths, the more effective the algorithm is at approximating the best-known solution.
 
@@ -63,6 +59,13 @@ The node distribution position maps for ACO with 2-opt and standard ACO on eil51
 
 #### Figure 5: Node distribution position map for ACO with 2-opt on kroA200
 ![Figure 5](https://github.com/cifarisu/aquapro/blob/main/Figure%205.%20Node%20Distribution%20map%20of%20ACO%20with%202-opt%20and%20standard%20ACO%20on%20krA200%20respectively.png)
+
+## Conclusion
+
+Based on the results above, conclusions can be drawn: 
+1) Concerning the results with respect to the best, average, and optimal value in the ten independent trials, the ACO with 2-opt achieved the best performance on eil51, kroA100, and kroA200, while the standard ACO does not obtain any best result.
+2) ACO with 2-opt has been observed to have a negative error percentage on eil51 and kroA100, which suggests that the algorithm has found a solution that is better than the previously best-known result, while on kroA200, both of the algorithms have a negative error percentage.
+3) In terms of the running time, standard ACO has the fastest execution and produces the result on eil51, kroA100, and kroA200, while the ACO with 2-opt has the longest running time.
 
 _For detailed results, please refer to the corresponding sections in the `Updated_Final_Algo.ipynb` file._
 
