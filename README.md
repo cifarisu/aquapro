@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Aqua Pro: Water Access Efficiency through Ant Colony Optimization
 
 This project, **Aqua Pro**, aims to optimize water access efficiency using Ant Colony Optimization (ACO) combined with a 2-Opt Local Search strategy. The goal is to improve water distribution systems by minimizing the overall travel distance of water supply vehicles, thus ensuring more efficient and effective water delivery.
@@ -73,3 +74,7 @@ _For detailed results, please refer to the corresponding sections in the [Update
 
 
 
+=======
+# portfolio
+Portfolio
+>>>>>>> f71e33e31a662343eb4af1f2b80b7a6989daa29c
