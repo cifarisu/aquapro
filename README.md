@@ -67,7 +67,7 @@ Based on the results above, conclusions can be drawn:
 2) ACO with 2-opt has been observed to have a negative error percentage on eil51 and kroA100, which suggests that the algorithm has found a solution that is better than the previously best-known result, while on kroA200, both of the algorithms have a negative error percentage.
 3) In terms of the running time, standard ACO has the fastest execution and produces the result on eil51, kroA100, and kroA200, while the ACO with 2-opt has the longest running time.
 
-_For detailed results, please refer to the corresponding sections in the `Updated_Final_Algo.ipynb` file._
+_For detailed results, please refer to the corresponding sections in the [Updated_Final_Algo](https://github.com/markjeromecifra/aquapro/blob/main/Updated_Final_Algo.ipynb) and [Aqua Pro Water Access Efficiency through Ant Colony Optimization with 2-Opt Local Search Strategy](https://github.com/markjeromecifra/aquapro/blob/main/Aqua%20Pro%20Water%20Access%20Efficiency%20through%20Ant%20Colony%20Optimization%20with%202-Opt%20Local%20Search%20Strategy.pdf)._
 
 
 
